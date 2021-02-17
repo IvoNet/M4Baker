@@ -24,3 +24,12 @@ poetry install
 cd PROJECT
 source venv/bin/activate
 ```
+
+## Build Mac App
+
+```shell
+source venv/bin/activate
+./build.sh
+```
+
+See also the build.sh script

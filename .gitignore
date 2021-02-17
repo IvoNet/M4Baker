@@ -4,13 +4,3 @@ node_modules
 .DS_Store
 target
 venv
-.idea
-*.iml
-node_modules
-.DS_Store
-target
-.idea
-*.iml
-node_modules
-.DS_Store
-target

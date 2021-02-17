@@ -8,8 +8,7 @@ fi
 
 if [ "$1" == "clean" ]; then
   if [ -d "./dist"  ]; then
-    rm -rf "./dist" 2>/dev/null
+    rm -rf "./dist" "./build" 2>/dev/null
   fi
 fi
-
-pyinstaller --noconsole -y src/m4baker.py
+pyinstaller --noconsole -y m4baker.spec

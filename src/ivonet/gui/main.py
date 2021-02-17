@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 import wx
+import wx.adv
+from wx.lib.wordwrap import wordwrap
+
+import ivonet
 
 
 class MainWindow(wx.Frame):
@@ -24,42 +28,63 @@ class MainWindow(wx.Frame):
         pnl.SetSizer(sizer)
 
         # create a menu bar
-        self.makeMenuBar()
+        self.make_menu_bar()
 
         # and a status bar
         self.CreateStatusBar()
         self.SetStatusText("M4Baker (c) 2021 by IvoNet.nl")
 
-    def makeMenuBar(self):
+    def make_menu_bar(self):
         """
         A menu bar is composed of menus, which are composed of menu items.
         This method builds a set of menus and binds handlers to be called
         when the menu item is selected.
         """
 
-        file_menu = wx.Menu()
-        exit_item = file_menu.Append(wx.ID_EXIT)
-        about_item = file_menu.Append(wx.ID_ABOUT)
+        help_menu = wx.Menu()
+        help_menu.Append(wx.ID_ABOUT)
 
         menu_bar = wx.MenuBar()
-        menu_bar.Append(file_menu, "&File")
-
+        menu_bar.Append(help_menu, "&Help")
         # Give the menu bar to the frame
         self.SetMenuBar(menu_bar)
 
         # Finally, associate a handler function with the EVT_MENU event for
         # each of the menu items. That means that when that menu item is
         # activated then the associated handler function will be called.
-        self.Bind(wx.EVT_MENU, self.OnExit, exit_item)
-        self.Bind(wx.EVT_MENU, self.OnAbout, about_item)
+        self.Bind(wx.EVT_MENU, self.on_exit, id=wx.ID_EXIT)
+        self.Bind(wx.EVT_MENU, self.on_about, id=wx.ID_ABOUT)
 
-    def OnExit(self, event):
+    def on_exit(self, event):
         """Close the frame, terminating the application."""
         self.Close(True)
 
-    def OnAbout(self, event):
+    def on_about(self, event):
         """Display an About Dialog"""
-        wx.MessageBox(
-            "Apache 2.0 license",
-            "M4Baker (c) 2021 by IvoNet.nl",
-            wx.OK | wx.ICON_INFORMATION)
+        # First we create and fill the info object
+        info = wx.adv.AboutDialogInfo()
+        info.SetName("M4Baker")
+        info.SetVersion("0.1.0")
+        info.SetCopyright("(c) 2021 Ivo Woltring")
+        info.SetDescription(wordwrap(
+            """Converts mp3 files to m4b with metadata and chapter information""",
+            350, wx.ClientDC(self)))
+        info.SetWebSite("https://www.ivonet.nl", "Ivo's blog")
+        info.SetDevelopers(["Ivo Woltring", ])
+        info.SetLicense(wordwrap("""Copyright 2021 Ivo Woltring
+        
+           Licensed under the Apache License, Version 2.0 (the "License");
+           you may not use this file except in compliance with the License.
+           You may obtain a copy of the License at
+        
+               http://www.apache.org/licenses/LICENSE-2.0
+        
+           Unless required by applicable law or agreed to in writing, software
+           distributed under the License is distributed on an "AS IS" BASIS,
+           WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+           See the License for the specific language governing permissions and
+           limitations under the License.""", 500, wx.ClientDC(self)))
+        info.SetIcon(wx.Icon(ivonet.APP_ICON, wx.BITMAP_TYPE_PNG))
+
+        # Then we call wx.AboutBox giving it that info object
+        wx.adv.AboutBox(info)

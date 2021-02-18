@@ -61,30 +61,13 @@ class MainWindow(wx.Frame):
 
     def on_about(self, event):
         """Display an About Dialog"""
-        # First we create and fill the info object
         info = wx.adv.AboutDialogInfo()
-        info.SetName("M4Baker")
-        info.SetVersion("0.1.0")
-        info.SetCopyright("(c) 2021 Ivo Woltring")
-        info.SetDescription(wordwrap(
-            """Converts mp3 files to m4b with metadata and chapter information""",
-            350, wx.ClientDC(self)))
-        info.SetWebSite("https://www.ivonet.nl", "Ivo's blog")
-        info.SetDevelopers(["Ivo Woltring", ])
-        info.SetLicense(wordwrap("""Copyright 2021 Ivo Woltring
-        
-           Licensed under the Apache License, Version 2.0 (the "License");
-           you may not use this file except in compliance with the License.
-           You may obtain a copy of the License at
-        
-               http://www.apache.org/licenses/LICENSE-2.0
-        
-           Unless required by applicable law or agreed to in writing, software
-           distributed under the License is distributed on an "AS IS" BASIS,
-           WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-           See the License for the specific language governing permissions and
-           limitations under the License.""", 500, wx.ClientDC(self)))
+        info.SetName(ivonet.APP_NAME)
+        info.SetVersion(ivonet.VERSION)
+        info.SetCopyright(ivonet.COPYRIGHT)
+        info.SetDescription(wordwrap(ivonet.ABOUT_DESCRIPTION, 350, wx.ClientDC(self)))
+        info.SetWebSite(ivonet.BLOG, ivonet.BLOG_DESCRIPTION)
+        info.SetDevelopers(ivonet.DEVELOPERS)
+        info.SetLicense(wordwrap(ivonet.LICENSE, 500, wx.ClientDC(self)))
         info.SetIcon(wx.Icon(ivonet.APP_ICON, wx.BITMAP_TYPE_PNG))
-
-        # Then we call wx.AboutBox giving it that info object
-        wx.adv.AboutBox(info)
+        wx.adv.AboutBox(info, self)

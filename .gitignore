@@ -6,3 +6,8 @@ target
 venv
 dist
 build
+ffmpeg
+ffprobe
+mp4chaps
+mp4art
+AtomicParsley

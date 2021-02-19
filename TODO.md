@@ -1,12 +1,18 @@
 # TODO
 
-* ToolBar
+## GUI
+
+* √ToolBar
 * Create MainPanel
 * Create Log Dialog
 * Create process dialog
 * √ Create About dialog
 * Application properties Panel (ini file)
   * where to save this? ~/Library/Application Support/ivonet/m4baker or something?
+* Drag and Drop panel
+
+## Business logic
+
 * Set track
 * Extract Chapters
 * Calculate chapters

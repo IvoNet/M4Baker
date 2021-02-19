@@ -36,7 +36,18 @@ source venv/bin/activate
 
 ```shell
 source venv/bin/activate
-./build.sh
+./build.sh [clean]
 ```
 
+The clean option will first remove the build and dist folder before rendering all the images to the
+ivonet.image.images.py file and building the application
+
 See also the build.sh script
+
+## Rendering the images
+
+```shell
+./images.sh
+```
+
+This script will convert all the ./images/*.{bmp,png} images to a format easily understood by wxPython.

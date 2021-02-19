@@ -6,6 +6,8 @@ Global defines
 
 import os
 
+import wx
+
 HERE = os.path.abspath(os.path.dirname(__file__))
 RESOURCE = os.path.abspath(HERE + '/../resources/')
 ICON_APP = RESOURCE + "/yoda.png"
@@ -32,3 +34,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
+# File Menu
+FILE_MENU_PROCESS = wx.NewIdRef()
+FILE_MENU_CLEAR = wx.NewIdRef()
+FILE_MENU_STOP_PROCESS = wx.NewIdRef()
+FILE_MENU_SHOW_LOG = wx.NewIdRef()
+FILE_MENU_TO_DIR = wx.NewIdRef()

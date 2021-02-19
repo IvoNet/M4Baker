@@ -26,6 +26,7 @@ class M4Baker(wx.App):
 
 
 def main():
+    wx.SystemOptions.SetOption("mac.window-plain-transition", 1)
     app = M4Baker(False)
     frame = MainWindow(None, title="B4Baker", size=(800, 600))
     frame.Show(True)

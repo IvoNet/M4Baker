@@ -38,4 +38,8 @@ coll = COLLECT(exe,
 app = BUNDLE(coll,
              name='M4Baker.app',
              icon="./Yoda.icns",
-             bundle_identifier=None)
+             bundle_identifier=None,
+             info_plist={
+                'NSRequiresAquaSystemAppearance': 'No'
+                },
+             )

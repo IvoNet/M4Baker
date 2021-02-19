@@ -8,5 +8,4 @@ from ivonet.gui.MenuBar import MenuBar
 __all__ = [
     "MainWindow",
     "MP3DropTarget",
-    "MenuBar",
 ]

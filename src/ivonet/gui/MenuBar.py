@@ -7,7 +7,7 @@ from ivonet import FILE_MENU_PROCESS, FILE_MENU_STOP_PROCESS, FILE_MENU_CLEAR, F
 
 class MenuBar(wx.MenuBar):
     def __init__(self, parent, style=0):
-        super().__init__(style)
+        super(MenuBar, self).__init__(style)
         self.parent = parent
 
         file_menu = wx.Menu()
@@ -84,7 +84,7 @@ class Example(wx.Frame):
     def on_clear(self, event):
         self.SetStatusText("Menu choice -> on_clear")
 
-    def on_show_out_log(self, event):
+    def on_show_log(self, event):
         self.SetStatusText("Menu choice -> on_show_log")
 
 

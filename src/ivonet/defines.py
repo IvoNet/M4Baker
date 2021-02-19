@@ -41,3 +41,6 @@ FILE_MENU_CLEAR = wx.NewIdRef()
 FILE_MENU_STOP_PROCESS = wx.NewIdRef()
 FILE_MENU_SHOW_LOG = wx.NewIdRef()
 FILE_MENU_TO_DIR = wx.NewIdRef()
+
+# Art
+ART_PREFIX = "inART_"

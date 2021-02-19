@@ -5,20 +5,18 @@ import wx.adv
 from wx.lib.wordwrap import wordwrap
 
 import ivonet
-from ivonet.gui import MenuBar
+from ivonet.gui.MenuBar import MenuBar
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
 from ivonet.image.images import yoda
+from ivonet.sys.application import data_directory
 
 
 class MainWindow(wx.Frame):
 
     def __init__(self, *args, **kw):
+        """Initialize the gui here"""
         super(MainWindow, self).__init__(*args, **kw)
 
-        self.on_init()
-
-    def on_init(self):
-        """Initializes the instance"""
         wx.ArtProvider.Push(IvoNetArtProvider())
 
         self.__make_toolbar()
@@ -27,12 +25,19 @@ class MainWindow(wx.Frame):
         self.CreateStatusBar()
         self.SetStatusText("M4Baker (c) 2021 by IvoNet.nl")
 
+        self.init()
+
+    def init(self):
+        # TODO application data init here
+        pass
+
     def __make_toolbar(self):
         """Toolbar"""
         tool_bar_size = (48, 48)
         tool_bar = self.CreateToolBar((wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT | wx.TB_TEXT))
         tool_bar.SetToolBitmapSize(tool_bar_size)
 
+        # Define new tool bar buttons here (
         tool_buttons = [
             ("process", "Start processing", self.on_process),
             ("stop", "Stop processing", self.on_stop_process),
@@ -76,7 +81,7 @@ class MainWindow(wx.Frame):
 
     # noinspection PyUnusedLocal
     def on_select_dir(self, event):
-        self.SetStatusText("TODO: on_select_dir")
+        self.SetStatusText("TODO: on_select_dir -> " + data_directory())
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):

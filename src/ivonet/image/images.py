@@ -1294,7 +1294,7 @@ process = PyEmbeddedImage(
 index.append('process')
 catalog['process'] = process
 
-# ----------------------------------------------------------------------
+#----------------------------------------------------------------------
 process_1 = PyEmbeddedImage(
     b'iVBORw0KGgoAAAANSUhEUgAAA4QAAAOECAYAAAD5Tv87AAAAAXNSR0IArs4c6QAAAIRlWElm'
     b'TU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAAB'
@@ -5080,7 +5080,7 @@ process_1 = PyEmbeddedImage(
 index.append('process_1')
 catalog['process_1'] = process_1
 
-# ----------------------------------------------------------------------
+#----------------------------------------------------------------------
 yoda = PyEmbeddedImage(
     b'iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAD//0lEQVR42uy9d5Bl93Umdm4O'
     b'L3funu7JmMEgEyCJQFIMIEVSokhRWorSapXWdpW95XWVXeu1LLn2D2u9Ja9qt2zvluSyUqkk'

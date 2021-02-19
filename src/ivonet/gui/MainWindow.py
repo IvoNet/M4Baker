@@ -43,10 +43,10 @@ class MainWindow(wx.Frame):
             ("stop", "Stop processing", self.on_stop_process),
             ("log", "Show Log", self.on_show_log),
         ]
-        for idx, value in enumerate(tool_buttons, start=1):
+        for art_id, value in enumerate(tool_buttons, start=1):
             label, short_help, func = value
-            art_id = idx * 10
-            bmp = wx.ArtProvider.GetBitmap("inART_{label}".format(label=label.upper()), wx.ART_TOOLBAR, tool_bar_size)
+            bmp = wx.ArtProvider.GetBitmap("{prefix}{label}".format(prefix=ivonet.ART_PREFIX, label=label.upper()),
+                                           wx.ART_TOOLBAR, tool_bar_size)
             tool_bar.AddTool(art_id, label.capitalize(), bmp, short_help, wx.ITEM_NORMAL)
             self.Bind(wx.EVT_TOOL, func, id=art_id)
 

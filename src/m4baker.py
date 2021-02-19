@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
+
+__doc__ = """
+The main application file. 
+The file to rule them all.
+Here it all starts and .... ends.
+There can be only one.
+import this
+"""
+
 import wx
 
 from ivonet.gui import MainWindow

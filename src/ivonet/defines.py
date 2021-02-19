@@ -7,7 +7,8 @@ Global defines
 import os
 
 HERE = os.path.abspath(os.path.dirname(__file__))
-APP_ICON = os.path.abspath(HERE + '/../resources/yoda.png')
+RESOURCE = os.path.abspath(HERE + '/../resources/')
+ICON_APP = RESOURCE + "/yoda.png"
 APP_NAME = "M4Baker"
 VERSION = "0.1.0"
 COPYRIGHT = "(c) 2021 Ivo Woltring"

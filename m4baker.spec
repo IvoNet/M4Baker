@@ -36,6 +36,6 @@ coll = COLLECT(exe,
                upx_exclude=[],
                name='m4baker')
 app = BUNDLE(coll,
-             name='m4baker.app',
+             name='M4Baker.app',
              icon="./Yoda.icns",
              bundle_identifier=None)

@@ -5,12 +5,16 @@ import wx.adv
 from wx.lib.wordwrap import wordwrap
 
 import ivonet
+from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
+from ivonet.image.images import yoda
 
 
 class MainWindow(wx.Frame):
 
     def __init__(self, *args, **kw):
         super(MainWindow, self).__init__(*args, **kw)
+
+        self._make_toolbar()
 
         # create a panel in the frame
         pnl = wx.Panel(self)
@@ -28,13 +32,44 @@ class MainWindow(wx.Frame):
         pnl.SetSizer(sizer)
 
         # create a menu bar
-        self.make_menu_bar()
+        self._make_menu_bar()
 
         # and a status bar
         self.CreateStatusBar()
         self.SetStatusText("M4Baker (c) 2021 by IvoNet.nl")
 
-    def make_menu_bar(self):
+    def _make_toolbar(self):
+        """Toolbar"""
+        tool_bar_size = (48, 48)
+        tool_bar = self.CreateToolBar((wx.TB_HORIZONTAL
+                                       | wx.NO_BORDER
+                                       | wx.TB_FLAT
+                                       # | wx.TB_TEXT
+                                       # | wx.TB_HORZ_LAYOUT
+                                       )
+                                      )
+        tool_bar.SetToolBitmapSize(tool_bar_size)
+
+        wx.ArtProvider.Push(IvoNetArtProvider())
+
+        process_bmp = wx.ArtProvider.GetBitmap("inART_PROCESS_1", wx.ART_TOOLBAR, tool_bar_size)
+        tool_bar.AddTool(10, "Process", process_bmp, wx.NullBitmap, wx.ITEM_NORMAL, "Process", "Start processing", None)
+        self.Bind(wx.EVT_TOOL, self.on_tool_clicked, id=10)
+
+        clean_bmp = wx.ArtProvider.GetBitmap("inART_CLEAR", wx.ART_TOOLBAR, tool_bar_size)
+        tool_bar.AddTool(20, "Clear", clean_bmp, wx.NullBitmap, wx.ITEM_NORMAL, "Clear", "Clear stuff", None)
+        self.Bind(wx.EVT_TOOL, self.on_tool_clicked, id=20)
+
+        stop_bmp = wx.ArtProvider.GetBitmap("inART_YODA", wx.ART_TOOLBAR, tool_bar_size)
+        tool_bar.AddTool(30, "Stop", stop_bmp, wx.NullBitmap, wx.ITEM_NORMAL, "Stop", "Stop stuff", None)
+        self.Bind(wx.EVT_TOOL, self.on_tool_clicked, id=30)
+
+        tool_bar.Realize()
+
+    def on_tool_clicked(self, event):
+        self.SetStatusText("Clicked {}".format(event.GetId()))
+
+    def _make_menu_bar(self):
         """
         A menu bar is composed of menus, which are composed of menu items.
         This method builds a set of menus and binds handlers to be called
@@ -46,12 +81,9 @@ class MainWindow(wx.Frame):
 
         menu_bar = wx.MenuBar()
         menu_bar.Append(help_menu, "&Help")
-        # Give the menu bar to the frame
+
         self.SetMenuBar(menu_bar)
 
-        # Finally, associate a handler function with the EVT_MENU event for
-        # each of the menu items. That means that when that menu item is
-        # activated then the associated handler function will be called.
         self.Bind(wx.EVT_MENU, self.on_exit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.on_about, id=wx.ID_ABOUT)
 
@@ -69,5 +101,5 @@ class MainWindow(wx.Frame):
         info.SetWebSite(ivonet.BLOG, ivonet.BLOG_DESCRIPTION)
         info.SetDevelopers(ivonet.DEVELOPERS)
         info.SetLicense(wordwrap(ivonet.LICENSE, 500, wx.ClientDC(self)))
-        info.SetIcon(wx.Icon(ivonet.APP_ICON, wx.BITMAP_TYPE_PNG))
+        info.SetIcon(yoda.GetIcon())
         wx.adv.AboutBox(info, self)

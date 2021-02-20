@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
+
 import wx
 import wx.adv
 from wx.lib.wordwrap import wordwrap
@@ -10,6 +11,11 @@ from ivonet.gui.MenuBar import MenuBar
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
 from ivonet.image.images import yoda
 from ivonet.sys.application import data_directory
+
+
+def status(msg):
+    """Emits a status bar event message."""
+    ee.emit("status", msg)
 
 
 class MainWindow(wx.Frame):
@@ -23,14 +29,24 @@ class MainWindow(wx.Frame):
         self.__make_toolbar()
         self.SetMenuBar(MenuBar(self))
 
+        # create a panel in the frame
+        main_panel = wx.Panel(self)
+
+        box = wx.BoxSizer(wx.VERTICAL)
+        main_panel.SetSizer(box)
+
         self.CreateStatusBar()
         self.SetStatusText("M4Baker (c) 2021 by IvoNet.nl")
+
+        self.status_timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.clear_status, self.status_timer)
 
         self.init()
 
     def init(self):
         # Register events
         ee.on("log", self.on_log)
+        ee.on("status", self.on_status)
 
         _("MainWindows initialized")
 
@@ -44,7 +60,7 @@ class MainWindow(wx.Frame):
         tool_buttons = [
             ("process", "Start processing", self.on_process),
             ("stop", "Stop processing", self.on_stop_process),
-            ("log", "Show Log", self.on_show_log),
+            # ("log", "Show Log", self.on_show_log),
         ]
         for art_id, value in enumerate(tool_buttons, start=1):
             label, short_help, func = value
@@ -76,24 +92,41 @@ class MainWindow(wx.Frame):
 
     # noinspection PyUnusedLocal
     def on_process(self, event):
+        status("Processing...")
         _("TODO: on_process")
 
     # noinspection PyUnusedLocal
     def on_stop_process(self, event):
+        status("Stop processing")
         _("TODO: on_stop_process")
 
     # noinspection PyUnusedLocal
     def on_select_dir(self, event):
+        status("Select directory")
         _("TODO: on_select_dir -> " + data_directory())
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):
+        status("Clearing current config")
         _("TODO: on_clear")
 
     # noinspection PyUnusedLocal
     def on_show_log(self, event):
+        status("Switching to log window")
         _("TODO: on_show_log")
 
     @staticmethod
     def on_log(*args):
         print(" ".join(args))
+
+    def on_status(self, msg):
+        self.SetStatusText(msg)
+        if not self.status_timer.IsRunning():
+            _("Starting the StatusBar timer")
+            self.status_timer.Start(3000)
+
+    def clear_status(self, event):
+        self.SetStatusText("")
+        if self.status_timer.IsRunning():
+            _("Stopping the StatusBar timer")
+            self.status_timer.Stop()

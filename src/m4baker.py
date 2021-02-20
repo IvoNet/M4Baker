@@ -9,20 +9,17 @@ There can be only one.
 import this
 """
 
+import time
 import wx
 
 from ivonet.events import ee, _
 from ivonet.gui import MainWindow
 
-# Set to False if you do not want the emitted messages shown in stdout
-# Should be set to False for prod!
-DEBUG = True
 
-
-@ee.on_any()
+@ee.on("debug")
 def print_any_event_to_stdout(*args):
-    if DEBUG:
-        print("[DEBUG]", " ".join(args))
+    """Prints all debug message events"""
+    print(time.strftime('%X'), "[DEBUG]", " ".join(args))
 
 
 class M4Baker(wx.App):

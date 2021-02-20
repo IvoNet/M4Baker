@@ -1,8 +1,12 @@
 # TODO
 
+## POCs
+
+* Event emitter tests / Singleton? / Module?
+
 ## GUI
 
-* √ToolBar
+* √ ToolBar
 * Create MainPanel
 * Create Log Dialog
 * Create process dialog

@@ -11,7 +11,18 @@ import this
 
 import wx
 
+from ivonet.events import ee, _
 from ivonet.gui import MainWindow
+
+# Set to False if you do not want the emitted messages shown in stdout
+# Should be set to False for prod!
+DEBUG = True
+
+
+@ee.on_any()
+def print_any_event_to_stdout(*args):
+    if DEBUG:
+        print("[DEBUG]", " ".join(args))
 
 
 class M4Baker(wx.App):
@@ -19,7 +30,7 @@ class M4Baker(wx.App):
 
     def __init__(self, redirect=False, filename=None, use_best_visual=False, clear_sig_int=True):
         super(M4Baker, self).__init__(redirect, filename, use_best_visual, clear_sig_int)
-
+        _("Initializing app")
         self.Bind(wx.EVT_ACTIVATE_APP, self.on_activate)
 
     def on_activate(self, event):
@@ -36,8 +47,8 @@ class M4Baker(wx.App):
 
 def main():
     wx.SystemOptions.SetOption("mac.window-plain-transition", 1)
-    app = M4Baker(False)
-    frame = MainWindow(None, title="B4Baker", size=(800, 600))
+    app = M4Baker()
+    frame = MainWindow(None, title="B4Baker", size=(1024, 768))
     frame.Show(True)
     app.MainLoop()
 

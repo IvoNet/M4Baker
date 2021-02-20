@@ -13,7 +13,7 @@ class EventEmitter(object):
     new listener is registered with arguments ``(func, event=None)``.
     *max_listeners* configures the maximum number of event  listeners.
     A negative numbers means that this number is unlimited.
-    Event names have namespace support with each namspace being separated by a
+    Event names have namespace support with each namespace being separated by a
     *delimiter* which defaults to ``"."``.
     """
 
@@ -195,6 +195,7 @@ class EventEmitter(object):
             if not isinstance(b, dict):
                 continue
 
+            # noinspection PyUnresolvedReferences
             branches.extend(b.values())
 
             listeners.extend(b[self.CB_KEY])
@@ -220,9 +221,7 @@ class EventEmitter(object):
                 for k, b in branch.items():
                     if k == self.CB_KEY:
                         continue
-                    if k == p:
-                        _branches.append(b)
-                    elif self.wildcard and self.WC_CHAR in (p, k):
+                    if k == p or self.wildcard and self.WC_CHAR in (p, k):
                         _branches.append(b)
             branches = _branches
 
@@ -273,7 +272,7 @@ def test():
     ee = EventEmitter()
 
     @ee.on("log")
-    def handler_2(arg):
+    def handler_1(arg):
         print(arg)
 
     @ee.on("log")

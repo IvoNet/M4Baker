@@ -5,6 +5,7 @@ import wx.adv
 from wx.lib.wordwrap import wordwrap
 
 import ivonet
+from ivonet.events import ee, _
 from ivonet.gui.MenuBar import MenuBar
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
 from ivonet.image.images import yoda
@@ -28,8 +29,10 @@ class MainWindow(wx.Frame):
         self.init()
 
     def init(self):
-        # TODO application data init here
-        pass
+        # Register events
+        ee.on("log", self.on_log)
+
+        _("MainWindows initialized")
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -73,20 +76,24 @@ class MainWindow(wx.Frame):
 
     # noinspection PyUnusedLocal
     def on_process(self, event):
-        self.SetStatusText("TODO: on_process")
+        _("TODO: on_process")
 
     # noinspection PyUnusedLocal
     def on_stop_process(self, event):
-        self.SetStatusText("TODO: on_stop_process")
+        _("TODO: on_stop_process")
 
     # noinspection PyUnusedLocal
     def on_select_dir(self, event):
-        self.SetStatusText("TODO: on_select_dir -> " + data_directory())
+        _("TODO: on_select_dir -> " + data_directory())
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):
-        self.SetStatusText("TODO: on_clear")
+        _("TODO: on_clear")
 
     # noinspection PyUnusedLocal
     def on_show_log(self, event):
-        self.SetStatusText("TODO: on_show_log")
+        _("TODO: on_show_log")
+
+    @staticmethod
+    def on_log(*args):
+        print(" ".join(args))

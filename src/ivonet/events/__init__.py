@@ -3,6 +3,15 @@
 
 from ivonet.events.EventEmitter import EventEmitter
 
+ee = EventEmitter()
+
+
+def _(*args):
+    """Emit a 'log' event convenience method"""
+    ee.emit("log", *args)
+
+
 __all__ = [
-    "EventEmitter"
+    "ee",
+    "_"
 ]

@@ -6,4 +6,7 @@ if [ -z "${VIRTUAL_ENV}" ]; then
   exit 1
 fi
 
+rm -rf generated 2>/dev/null
+mkdir generated 2>/dev/null
+
 python tools/wxGlade/wxglade.pyw

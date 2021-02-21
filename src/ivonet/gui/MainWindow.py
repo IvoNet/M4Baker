@@ -36,7 +36,7 @@ class MainWindow(wx.Frame):
         main_panel.SetSizer(box)
 
         self.CreateStatusBar()
-        self.SetStatusText("M4Baker (c) 2021 by IvoNet.nl")
+        self.SetStatusText(ivonet.COPYRIGHT)
 
         self.status_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.clear_status, self.status_timer)
@@ -52,7 +52,7 @@ class MainWindow(wx.Frame):
 
     def __make_toolbar(self):
         """Toolbar"""
-        tool_bar_size = (48, 48)
+        tool_bar_size = (256, 256)
         tool_bar = self.CreateToolBar((wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT | wx.TB_TEXT))
         tool_bar.SetToolBitmapSize(tool_bar_size)
 
@@ -126,7 +126,7 @@ class MainWindow(wx.Frame):
             self.status_timer.Start(3000)
 
     def clear_status(self, event):
-        self.SetStatusText("")
+        self.SetStatusText(ivonet.COPYRIGHT)
         if self.status_timer.IsRunning():
             _("Stopping the StatusBar timer")
             self.status_timer.Stop()

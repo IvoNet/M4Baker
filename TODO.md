@@ -2,7 +2,9 @@
 
 ## POCs
 
-* Event emitter tests / Singleton? / Module?
+* √ Event emitter tests / Singleton? / Module? -> Implemented.
+* √ wxGlade gui builder -> Works fine -> prefer it (bit more intuitive for me)
+* √ wxFormBuilder gui builder -> Works fine!
 
 ## GUI
 

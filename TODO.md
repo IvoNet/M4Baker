@@ -20,27 +20,28 @@
 
 ## Business logic
 
+* Dirty check for images (if stuff was done manually)
 * Save project?!
-* Clean project
+* √ Clean project
 * Set track
 * Extract Chapters
 * Calculate chapters
 * Create chapter file
-* Set chapter text (Default = chapter)
+* √ Set chapter text (Default = chapter)
 * Set target dir (default = dir where mp3 came from unless there are more locations otherwise Music folder)
-* Get bitrate mp3
-* Get sample rate mp3
-* Set Fixed length chapter (default = 10 minutes)
+* √ Get bitrate mp3
+* √ Get sample rate mp3
+* √ Set Fixed length chapter (default = 10 minutes)
 * Set output quality (default = copy)
 * Extract number of processors
   * default all -1 for concurrent processes
   * overridable with "just do it"
-* Extract / Set Artist
-* Extract / Set CoverArt
+* √ Extract / Set Artist
+* √ Extract / Set CoverArt
 * Set Temp dir (work dir)
-* Set Fixed length (default is calculate but override checkbox)
-* Convert cover to png
-* wrap mp3s into one file
+* √ Set Fixed length (default is calculate but override checkbox)
+* X Convert cover to png
+* √ wrap mp3s into one file
 * Convert to m4a
   * `ffmpeg -i "${GROUPED_MP3_NAME}" -v quiet -stats -threads 4 -vn -y -acodec aac -strict -2 -map_metadata 0 -map_metadata:s:a 0:s:a -ab "${BITRATE}"k -ar "${SAMPLERATE}" -ac 1 "${AUDIOBOOK}.m4a"`
   * parse stats for progress

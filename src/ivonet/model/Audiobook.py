@@ -2,6 +2,7 @@
 #  -*- coding: utf-8 -*-
 import os
 import os.path
+from io import BytesIO
 
 from tinytag import TinyTag, TinyTagException
 
@@ -57,7 +58,7 @@ class Track(object):
         if self.tag.year:
             ee.emit("track.year", self.tag.year)
         if self.tag.get_image():
-            ee.emit("track.cover_art", self.tag.get_image())
+            ee.emit("track.cover_art", BytesIO(self.tag.get_image()))
 
     def get(self, key) -> any:
         return self.tag.as_dict().get(key)
@@ -74,27 +75,59 @@ class Audiobook(object):
         self.grouping = None
         self.genre = None
         self.chapter_text = "Chapter"
-        self.disk = 1
-        self.disk_total = 1
+        self.chapter_method = None
+        self.disc = 1
+        self.disc_total = 1
         ee.emit("audiobook.new", "New Audiobook initialized")
 
-    def mp3(self, filenames):
-        if not filenames or not type(filenames) is list:
-            _(f"Something went wrong while setting the mp3s [{filenames}]")
-        # check of all are mp3
-        for track in filenames:
-            extension = os.path.splitext(track)[1]
-            if extension != ".mp3":
-                log(f"File {track} is not an mp3 file")
+    def add_all(self, filenames: list):
+        for name in filenames:
+            if name.lower().endswith(".mp3"):
+                self.tracks.append(Track(name))
+            else:
+                log(f"File {name} is not an mp3 file")
+
+    def set_grouping(self, value):
+        self.grouping = value
+        _(self)
+
+    def set_title(self, value):
+        self.title = value
+        _(self)
+
+    def set_artist(self, value):
+        self.artist = value
+        _(self)
+
+    def set_disc(self, value):
+        self.disc = value
+        _(self)
+
+    def set_disc_total(self, value):
+        self.disc_total = value
+        _(self)
+
+    def set_cover_art(self, image):
+        # TODO implement me
+        pass
+
+    def __repr__(self) -> str:
+        return f"""Audiobook [
+        title={self.title}, 
+        artist={self.artist}, 
+        grouping={self.grouping},
+        genre={self.genre},
+        disk={self.disc}/{self.disc_total}]"""
 
 
 if __name__ == '__main__':
+    import pprint
+
+
     @ee.on("track.*")
     def event(evt):
         print(str(evt))
 
-
-    import pprint
 
     track = Track("/Users/iwo16283/dev/ivonet-audiobook/test/test.mp3")
     pprint.pprint(track)

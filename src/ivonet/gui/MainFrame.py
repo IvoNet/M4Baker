@@ -30,6 +30,9 @@ class MainFrame(wx.Frame):
     def __init__(self, *args, **kw):
         """Initialize the gui here"""
         super().__init__(*args, **kw)
+
+        self.audiobook = Audiobook()
+
         self.SetSize((1024, 768))
         self.SetMinSize((1024, 768))
 
@@ -53,7 +56,12 @@ class MainFrame(wx.Frame):
     def init(self):
         # Register events
         ee.on("status", self.on_status)
-        self.on_clear(None)
+        ee.on("audiobook.tracks", self.audiobook.add_all)
+        ee.on("audiobook.grouping", self.audiobook.set_grouping)
+        ee.on("audiobook.title", self.audiobook.set_title)
+        ee.on("audiobook.artist", self.audiobook.set_artist)
+        ee.on("audiobook.disc", self.audiobook.set_disc)
+        ee.on("audiobook.disc_total", self.audiobook.set_disc_total)
 
         _("MainWindows initialized")
 

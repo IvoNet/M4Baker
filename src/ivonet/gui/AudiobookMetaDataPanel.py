@@ -6,7 +6,7 @@ import wx
 
 import ivonet
 from ivonet.book.meta import GENRES, CHAPTER_LIST
-from ivonet.events import ee, _, log
+from ivonet.events import ee, log
 from ivonet.image import IMAGE_TYPES
 
 try:
@@ -52,7 +52,6 @@ class AudiobookMetaDataPanel(wx.Panel):
         kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)
 
-        ee.on("coverart.dnd", self.on_conver_art)
         self.PhotoMaxSize = 350
 
         hs_left_pnl_m4b_page = wx.BoxSizer(wx.HORIZONTAL)
@@ -200,11 +199,33 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.Bind(wx.EVT_TEXT, self.on_chapter_text, self.tc_chapter_text)
         self.Bind(wx.EVT_COMBOBOX, self.on_chapter_method, self.cb_chapterisation)
         self.Bind(wx.EVT_SPINCTRL, self.on_disc, self.sc_disc)
-        self.Bind(wx.EVT_SPINCTRL, self.on_disc_total, self.sc_disk_total)
+        self.Bind(wx.EVT_SPINCTRL, self.on_disc, self.sc_disk_total)
         self.Bind(wx.EVT_TEXT, self.on_year, self.tc_year)
         self.Bind(wx.EVT_TEXT, self.on_comment, self.tc_comment)
 
+        ee.on("coverart.dnd", self.ee_on_conver_art)
+        ee.on("track.cover_art", self.ee_on_conver_art)
+
         ee.on("audiobook.new", self.reset_metadata)
+
+        ee.on("track.title", self.ee_on_title)
+        ee.on("track.artist", self.ee_on_artist)
+        ee.on("track.disc", self.ee_on_disc)
+        ee.on("track.disc_total", self.ee_on_disc_total)
+        ee.on("track.genre", self.ee_on_genre)
+        ee.on("track.comment", self.ee_on_comment)
+        ee.on("track.year", self.ee_on_year)
+        ee.on("track.album", self.ee_on_title)
+        # TODO remove me
+        # ee.on("track.albumartist", self.on_title)
+        # ee.on("track.bitrate", self.on_title)
+        # ee.on("track.duration", self.on_duration)
+        # ee.on("track.filesize", self.on_title)
+        # ee.on("track.samplerate", self.on_title)
+        # ee.on("track.track", self.on_title)
+        # ee.on("track.track_total", self.on_title)
+
+        self.genre_clean = True
 
     def reset_metadata(self, event):
         self.tc_title.Clear()
@@ -217,8 +238,10 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.sc_disk_total.SetValue(1)
         self.tc_year.Clear()
         self.tc_comment.SetValue(ivonet.TXT_COMMENT)
+        self.genre_clean = True
 
-    def on_conver_art(self, image):
+    def ee_on_conver_art(self, image):
+        # TODO dirty check. What if mp3 have different mp3's or a dnd has already happened?
         log(f"Setting cover art to: {image}")
         img = wx.Image(image, wx.BITMAP_TYPE_ANY)
         width = img.GetWidth()
@@ -236,24 +259,43 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.pnl_cover_art.Refresh()
 
     def on_title(self, event):
-        log("Event handler 'on_title' not implemented!")
+        ee.emit("audiobook.title", event.GetString())
         event.Skip()
+
+    def ee_on_title(self, value):
+        if self.tc_title.IsEmpty():
+            self.tc_title.SetValue(value)
 
     def on_artist(self, event):
-        log("Event handler 'on_artist' not implemented!")
+        ee.emit("audiobook.artist", event.GetString())
         event.Skip()
+
+    def ee_on_artist(self, value):
+        if self.tc_artist.IsEmpty():
+            self.tc_artist.SetValue(value)
 
     def on_grouping(self, event):
-        log("Event handler 'on_grouping' not implemented!")
+        ee.emit("audiobook.grouping", event.GetString())
         event.Skip()
+
+    def ee_on_grouping(self, value):
+        if self.tc_grouping.IsEmpty():
+            self.tc_grouping.SetValue(value)
 
     def on_genre(self, event):
-        log("Event handler 'on_genre' not implemented!")
-        _("Event handler 'on_genre' not implemented!")
+        ee.emit("audiobook.genre", event.GetString())
         event.Skip()
 
+    def ee_on_genre(self, value):
+        if self.genre_clean:
+            if value in GENRES:
+                self.genre_clean = False
+                self.cb_genre.SetValue(value)
+            else:
+                log(f"Genre {value} from the metadata is not a known genre.")
+
     def on_chapter_text(self, event):
-        log("Event handler 'on_chapter_text' not implemented!")
+        ee.emit("audiobook.chapter_text", event)
         event.Skip()
 
     def on_chapter_method(self, event):
@@ -261,17 +303,36 @@ class AudiobookMetaDataPanel(wx.Panel):
         event.Skip()
 
     def on_disc(self, event):
-        log("Event handler 'on_disc' not implemented!")
+        self.check_disc()
+        ee.emit("audiobook.disc", self.sc_disc.GetValue())
+        ee.emit("audiobook.disc_total", self.sc_disk_total.GetValue())
         event.Skip()
 
-    def on_disc_total(self, event):
-        log("Event handler 'on_disc_total' not implemented!")
-        event.Skip()
+    def ee_on_disc(self, value):
+        self.sc_disc.SetValue(int(value))
+        # self.check_disc()
+
+    def ee_on_disc_total(self, value):
+        self.sc_disk_total.SetValue(int(value))
+        # self.check_disc()
 
     def on_year(self, event):
         log("Event handler 'on_year' not implemented!")
         event.Skip()
 
+    def ee_on_year(self, value):
+        if self.tc_year.IsEmpty():
+            self.tc_year.SetValue(value)
+
     def on_comment(self, event):
         log("Event handler 'on_comment' not implemented!")
         event.Skip()
+
+    def ee_on_comment(self, value):
+        if self.tc_comment.IsEmpty() or self.tc_comment.GetValue() == ivonet.TXT_COMMENT:
+            self.tc_comment.SetValue(value)
+
+    def check_disc(self):
+        if self.sc_disk_total.GetValue() < self.sc_disc.GetValue():
+            log("Correcting disk total as it can not be smaller than the current disk.")
+            self.sc_disk_total.SetValue(self.sc_disc.GetValue())

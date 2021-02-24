@@ -23,5 +23,6 @@ REGISTERED_EVENTS = [
     "track.track_total",
     "track.year",
     "audiobook.new",
+    "audiobook.tracks",
 
 ]

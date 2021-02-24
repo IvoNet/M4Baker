@@ -3,7 +3,7 @@
 import time
 import wx
 
-from ivonet.events import ee
+from ivonet.events import ee, log
 
 
 class LogPanel(wx.Panel):
@@ -31,7 +31,7 @@ class LogPanel(wx.Panel):
         self.Bind(wx.EVT_TEXT_MAXLEN, self.on_log_max_len, self.tc_log)
 
     def on_log_max_len(self, event):
-        ee.emit("log", "Event handler 'on_log_max_len' not implemented!")
+        log("Event handler 'on_log_max_len' not implemented!")
         event.Skip()
 
     def on_log(self, *args):

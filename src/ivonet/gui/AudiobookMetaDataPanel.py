@@ -6,7 +6,7 @@ import wx
 
 import ivonet
 from ivonet.book.meta import GENRES, CHAPTER_LIST
-from ivonet.events import ee, _
+from ivonet.events import ee, _, log
 from ivonet.image import IMAGE_TYPES
 
 try:
@@ -31,21 +31,22 @@ class CoverArtDropTarget(wx.FileDropTarget):
         super().__init__()
 
     def OnDropFiles(self, x, y, filenames):
-        ee.emit("log", "Cover art dropped")
+        log("Cover art dropped")
         if len(filenames) > 1:
-            ee.emit("log", "More than one cover art image was dropped. Taking only the first")
+            log("More than one cover art image was dropped. Taking only the first")
         split_filename = os.path.splitext(filenames[0])
         if len(split_filename) != 2:
-            ee.emit("log", "The file dropped is probably not an image.")
+            log("The file dropped is probably not an image.")
             return False
         if split_filename[1] in IMAGE_TYPES:
             ee.emit("coverart.dnd", filenames[0])
         else:
-            ee.emit("log", f"File {filenames[0]} is not an image.")
+            log(f"File {filenames[0]} is not an image.")
             return False
         return True
 
 
+# noinspection PyUnusedLocal
 class AudiobookMetaDataPanel(wx.Panel):
     def __init__(self, *args, **kwds):
         kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
@@ -119,20 +120,24 @@ class AudiobookMetaDataPanel(wx.Panel):
         hs_track_year = wx.BoxSizer(wx.HORIZONTAL)
         vs_track_year_comment.Add(hs_track_year, 0, wx.ALL | wx.EXPAND, 0)
 
-        lbl_track = wx.StaticText(self, wx.ID_ANY, "Track")
-        hs_track_year.Add(lbl_track, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        hs_track_year = wx.BoxSizer(wx.HORIZONTAL)
+        vs_track_year_comment.Add(hs_track_year, 0, wx.ALL | wx.EXPAND, 0)
+
+        lbl_disc = wx.StaticText(self, wx.ID_ANY, "Disc")
+        hs_track_year.Add(lbl_disc, 0, 0, 0)
 
         hs_track_year.Add((60, 20), 0, 0, 0)
 
-        self.sc_track = wx.SpinCtrl(self, wx.ID_ANY, "1", min=0, max=100)
-        self.sc_track.SetToolTip("e.g. the series title")
-        hs_track_year.Add(self.sc_track, 0, 0, 0)
+        self.sc_disc = wx.SpinCtrl(self, wx.ID_ANY, "1", min=0, max=100)
+        self.sc_disc.SetToolTip("which disk?")
+        hs_track_year.Add(self.sc_disc, 0, 0, 0)
 
         label_8 = wx.StaticText(self, wx.ID_ANY, "of")
         hs_track_year.Add(label_8, 0, wx.ALIGN_CENTER_VERTICAL, 0)
 
-        self.sc_track_total = wx.SpinCtrl(self, wx.ID_ANY, "1", min=0, max=100)
-        hs_track_year.Add(self.sc_track_total, 0, 0, 0)
+        self.sc_disk_total = wx.SpinCtrl(self, wx.ID_ANY, "1", min=0, max=100)
+        self.sc_disk_total.SetToolTip("Total number of discs for this book")
+        hs_track_year.Add(self.sc_disk_total, 0, 0, 0)
 
         hs_track_year.Add((32, 20), 0, 0, 0)
 
@@ -194,16 +199,27 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.Bind(wx.EVT_COMBOBOX, self.on_genre, self.cb_genre)
         self.Bind(wx.EVT_TEXT, self.on_chapter_text, self.tc_chapter_text)
         self.Bind(wx.EVT_COMBOBOX, self.on_chapter_method, self.cb_chapterisation)
-        self.Bind(wx.EVT_SPINCTRL, self.on_track, self.sc_track)
-        self.Bind(wx.EVT_SPINCTRL, self.on_track_total, self.sc_track_total)
+        self.Bind(wx.EVT_SPINCTRL, self.on_disc, self.sc_disc)
+        self.Bind(wx.EVT_SPINCTRL, self.on_disc_total, self.sc_disk_total)
         self.Bind(wx.EVT_TEXT, self.on_year, self.tc_year)
         self.Bind(wx.EVT_TEXT, self.on_comment, self.tc_comment)
 
-        ee.on("track.title", self.on_title)
-        # ee.on()
+        ee.on("audiobook.new", self.reset_metadata)
+
+    def reset_metadata(self, event):
+        self.tc_title.Clear()
+        self.tc_artist.Clear()
+        self.tc_grouping.Clear()
+        self.cb_genre.SetValue("Urban Fantasy")
+        self.tc_chapter_text.SetValue("Chapter")
+        self.cb_chapterisation.SetSelection(0)
+        self.sc_disc.SetValue(1)
+        self.sc_disk_total.SetValue(1)
+        self.tc_year.Clear()
+        self.tc_comment.SetValue(ivonet.TXT_COMMENT)
 
     def on_conver_art(self, image):
-        ee.emit("log", f"Setting cover art to: {image}")
+        log(f"Setting cover art to: {image}")
         img = wx.Image(image, wx.BITMAP_TYPE_ANY)
         width = img.GetWidth()
         height = img.GetHeight()
@@ -220,44 +236,42 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.pnl_cover_art.Refresh()
 
     def on_title(self, event):
-        ee.emit("log", "Event handler 'on_title' not implemented!")
+        log("Event handler 'on_title' not implemented!")
         event.Skip()
 
     def on_artist(self, event):
-        ee.emit("log", "Event handler 'on_artist' not implemented!")
+        log("Event handler 'on_artist' not implemented!")
         event.Skip()
 
     def on_grouping(self, event):
-        ee.emit("log", "Event handler 'on_grouping' not implemented!")
+        log("Event handler 'on_grouping' not implemented!")
         event.Skip()
 
     def on_genre(self, event):
-        ee.emit("log", "Event handler 'on_genre' not implemented!")
+        log("Event handler 'on_genre' not implemented!")
         _("Event handler 'on_genre' not implemented!")
         event.Skip()
 
     def on_chapter_text(self, event):
-        ee.emit("log", "Event handler 'on_chapter_text' not implemented!")
+        log("Event handler 'on_chapter_text' not implemented!")
         event.Skip()
 
     def on_chapter_method(self, event):
-        ee.emit("log", "Event handler 'on_chapter_method' not implemented!")
+        log("Event handler 'on_chapter_method' not implemented!")
         event.Skip()
 
-    def on_track(self, event):
-        ee.emit("log", "Event handler 'on_track' not implemented!")
+    def on_disc(self, event):
+        log("Event handler 'on_disc' not implemented!")
         event.Skip()
 
-    def on_track_total(self, event):
-        ee.emit("log", "Event handler 'on_track_total' not implemented!")
+    def on_disc_total(self, event):
+        log("Event handler 'on_disc_total' not implemented!")
         event.Skip()
 
     def on_year(self, event):
-        ee.emit("log", "Event handler 'on_year' not implemented!")
+        log("Event handler 'on_year' not implemented!")
         event.Skip()
 
     def on_comment(self, event):
-        ee.emit("log", "Event handler 'on_comment' not implemented!")
+        log("Event handler 'on_comment' not implemented!")
         event.Skip()
-
-# end of class AudiobookMetaDataPanel

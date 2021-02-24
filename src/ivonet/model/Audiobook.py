@@ -5,7 +5,7 @@ import os.path
 
 from tinytag import TinyTag, TinyTagException
 
-from ivonet.events import _, ee
+from ivonet.events import _, ee, log
 
 
 class TrackException(Exception):
@@ -22,7 +22,8 @@ class Track(object):
             self.tag = TinyTag.get(self.mp3, image=True)
             self.cover_art = self.tag.get_image()
         except TinyTagException as e:
-            ee.emit("log", f"Could not retrieve metadata from: {os.path.splitext(filename)[1]}")
+            log(f"Could not retrieve metadata from: {os.path.splitext(filename)[1]}")
+            _(e)
             return
 
         if self.tag.album:
@@ -65,11 +66,6 @@ class Track(object):
         return str(self.tag.as_dict())
 
 
-@ee.on("track.*")
-def event(evt):
-    print(str(evt))
-
-
 class Audiobook(object):
     def __init__(self) -> None:
         self.tracks = []
@@ -80,6 +76,7 @@ class Audiobook(object):
         self.chapter_text = "Chapter"
         self.disk = 1
         self.disk_total = 1
+        ee.emit("audiobook.new", "New Audiobook initialized")
 
     def mp3(self, filenames):
         if not filenames or not type(filenames) is list:
@@ -88,12 +85,19 @@ class Audiobook(object):
         for track in filenames:
             extension = os.path.splitext(track)[1]
             if extension != ".mp3":
-                ee.emit("log", f"File {track} is not an mp3 file")
+                log(f"File {track} is not an mp3 file")
 
 
 if __name__ == '__main__':
+    @ee.on("track.*")
+    def event(evt):
+        print(str(evt))
+
+
     import pprint
 
     track = Track("/Users/iwo16283/dev/ivonet-audiobook/test/test.mp3")
     pprint.pprint(track)
     print("Duration:", track.get("duration"))
+
+    track = Track("/Users/iwo16283/dev/ivonet-audiobook/test/wrong.mp3")

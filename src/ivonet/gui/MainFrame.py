@@ -6,10 +6,11 @@ import wx.adv
 from wx.lib.wordwrap import wordwrap
 
 import ivonet
-from ivonet.events import ee, _
+from ivonet.events import ee, _, log
 from ivonet.gui.MainPanel import MainPanel
 from ivonet.gui.MenuBar import MenuBar
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
+from ivonet.model.Audiobook import Audiobook
 
 try:
     from ivonet.image.images import yoda
@@ -52,6 +53,7 @@ class MainFrame(wx.Frame):
     def init(self):
         # Register events
         ee.on("status", self.on_status)
+        self.on_clear(None)
 
         _("MainWindows initialized")
 
@@ -65,7 +67,7 @@ class MainFrame(wx.Frame):
         tool_buttons = [
             ("process", "Start processing", self.on_process),
             ("stop", "Stop processing", self.on_stop_process),
-            # ("log", "Show Log", self.on_show_log),
+            # TODO add clear / New button and action
         ]
         for art_id, value in enumerate(tool_buttons, start=1):
             label, short_help, func = value
@@ -99,15 +101,13 @@ class MainFrame(wx.Frame):
     def on_process(self, event):
         status("Processing...")
         ee.emit("processing.start", event)
-        ee.emit("log", "Started processing")
-        _("TODO: on_process")
+        log("Started processing")
 
     # noinspection PyUnusedLocal
     def on_stop_process(self, event):
         status("Stop processing")
         ee.emit("processing.stop", event)
-        ee.emit("log", "Stopped processing")
-        _("TODO: on_stop_process")
+        log("Stopped processing")
 
     # noinspection PyUnusedLocal
     def on_select_dir(self, event):
@@ -116,9 +116,9 @@ class MainFrame(wx.Frame):
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):
-        status("Clearing current config")
-        ee.emit("log", "Clearing current config")
-        _("TODO: on_clear")
+        status("Starting new Audiobook")
+        log("Starting new Audiobook")
+        self.audiobook = Audiobook()
 
     def on_status(self, msg):
         self.SetStatusText(msg)

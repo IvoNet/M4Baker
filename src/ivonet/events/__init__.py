@@ -3,6 +3,7 @@
 import os
 
 from ivonet.events.EventEmitter import EventEmitter
+from ivonet.events.defines import *
 
 ee = EventEmitter(wildcard=True)
 
@@ -21,7 +22,14 @@ def _(*args):
         ee.emit("debug", *args)
 
 
+def log(*args):
+    """Emit a 'log' event convenience method"""
+    ee.emit("log", *args)
+
+
 __all__ = [
     "ee",
-    "_"
+    "_",
+    "log",
+    "REGISTERED_EVENTS"
 ]

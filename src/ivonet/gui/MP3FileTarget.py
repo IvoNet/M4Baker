@@ -1,6 +1,6 @@
 import wx
 
-from ivonet.events import ee, _
+from ivonet.events import _, log
 
 
 class MP3DropTarget(wx.FileDropTarget):
@@ -10,7 +10,8 @@ class MP3DropTarget(wx.FileDropTarget):
         self.target = target
 
     def OnDropFiles(self, x, y, filenames):
-        ee.emit("log", "Files dropped")
+        log("MP3 Files dropped")
+
         for idx, name in enumerate(filenames):
             _(str(idx), name)
             self.target.Append((name, "TODO"))

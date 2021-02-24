@@ -7,6 +7,7 @@ from wx.lib.wordwrap import wordwrap
 
 import ivonet
 from ivonet.events import ee, _
+from ivonet.gui.MainPanel import MainPanel
 from ivonet.gui.MenuBar import MenuBar
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
 from ivonet.image.images import yoda
@@ -18,22 +19,18 @@ def status(msg):
     ee.emit("status", msg)
 
 
-class MainWindow(wx.Frame):
+class MainFrame(wx.Frame):
 
     def __init__(self, *args, **kw):
         """Initialize the gui here"""
-        super(MainWindow, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
+        self.SetSize((1024, 768))
+        self.SetMinSize((1024, 768))
 
         wx.ArtProvider.Push(IvoNetArtProvider())
 
         self.__make_toolbar()
         self.SetMenuBar(MenuBar(self))
-
-        # create a panel in the frame
-        main_panel = wx.Panel(self)
-
-        box = wx.BoxSizer(wx.VERTICAL)
-        main_panel.SetSizer(box)
 
         self.CreateStatusBar()
         self.SetStatusText(ivonet.COPYRIGHT)
@@ -41,6 +38,10 @@ class MainWindow(wx.Frame):
         self.status_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.clear_status, self.status_timer)
 
+        self.main_panel = MainPanel(self, wx.ID_ANY)
+
+        self.Layout()
+        self.Center()
         self.init()
 
     def init(self):

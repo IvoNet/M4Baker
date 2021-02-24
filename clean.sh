@@ -4,5 +4,7 @@ echo "Cleaning project...."
 
 rm -rf dist 2>/dev/null
 rm -rf build 2>/dev/null
+rm -rf generated 2>/dev/null
+mkdir generated 2>/dev/null
 
 echo "Finished."

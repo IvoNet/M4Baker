@@ -13,7 +13,7 @@ import time
 import wx
 
 from ivonet.events import ee, _
-from ivonet.gui import MainWindow
+from ivonet.gui import MainFrame
 
 
 @ee.on("debug")
@@ -45,7 +45,7 @@ class M4Baker(wx.App):
 def main():
     wx.SystemOptions.SetOption("mac.window-plain-transition", 1)
     app = M4Baker()
-    frame = MainWindow(None, title="B4Baker", size=(1024, 768))
+    frame = MainFrame(None, title="B4Baker", size=(1024, 768))
     frame.Show(True)
     app.MainLoop()
 

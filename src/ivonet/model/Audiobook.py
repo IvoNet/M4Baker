@@ -22,7 +22,6 @@ class Track(object):
             self.tag = TinyTag.get(self.mp3, image=True)
             self.cover_art = self.tag.get_image()
         except TinyTagException as e:
-            _(f"Could not retrieve metadata from: {os.path.splitext(filename)[1]}, {e}")
             ee.emit("log", f"Could not retrieve metadata from: {os.path.splitext(filename)[1]}")
             return
 

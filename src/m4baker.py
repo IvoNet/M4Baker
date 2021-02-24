@@ -6,7 +6,7 @@ The main application file.
 The file to rule them all.
 Here it all starts and .... ends.
 There can be only one.
-import this
+import this :-)
 """
 
 import time
@@ -16,10 +16,10 @@ from ivonet.events import ee, _
 from ivonet.gui import MainFrame
 
 
-@ee.on("debug")
+@ee.on_any
 def print_any_event_to_stdout(*args):
     """Prints all debug message events"""
-    print(time.strftime('%X'), "[DEBUG]", " ".join(args))
+    print(time.strftime('%X'), "[DEBUG]", " ".join([str(x) for x in args]))
 
 
 class M4Baker(wx.App):

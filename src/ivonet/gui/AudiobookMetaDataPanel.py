@@ -199,6 +199,9 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.Bind(wx.EVT_TEXT, self.on_year, self.tc_year)
         self.Bind(wx.EVT_TEXT, self.on_comment, self.tc_comment)
 
+        ee.on("track.title", self.on_title)
+        # ee.on()
+
     def on_conver_art(self, image):
         ee.emit("log", f"Setting cover art to: {image}")
         img = wx.Image(image, wx.BITMAP_TYPE_ANY)
@@ -218,17 +221,14 @@ class AudiobookMetaDataPanel(wx.Panel):
 
     def on_title(self, event):
         ee.emit("log", "Event handler 'on_title' not implemented!")
-        _("Event handler 'on_title' not implemented!")
         event.Skip()
 
     def on_artist(self, event):
         ee.emit("log", "Event handler 'on_artist' not implemented!")
-        _("Event handler 'on_artist' not implemented!")
         event.Skip()
 
     def on_grouping(self, event):
         ee.emit("log", "Event handler 'on_grouping' not implemented!")
-        _("Event handler 'on_grouping' not implemented!")
         event.Skip()
 
     def on_genre(self, event):
@@ -238,32 +238,26 @@ class AudiobookMetaDataPanel(wx.Panel):
 
     def on_chapter_text(self, event):
         ee.emit("log", "Event handler 'on_chapter_text' not implemented!")
-        _("Event handler 'on_chapter_text' not implemented!")
         event.Skip()
 
     def on_chapter_method(self, event):
         ee.emit("log", "Event handler 'on_chapter_method' not implemented!")
-        _("Event handler 'on_chapter_method' not implemented!")
         event.Skip()
 
     def on_track(self, event):
         ee.emit("log", "Event handler 'on_track' not implemented!")
-        _("Event handler 'on_track' not implemented!")
         event.Skip()
 
     def on_track_total(self, event):
         ee.emit("log", "Event handler 'on_track_total' not implemented!")
-        _("Event handler 'on_track_total' not implemented!")
         event.Skip()
 
     def on_year(self, event):
         ee.emit("log", "Event handler 'on_year' not implemented!")
-        _("Event handler 'on_year' not implemented!")
         event.Skip()
 
     def on_comment(self, event):
         ee.emit("log", "Event handler 'on_comment' not implemented!")
-        _("Event handler 'on_comment' not implemented!")
         event.Skip()
 
 # end of class AudiobookMetaDataPanel

@@ -43,6 +43,7 @@ poetry install
 ```shell
 cd PROJECT
 source venv/bin/activate
+python src/m4baker.py
 ```
 
 ## Build Mac App

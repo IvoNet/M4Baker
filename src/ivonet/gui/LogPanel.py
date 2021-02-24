@@ -3,7 +3,7 @@
 import time
 import wx
 
-from ivonet.events import ee, _
+from ivonet.events import ee
 
 
 class LogPanel(wx.Panel):
@@ -36,6 +36,5 @@ class LogPanel(wx.Panel):
 
     def on_log(self, *args):
         message = " ".join([str(x) for x in args])
-        _(message)
         self.tc_log.AppendText("{timestamp} - {message}\n".format(timestamp=time.strftime('%X'),
                                                                   message=message))

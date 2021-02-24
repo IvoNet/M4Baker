@@ -10,7 +10,12 @@ from ivonet.events import ee, _
 from ivonet.gui.MainPanel import MainPanel
 from ivonet.gui.MenuBar import MenuBar
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
-from ivonet.image.images import yoda
+
+try:
+    from ivonet.image.images import yoda
+except ImportError:
+    raise ImportError("The images file was not found. Did you forget to generate them?")
+
 from ivonet.sys.application import data_directory
 
 

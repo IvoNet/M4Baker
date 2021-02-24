@@ -8,7 +8,11 @@ import ivonet
 from ivonet.book.meta import GENRES, CHAPTER_LIST
 from ivonet.events import ee, _
 from ivonet.image import IMAGE_TYPES
-from ivonet.image.images import yoda
+
+try:
+    from ivonet.image.images import yoda
+except ImportError:
+    raise ImportError("The images file was not found. Did you forget to generate them?")
 
 
 class CoverArtDropTarget(wx.FileDropTarget):

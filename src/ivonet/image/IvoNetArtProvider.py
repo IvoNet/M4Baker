@@ -3,7 +3,11 @@
 import wx
 
 import ivonet
-from ivonet.image.images import catalog, index
+
+try:
+    from ivonet.image.images import catalog, index
+except ImportError:
+    raise ImportError("The images file was not found. Did you forget to do generate them?")
 
 
 class IvoNetArtProvider(wx.ArtProvider):

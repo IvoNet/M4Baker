@@ -4,7 +4,7 @@
 import wx
 
 from ivonet.gui.AudiobookMetaDataPanel import AudiobookMetaDataPanel
-from ivonet.gui.MP3DropTarget import MP3DropTarget
+from ivonet.gui.MP3FileTarget import MP3FileTarget
 
 
 class MetadataPanel(wx.Panel):
@@ -24,7 +24,7 @@ class MetadataPanel(wx.Panel):
 
         self.pnl_left_m4b_page = AudiobookMetaDataPanel(self.sw_m4b_page, wx.ID_ANY)
 
-        self.pnl_right_m4b_page = MP3DropTarget(self.sw_m4b_page, wx.ID_ANY)
+        self.pnl_right_m4b_page = MP3FileTarget(self.sw_m4b_page, wx.ID_ANY)
 
         self.sw_m4b_page.SplitVertically(self.pnl_left_m4b_page, self.pnl_right_m4b_page, 352)
 

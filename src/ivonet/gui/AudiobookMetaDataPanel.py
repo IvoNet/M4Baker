@@ -2,7 +2,7 @@
 #  -*- coding: utf-8 -*-
 import wx
 
-from ivonet.book.genre import GENRES
+from ivonet.book.meta import GENRES
 
 
 class AudiobookMetaDataPanel(wx.Panel):

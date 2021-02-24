@@ -166,7 +166,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         sizer_17.Add(label_11, 0, 0, 0)
 
         self.pnl_cover_art = wx.Panel(self, wx.ID_ANY)
-        self.pnl_cover_art.SetToolTip("Drag and drop Cover Art here")
+
         sizer_17.Add(self.pnl_cover_art, 1, wx.ALL | wx.EXPAND, 0)
 
         sizer_1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -174,6 +174,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.cover_art = wx.StaticBitmap(self.pnl_cover_art, wx.ID_ANY,
                                          yoda.GetBitmap())
         self.cover_art.SetDropTarget(CoverArtDropTarget())
+        self.cover_art.SetToolTip("Drag and drop Cover Art here")
 
         sizer_1.Add(self.cover_art, 1, wx.EXPAND, 0)
 

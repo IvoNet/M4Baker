@@ -60,4 +60,4 @@ if __name__ == '__main__':
     GENRES.sort()
     import pprint
 
-    pprint.pprint(GENRES)
+    pprint.pprint(list(set(GENRES)))

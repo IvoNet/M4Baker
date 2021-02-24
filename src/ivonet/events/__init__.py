@@ -3,7 +3,7 @@
 
 from ivonet.events.EventEmitter import EventEmitter
 
-ee = EventEmitter()
+ee = EventEmitter(wildcard=True)
 
 # Set to False if you do not want the emitted messages shown in stdout
 # Should be set to False for prod!

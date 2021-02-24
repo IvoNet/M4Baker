@@ -26,7 +26,7 @@ class QueuePanel(wx.Panel):
         self.progress = wx.Gauge(self, -1, 100, (110, 50), (250, -1))
         vs_queue.Add(self.progress, 0, wx.EXPAND, 0)
 
-        # TEMP Code while progressbar not yet implemented
+        # TODO TEMP Code while progressbar not yet implemented
         self.Bind(wx.EVT_TIMER, self.timer_handler)
         self.timer = wx.Timer(self)
         ee.on("processing.start", self.on_start)

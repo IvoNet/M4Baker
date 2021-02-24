@@ -6,7 +6,7 @@ from ivonet.events import ee, _
 class MP3DropTarget(wx.FileDropTarget):
 
     def __init__(self, target):
-        super(MP3DropTarget, self).__init__()
+        super().__init__()
         self.target = target
 
     def OnDropFiles(self, x, y, filenames):

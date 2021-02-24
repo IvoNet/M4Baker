@@ -1,16 +1,54 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
+import os
+
 import wx
 
 import ivonet
-from ivonet.book.meta import GENRES
+from ivonet.book.meta import GENRES, CHAPTER_LIST
 from ivonet.events import ee, _
+from ivonet.image import IMAGE_TYPES
+from ivonet.image.images import yoda
+
+
+class CoverArtDropTarget(wx.FileDropTarget):
+    """Listening to image drops on the target it is set to
+
+    This FileDropTarget does not need any init parameters as it will only
+    emit an event containing the image file name.
+
+    This drop target will check if the file dropped is an image before
+    emitting the event.
+
+    The subscriber is responsible for processing the image.
+    """
+
+    def __init__(self):
+        super().__init__()
+
+    def OnDropFiles(self, x, y, filenames):
+        ee.emit("log", "Cover art dropped")
+        if len(filenames) > 1:
+            ee.emit("log", "More than one cover art image was dropped. Taking only the first")
+        split_filename = os.path.splitext(filenames[0])
+        if len(split_filename) != 2:
+            ee.emit("log", "The file dropped is probably not an image.")
+            return False
+        if split_filename[1] in IMAGE_TYPES:
+            ee.emit("coverart.dnd", filenames[0])
+        else:
+            ee.emit("log", f"File {filenames[0]} is not an image.")
+            return False
+        return True
 
 
 class AudiobookMetaDataPanel(wx.Panel):
     def __init__(self, *args, **kwds):
         kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)
+
+        ee.on("coverart.dnd", self.on_conver_art)
+        self.PhotoMaxSize = 350
 
         hs_left_pnl_m4b_page = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -62,10 +100,9 @@ class AudiobookMetaDataPanel(wx.Panel):
         fgs_mp3_metadata.Add(lbl_chapterisation, 1, 0, 0)
 
         self.cb_chapterisation = wx.ComboBox(self, wx.ID_ANY,
-                                             choices=["Based on mp3 length", "Fixed 3 minutes", "Fixed 10 minutes",
-                                                      "Fixed 30 minutes", "Fixed 60 minutes"],
+                                             choices=CHAPTER_LIST,
                                              style=wx.CB_DROPDOWN | wx.CB_READONLY | wx.CB_SIMPLE)
-        self.cb_chapterisation.SetToolTip("Choose which chapterisation method is prefered")
+        self.cb_chapterisation.SetToolTip("Choose which chapterisation method is preferred")
         self.cb_chapterisation.SetSelection(0)
         fgs_mp3_metadata.Add(self.cb_chapterisation, 0, wx.EXPAND, 0)
 
@@ -124,18 +161,19 @@ class AudiobookMetaDataPanel(wx.Panel):
         label_11 = wx.StaticText(self, wx.ID_ANY, "Cover art")
         sizer_17.Add(label_11, 0, 0, 0)
 
-        self.panel_2 = wx.Panel(self, wx.ID_ANY)
-        self.panel_2.SetToolTip("Drag and drop Cover Art here")
-        sizer_17.Add(self.panel_2, 1, wx.ALL | wx.EXPAND, 0)
+        self.pnl_cover_art = wx.Panel(self, wx.ID_ANY)
+        self.pnl_cover_art.SetToolTip("Drag and drop Cover Art here")
+        sizer_17.Add(self.pnl_cover_art, 1, wx.ALL | wx.EXPAND, 0)
 
         sizer_1 = wx.BoxSizer(wx.HORIZONTAL)
 
-        bitmap_1 = wx.StaticBitmap(self.panel_2, wx.ID_ANY,
-                                   wx.Bitmap("/Users/iwo16283/dev/ivonet-audiobook/images/yoda.png",
-                                             wx.BITMAP_TYPE_ANY))
-        sizer_1.Add(bitmap_1, 1, wx.EXPAND, 0)
+        self.cover_art = wx.StaticBitmap(self.pnl_cover_art, wx.ID_ANY,
+                                         yoda.GetBitmap())
+        self.cover_art.SetDropTarget(CoverArtDropTarget())
 
-        self.panel_2.SetSizer(sizer_1)
+        sizer_1.Add(self.cover_art, 1, wx.EXPAND, 0)
+
+        self.pnl_cover_art.SetSizer(sizer_1)
 
         fgs_mp3_metadata.AddGrowableCol(1)
 
@@ -155,6 +193,23 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.Bind(wx.EVT_SPINCTRL, self.on_track_total, self.sc_track_total)
         self.Bind(wx.EVT_TEXT, self.on_year, self.tc_year)
         self.Bind(wx.EVT_TEXT, self.on_comment, self.tc_comment)
+
+    def on_conver_art(self, image):
+        ee.emit("log", f"Setting cover art to: {image}")
+        img = wx.Image(image, wx.BITMAP_TYPE_ANY)
+        width = img.GetWidth()
+        height = img.GetHeight()
+        if width > height:
+            new_width = self.PhotoMaxSize
+            new_height = self.PhotoMaxSize * height / width
+        else:
+            new_height = self.PhotoMaxSize
+            new_width = self.PhotoMaxSize * width / height
+        img = img.Scale(new_width, new_height)
+
+        self.cover_art.SetBitmap(wx.Bitmap(img))
+        self.cover_art.Center()
+        self.pnl_cover_art.Refresh()
 
     def on_title(self, event):
         ee.emit("log", "Event handler 'on_title' not implemented!")

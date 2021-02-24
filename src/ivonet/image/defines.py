@@ -1,4 +1,4 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 
-from ivonet.image.defines import *
+IMAGE_TYPES = [".bmp", ".png", ".jpg", ".gif"]

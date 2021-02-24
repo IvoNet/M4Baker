@@ -16,7 +16,7 @@ def write_version(version):
 def inc_version(version):
     major, minor, build = version.split(".")
     build = str(int(build) + 1)
-    return "{major}.{minor}.{build}".format(major=major, minor=minor, build=build)
+    return f"{major}.{minor}.{build}"
 
 
 def versioning():

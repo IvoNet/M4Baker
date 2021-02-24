@@ -17,3 +17,6 @@ research
 tools
 generated
 /tools/wxGlade/
+__pycache__
+*.wxg~
+*.pyc

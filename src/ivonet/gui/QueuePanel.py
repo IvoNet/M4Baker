@@ -3,11 +3,14 @@
 
 import wx
 
+from ivonet.events import ee
+
 
 class QueuePanel(wx.Panel):
     def __init__(self, *args, **kwds):
         kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)
+        self.count = 0
 
         hs_queue = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -20,6 +23,35 @@ class QueuePanel(wx.Panel):
         self.lc_queue.AppendColumn("Status", format=wx.LIST_FORMAT_LEFT, width=100)
         vs_queue.Add(self.lc_queue, 1, wx.EXPAND, 0)
 
+        self.progress = wx.Gauge(self, -1, 100, (110, 50), (250, -1))
+        vs_queue.Add(self.progress, 0, wx.EXPAND, 0)
+
+        # TEMP Code while progressbar not yet implemented
+        self.Bind(wx.EVT_TIMER, self.timer_handler)
+        self.timer = wx.Timer(self)
+        ee.on("processing.start", self.on_start)
+        ee.on("processing.stop", self.on_stop)
+        # /TEMP Code while progressbar not yet implemented
+
         self.SetSizer(hs_queue)
 
         self.Layout()
+
+    # noinspection PyUnusedLocal
+    def on_start(self, event):
+        self.timer.Start(100)
+
+    # noinspection PyUnusedLocal
+    def on_stop(self, event):
+        self.timer.Stop()
+        self.count = 0
+        self.progress.SetValue(self.count)
+
+    # noinspection PyUnusedLocal
+    def timer_handler(self, event):
+        self.count = self.count + 1
+
+        if self.count >= 100:
+            self.count = 0
+
+        self.progress.SetValue(self.count)

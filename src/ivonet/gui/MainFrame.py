@@ -46,7 +46,6 @@ class MainFrame(wx.Frame):
 
     def init(self):
         # Register events
-        ee.on("log", self.on_log)
         ee.on("status", self.on_status)
 
         _("MainWindows initialized")
@@ -94,11 +93,15 @@ class MainFrame(wx.Frame):
     # noinspection PyUnusedLocal
     def on_process(self, event):
         status("Processing...")
+        ee.emit("processing.start", event)
+        ee.emit("log", "Started processing")
         _("TODO: on_process")
 
     # noinspection PyUnusedLocal
     def on_stop_process(self, event):
         status("Stop processing")
+        ee.emit("processing.stop", event)
+        ee.emit("log", "Stopped processing")
         _("TODO: on_stop_process")
 
     # noinspection PyUnusedLocal
@@ -109,16 +112,8 @@ class MainFrame(wx.Frame):
     # noinspection PyUnusedLocal
     def on_clear(self, event):
         status("Clearing current config")
+        ee.emit("log", "Clearing current config")
         _("TODO: on_clear")
-
-    # noinspection PyUnusedLocal
-    def on_show_log(self, event):
-        status("Switching to log window")
-        _("TODO: on_show_log")
-
-    @staticmethod
-    def on_log(*args):
-        print(" ".join(args))
 
     def on_status(self, msg):
         self.SetStatusText(msg)
@@ -126,6 +121,7 @@ class MainFrame(wx.Frame):
             _("Starting the StatusBar timer")
             self.status_timer.Start(3000)
 
+    # noinspection PyUnusedLocal
     def clear_status(self, event):
         self.SetStatusText(ivonet.COPYRIGHT)
         if self.status_timer.IsRunning():

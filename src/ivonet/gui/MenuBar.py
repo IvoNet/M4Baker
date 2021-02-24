@@ -35,7 +35,6 @@ class MenuBar(wx.MenuBar):
             (FILE_MENU_STOP_PROCESS, self.parent.on_stop_process),
             (FILE_MENU_CLEAR, self.parent.on_clear),
             (FILE_MENU_TO_DIR, self.parent.on_select_dir),
-            (FILE_MENU_SHOW_LOG, self.parent.on_show_log),
             (wx.ID_EXIT, self.parent.on_exit),
             (wx.ID_ABOUT, self.parent.on_about),
         ]

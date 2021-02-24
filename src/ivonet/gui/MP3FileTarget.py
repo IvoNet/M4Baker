@@ -1,6 +1,6 @@
 import wx
 
-from ivonet.events import _
+from ivonet.events import ee, _
 
 
 class MP3DropTarget(wx.FileDropTarget):
@@ -10,7 +10,7 @@ class MP3DropTarget(wx.FileDropTarget):
         self.target = target
 
     def OnDropFiles(self, x, y, filenames):
-        # self.target.write("\n".join(filenames))
+        ee.emit("log", "Files dropped")
         for idx, name in enumerate(filenames):
             _(str(idx), name)
             self.target.Append((name, "TODO"))
@@ -19,7 +19,6 @@ class MP3DropTarget(wx.FileDropTarget):
 
 class MP3FileTarget(wx.Panel):
     def __init__(self, *args, **kwds):
-        # begin wxGlade: MP3DropTarget.__init__
         kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)
 

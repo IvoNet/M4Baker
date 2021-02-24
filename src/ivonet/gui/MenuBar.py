@@ -2,7 +2,12 @@
 #  -*- coding: utf-8 -*-
 import wx
 
-from ivonet import FILE_MENU_PROCESS, FILE_MENU_STOP_PROCESS, FILE_MENU_CLEAR, FILE_MENU_SHOW_LOG, FILE_MENU_TO_DIR
+# File Menu
+FILE_MENU_PROCESS = wx.NewIdRef()
+FILE_MENU_CLEAR = wx.NewIdRef()
+FILE_MENU_STOP_PROCESS = wx.NewIdRef()
+FILE_MENU_SHOW_LOG = wx.NewIdRef()
+FILE_MENU_TO_DIR = wx.NewIdRef()
 
 
 class MenuBar(wx.MenuBar):
@@ -42,6 +47,7 @@ class MenuBar(wx.MenuBar):
             self.parent.Bind(wx.EVT_MENU, handler, id=menu_id)
 
 
+# noinspection PyUnusedLocal
 class Example(wx.Frame):
 
     def __init__(self, *args, **kw):

@@ -13,6 +13,9 @@ if [ "$1" == "clean" ]; then
   fi
   ./images.sh
 fi
+echo "Versioning..."
+python ./version.py
+
 echo "Building..."
 
 echo "Building the m4baker.app"

@@ -14,7 +14,7 @@ import sys
 import ivonet
 
 
-def data_directory(application_name=ivonet.APP_NAME):
+def data_directory(application_name=ivonet.TXT_APP_NAME):
     """Specialised code for retrieving the allplication data folder where they save """
     if sys.platform == 'darwin':
         # https://stackoverflow.com/questions/1084697/how-do-i-store-desktop-application-data-in-a-cross-platform-way-for-python

@@ -2,7 +2,9 @@
 #  -*- coding: utf-8 -*-
 import wx
 
+import ivonet
 from ivonet.book.meta import GENRES
+from ivonet.events import ee, _
 
 
 class AudiobookMetaDataPanel(wx.Panel):
@@ -109,7 +111,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         lbl_comment = wx.StaticText(self, wx.ID_ANY, "Comment")
         vs_comment_1.Add(lbl_comment, 0, wx.LEFT, 0)
 
-        self.tc_comment = wx.TextCtrl(self, wx.ID_ANY, "Converted with M4Baker (c) IvonNet.nl", style=wx.TE_MULTILINE)
+        self.tc_comment = wx.TextCtrl(self, wx.ID_ANY, ivonet.TXT_COMMENT, style=wx.TE_MULTILINE)
         self.tc_comment.SetToolTip("Add your comments here")
         vs_comment_1.Add(self.tc_comment, 2, wx.EXPAND, 0)
 
@@ -155,43 +157,53 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.Bind(wx.EVT_TEXT, self.on_comment, self.tc_comment)
 
     def on_title(self, event):
-        print("Event handler 'on_title' not implemented!")
+        ee.emit("log", "Event handler 'on_title' not implemented!")
+        _("Event handler 'on_title' not implemented!")
         event.Skip()
 
     def on_artist(self, event):
-        print("Event handler 'on_artist' not implemented!")
+        ee.emit("log", "Event handler 'on_artist' not implemented!")
+        _("Event handler 'on_artist' not implemented!")
         event.Skip()
 
     def on_grouping(self, event):
-        print("Event handler 'on_grouping' not implemented!")
+        ee.emit("log", "Event handler 'on_grouping' not implemented!")
+        _("Event handler 'on_grouping' not implemented!")
         event.Skip()
 
     def on_genre(self, event):
-        print("Event handler 'on_genre' not implemented!")
+        ee.emit("log", "Event handler 'on_genre' not implemented!")
+        _("Event handler 'on_genre' not implemented!")
         event.Skip()
 
     def on_chapter_text(self, event):
-        print("Event handler 'on_chapter_text' not implemented!")
+        ee.emit("log", "Event handler 'on_chapter_text' not implemented!")
+        _("Event handler 'on_chapter_text' not implemented!")
         event.Skip()
 
     def on_chapter_method(self, event):
-        print("Event handler 'on_chapter_method' not implemented!")
+        ee.emit("log", "Event handler 'on_chapter_method' not implemented!")
+        _("Event handler 'on_chapter_method' not implemented!")
         event.Skip()
 
     def on_track(self, event):
-        print("Event handler 'on_track' not implemented!")
+        ee.emit("log", "Event handler 'on_track' not implemented!")
+        _("Event handler 'on_track' not implemented!")
         event.Skip()
 
     def on_track_total(self, event):
-        print("Event handler 'on_track_total' not implemented!")
+        ee.emit("log", "Event handler 'on_track_total' not implemented!")
+        _("Event handler 'on_track_total' not implemented!")
         event.Skip()
 
     def on_year(self, event):
-        print("Event handler 'on_year' not implemented!")
+        ee.emit("log", "Event handler 'on_year' not implemented!")
+        _("Event handler 'on_year' not implemented!")
         event.Skip()
 
     def on_comment(self, event):
-        print("Event handler 'on_comment' not implemented!")
+        ee.emit("log", "Event handler 'on_comment' not implemented!")
+        _("Event handler 'on_comment' not implemented!")
         event.Skip()
 
 # end of class AudiobookMetaDataPanel

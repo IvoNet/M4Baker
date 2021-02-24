@@ -6,7 +6,10 @@ block_cipher = None
 a = Analysis(['src/m4baker.py'],
              pathex=['/Users/iwo16283/dev/ivonet-audiobook/'],
              binaries=[],
-             datas=[ ("src/resources", "./resources")],
+             datas=[
+                ("src/resources", "./resources"),
+                ("VERSION", "./resources"),
+             ],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

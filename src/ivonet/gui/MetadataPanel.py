@@ -9,7 +9,6 @@ from ivonet.gui.MP3FileTarget import MP3FileTarget
 
 class MetadataPanel(wx.Panel):
     def __init__(self, *args, **kwds):
-        # begin wxGlade: MetadataPanel.__init__
         kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)
 
@@ -31,6 +30,3 @@ class MetadataPanel(wx.Panel):
         self.SetSizer(vs_m4b_page)
 
         self.Layout()
-        # end wxGlade
-
-# end of class MetadataPanel

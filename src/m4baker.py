@@ -9,17 +9,10 @@ There can be only one.
 import this :-)
 """
 
-import time
 import wx
 
-from ivonet.events import ee, _
+from ivonet.events import _
 from ivonet.gui import MainFrame
-
-
-@ee.on_any
-def print_any_event_to_stdout(*args):
-    """Prints all debug message events"""
-    print(time.strftime('%X'), "[DEBUG]", " ".join([str(x) for x in args]))
 
 
 class M4Baker(wx.App):
@@ -36,16 +29,13 @@ class M4Baker(wx.App):
         event.Skip()
 
     def bring_window_to_front(self):
-        # try:
         self.GetTopWindow().Raise()
-        # except:  # TODO specific Exception if thrown here
-        #     pass
 
 
 def main():
     wx.SystemOptions.SetOption("mac.window-plain-transition", 1)
     app = M4Baker()
-    frame = MainFrame(None, title="B4Baker", size=(1024, 768))
+    frame = MainFrame(None, title="M4Baker", size=(1024, 768))
     frame.Show(True)
     app.MainLoop()
 

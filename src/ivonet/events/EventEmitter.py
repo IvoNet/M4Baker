@@ -195,8 +195,7 @@ class EventEmitter(object):
             if not isinstance(b, dict):
                 continue
 
-            # noinspection PyUnresolvedReferences
-            branches.extend(b.values())
+            # branches.extend(b.values())
 
             listeners.extend(b[self.CB_KEY])
 

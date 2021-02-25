@@ -13,17 +13,17 @@
 * √ Create Log Dialog
 * √ Create process dialog
 * √ Create About dialog
-* Application properties Panel (ini file)
-  * where to save this? ~/Library/Application Support/ivonet/m4baker or something?
+* Application Settings Panel (ini file)
+  * where to save this? ~/Library/Application Support/m4baker or something?
 * √ Drag and Drop panel for mp3
 * √ Drag and Drop panel for Cover art
 
 ## Business logic
 
-* Dirty check for images (if stuff was done manually)
+* √ Dirty check for images (if stuff was done manually)
 * Save project?!
 * √ Clean project
-* Set track
+* √ Set track
 * Extract Chapters
 * Calculate chapters
 * Create chapter file
@@ -32,7 +32,7 @@
 * √ Get bitrate mp3
 * √ Get sample rate mp3
 * √ Set Fixed length chapter (default = 10 minutes)
-* Set output quality (default = copy)
+* X Set output quality (default = copy)
 * Extract number of processors
   * default all -1 for concurrent processes
   * overridable with "just do it"
@@ -55,5 +55,7 @@
   * `mp4art --add "$(find . -name '*.jpg' | head -n 1)" "${AUDIOBOOK}.m4b"`
 * Move finished audiobook to target location
 * Clean temp space
-* Create model
+* √ Create model
 * Create queue
+* PyDoc
+* Unit tests for business logic. 

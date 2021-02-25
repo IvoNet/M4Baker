@@ -62,8 +62,9 @@ class MainFrame(wx.Frame):
         ee.on("audiobook.artist", self.audiobook.set_artist)
         ee.on("audiobook.disc", self.audiobook.set_disc)
         ee.on("audiobook.disc_total", self.audiobook.set_disc_total)
-
-        _("MainWindows initialized")
+        ee.on("audiobook.comment", self.audiobook.set_comment)
+        ee.on("audiobook.year", self.audiobook.set_year)
+        _("MainFrame initialized")
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -75,7 +76,7 @@ class MainFrame(wx.Frame):
         tool_buttons = [
             ("process", "Start processing", self.on_process),
             ("stop", "Stop processing", self.on_stop_process),
-            # TODO add clear / New button and action
+            ("clear", "Clean Audiobook", self.on_clear),
         ]
         for art_id, value in enumerate(tool_buttons, start=1):
             label, short_help, func = value

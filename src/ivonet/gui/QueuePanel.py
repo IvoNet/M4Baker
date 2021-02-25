@@ -34,7 +34,6 @@ class QueuePanel(wx.Panel):
         # /TEMP Code while progressbar not yet implemented
 
         self.SetSizer(hs_queue)
-
         self.Layout()
 
     # noinspection PyUnusedLocal

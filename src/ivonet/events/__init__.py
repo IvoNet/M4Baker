@@ -2,6 +2,8 @@
 #  -*- coding: utf-8 -*-
 import os
 
+import time
+
 from ivonet.events.EventEmitter import EventEmitter
 from ivonet.events.defines import *
 
@@ -20,6 +22,13 @@ def _(*args):
     """Emit a 'debug' event convenience method"""
     if DEBUG:
         ee.emit("debug", *args)
+
+
+@ee.on_any
+def print_any_event_to_stdout(*args):
+    """Prints all message events if DEBUG = True"""
+    if DEBUG:
+        print(time.strftime('%X'), "[DEBUG]", " ".join([str(x) for x in args]))
 
 
 def log(*args):

@@ -40,7 +40,7 @@ class CoverArtDropTarget(wx.FileDropTarget):
             return False
         if split_filename[1] in IMAGE_TYPES:
             ee.emit("coverart.dnd", filenames[0])
-        elif filenames[0].endswith(".mp3"):
+        elif filenames[0].lower().endswith(".mp3"):
             track = Track(filenames[0], silent=True)
             if track.get_cover_art():
                 ee.emit("coverart.dnd", track.get_cover_art())

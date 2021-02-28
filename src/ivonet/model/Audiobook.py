@@ -23,7 +23,8 @@ class Audiobook(object):
         self.disc_total = 1
         self.cover_art = None
         self.year = None
-        ee.emit("audiobook.new", "New Audiobook initialized")
+        ee.emit("audiobook.new")
+        log("New Audiobook initialized")
 
     def add_all(self, filenames: list):
         for name in filenames:
@@ -31,6 +32,7 @@ class Audiobook(object):
                 self.tracks.append(Track(name))
             else:
                 log(f"File {name} is not an mp3 file")
+        ee.emit("audiobook.tracks", self.tracks)
 
     def set_grouping(self, value):
         self.grouping = value
@@ -73,7 +75,9 @@ class Audiobook(object):
         artist={self.artist}, 
         grouping={self.grouping},
         genre={self.genre},
-        disk={self.disc}/{self.disc_total}]"""
+        disk={self.disc}/{self.disc_total},
+        year={self.year},
+        ]"""
 
     def verify(self) -> bool:
         ret = True

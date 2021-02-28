@@ -26,6 +26,7 @@ def status(msg):
 
 
 class MainFrame(wx.Frame):
+    """The main application Frame holding all the other panels"""
 
     def __init__(self, *args, **kw):
         """Initialize the gui here"""
@@ -52,11 +53,12 @@ class MainFrame(wx.Frame):
         self.Layout()
         self.Center()
         self.init()
+        _("MainFrame initialized")
 
     def init(self):
         # Register events
         ee.on("status", self.on_status)
-        ee.on("audiobook.tracks", self.audiobook.add_all)
+        ee.on("audiobook.mp3s", self.audiobook.add_all)
         ee.on("audiobook.grouping", self.audiobook.set_grouping)
         ee.on("audiobook.title", self.audiobook.set_title)
         ee.on("audiobook.artist", self.audiobook.set_artist)
@@ -64,7 +66,6 @@ class MainFrame(wx.Frame):
         ee.on("audiobook.disc_total", self.audiobook.set_disc_total)
         ee.on("audiobook.comment", self.audiobook.set_comment)
         ee.on("audiobook.year", self.audiobook.set_year)
-        _("MainFrame initialized")
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -72,7 +73,6 @@ class MainFrame(wx.Frame):
         tool_bar = self.CreateToolBar((wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT | wx.TB_TEXT))
         tool_bar.SetToolBitmapSize(tool_bar_size)
 
-        # Define new tool bar buttons here (
         tool_buttons = [
             ("process", "Start processing", self.on_process),
             ("stop", "Stop processing", self.on_stop_process),
@@ -107,19 +107,22 @@ class MainFrame(wx.Frame):
         wx.adv.AboutBox(info, self)
 
     # noinspection PyUnusedLocal
-    def on_process(self, event):
+    @staticmethod
+    def on_process(event):
         status("Processing...")
         ee.emit("processing.start", event)
         log("Started processing")
 
     # noinspection PyUnusedLocal
-    def on_stop_process(self, event):
+    @staticmethod
+    def on_stop_process(event):
         status("Stop processing")
         ee.emit("processing.stop", event)
         log("Stopped processing")
 
     # noinspection PyUnusedLocal
-    def on_select_dir(self, event):
+    @staticmethod
+    def on_select_dir(event):
         status("Select directory")
         _("TODO: on_select_dir -> " + data_directory())
 

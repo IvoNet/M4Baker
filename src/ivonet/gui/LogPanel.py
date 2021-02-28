@@ -7,6 +7,7 @@ from ivonet.events import ee, log
 
 
 class LogPanel(wx.Panel):
+    """All logging events will land here."""
     def __init__(self, *args, **kwds):
         kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)

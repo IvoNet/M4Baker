@@ -1,13 +1,13 @@
 import wx
+import wx.adv
 
-from ivonet.events import log, ee
+from ivonet.events import log, ee, _
 
 
 class MP3DropTarget(wx.FileDropTarget):
 
-    def __init__(self, target):
+    def __init__(self):
         super().__init__()
-        self.target = target
 
     def OnDropFiles(self, x, y, filenames):
         log("MP3 Files dropped")
@@ -19,9 +19,27 @@ class MP3DropTarget(wx.FileDropTarget):
             else:
                 log(f"Dropped file '{name}' is not an mp3 file.")
 
-        ee.emit("audiobook.tracks", mp3s)
+        ee.emit("audiobook.mp3s", mp3s)
 
         return True
+
+
+class MP3ListBox(wx.adv.EditableListBox):
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.SetStrings([])
+        self.SetDropTarget(MP3DropTarget())
+        self.SetToolTip("Drag and Drop MP3 files here")
+        self.del_button = self.GetDelButton()
+
+    def append(self, line):
+        lines = list(self.GetStrings())
+        lines.append(line)
+        self.SetStrings(lines)
+
+    def clear(self):
+        self.SetStrings([])
 
 
 class MP3FileTarget(wx.Panel):
@@ -34,15 +52,22 @@ class MP3FileTarget(wx.Panel):
         bs_right_pnl_m4b_page = wx.BoxSizer(wx.VERTICAL)
         hs_right_pnl_m4b_page.Add(bs_right_pnl_m4b_page, 1, wx.EXPAND, 0)
 
-        self.lc_mp3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_HRULES | wx.LC_REPORT | wx.LC_VRULES)
-        self.lc_mp3.SetToolTip("Drag and Drop MP3 files here")
-        # self.lc_mp3.AppendColumn("#", format=wx.LIST_FORMAT_LEFT, width=20)
-        self.lc_mp3.AppendColumn("Track", format=wx.LIST_FORMAT_LEFT, width=500)
-        self.lc_mp3.AppendColumn("Length", format=wx.LIST_FORMAT_LEFT, width=135)
-        bs_right_pnl_m4b_page.Add(self.lc_mp3, 1, wx.EXPAND, 0)
+        self.lc_mp3 = MP3ListBox(self, wx.ID_ANY, "Drag and Drop mp3 files below...",
+                                 style=wx.adv.EL_ALLOW_DELETE)
 
-        self.SetDropTarget(MP3DropTarget(self.lc_mp3))
+        bs_right_pnl_m4b_page.Add(self.lc_mp3, 1, wx.EXPAND, 0)
 
         self.SetSizer(hs_right_pnl_m4b_page)
 
         self.Layout()
+        ee.on("audiobook.tracks", self.ee_on_tracks)
+        ee.on("audiobook.new", self.ee_on_new_audiobook)
+
+    def ee_on_tracks(self, tracks):
+        for idx, track in enumerate(tracks):
+            _(track)
+            # self.lc_mp3.SetItem(self.lc_mp3.GetItemCount(), 0, track.mp3)
+            self.lc_mp3.append(track.mp3)
+
+    def ee_on_new_audiobook(self):
+        self.lc_mp3.clear()

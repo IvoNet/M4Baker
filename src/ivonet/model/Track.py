@@ -55,7 +55,10 @@ class Track(object):
             if self.tag.track_total:
                 ee.emit("track.track_total", self.tag.track_total)
             if self.tag.year:
-                ee.emit("track.year", self.tag.year)
+                if self.tag.year.isnumeric():
+                    ee.emit("track.year", self.tag.year)
+                else:
+                    log(f"Ignoring year tag [{self.tag.year}] as it is not numeric.")
             if self.tag.get_image():
                 ee.emit("track.cover_art", BytesIO(self.tag.get_image()))
 
@@ -66,6 +69,9 @@ class Track(object):
         if self.tag.get_image():
             return BytesIO(self.tag.get_image())
         return None
+
+    def get_ctrl(self) -> tuple:
+        return self.mp3, self.tag.duration
 
     def __repr__(self) -> str:
         return str(self.tag.as_dict())

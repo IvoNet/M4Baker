@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
+__author__ = "Ivo Woltring"
+__revised__ = "$revised: 2021-02-28 14:20:25$"
+__copyright__ = "Copyright (c) 2021 Ivo Woltring"
+__license__ = "Apache 2.0"
+__doc__ = """
+Versioning file
+"""
+
 
 def read_version():
     try:

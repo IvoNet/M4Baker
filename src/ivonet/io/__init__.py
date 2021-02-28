@@ -5,7 +5,11 @@ __revised__ = "$revised: 2021-02-28 13:21:13$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
-Some defines around the image package
+
 """
 
-IMAGE_TYPES = [".bmp", ".png", ".jpg", ".gif"]
+from ivonet.io.walk import walk
+
+__all__ = [
+    "walk",
+]

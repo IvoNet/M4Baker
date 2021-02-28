@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
+__author__ = "Ivo Woltring"
+__revised__ = "$revised: 2021-02-28 13:21:13$"
+__copyright__ = "Copyright (c) 2021 Ivo Woltring"
+__license__ = "Apache 2.0"
+__doc__ = """
+
+"""
+
 import wx
 
 # File Menu
@@ -12,7 +20,7 @@ FILE_MENU_TO_DIR = wx.NewIdRef()
 
 class MenuBar(wx.MenuBar):
     def __init__(self, parent, style=0):
-        super(MenuBar, self).__init__(style)
+        super().__init__(style)
         self.parent = parent
 
         file_menu = wx.Menu()

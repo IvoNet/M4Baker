@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+__author__ = "Ivo Woltring"
+__revised__ = "$revised: 2021-02-28 13:21:13$"
+__copyright__ = "Copyright (c) 2021 Ivo Woltring"
+__license__ = "Apache 2.0"
+__doc__ = """
+The Log Screen
+"""
+
 import time
 import wx
 
@@ -8,6 +16,7 @@ from ivonet.events import ee, log
 
 class LogPanel(wx.Panel):
     """All logging events will land here."""
+
     def __init__(self, *args, **kwds):
         kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)

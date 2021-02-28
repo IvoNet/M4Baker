@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
+__author__ = "Ivo Woltring"
+__revised__ = "$revised: 2021-02-28 13:21:13$"
+__copyright__ = "Don't know and in absence of knowledge I would say DBAD"
+__doc__ = """
+This code was originally not written by me. I found it somewhere on the internet
+but have no idea anymore where.
+
+I have made adjustments here and there but in essence it seems to do the job for
+me.
+I you are the author please let me know and I'll give credit where it is due.
+"""
 
 from time import time
 

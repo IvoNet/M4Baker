@@ -49,5 +49,4 @@ __all__ = [
     "ee",
     "_",
     "log",
-    "REGISTERED_EVENTS"
 ]

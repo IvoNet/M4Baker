@@ -34,6 +34,7 @@ class Track(object):
             _(e)
             return
         if not silent:
+            ee.emit("track.mp3", self.mp3)
             if self.tag.album:
                 ee.emit("track.album", self.tag.album)
             if self.tag.albumartist:

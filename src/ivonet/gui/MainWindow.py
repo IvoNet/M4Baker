@@ -21,7 +21,7 @@ from ivonet.events import ee, _, log
 from ivonet.gui.MainPanel import MainPanel
 from ivonet.gui.MenuBar import MenuBar
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
-from ivonet.model.Audiobook import Audiobook
+from ivonet.model.Project import Project
 
 try:
     from ivonet.image.images import yoda
@@ -41,7 +41,7 @@ class MainFrame(wx.Frame):
         """Initialize the gui here"""
         super().__init__(*args, **kw)
 
-        self.audiobook = Audiobook()
+        self.project = Project()
 
         self.SetSize((1024, 768))
         self.SetMinSize((1024, 768))
@@ -57,6 +57,11 @@ class MainFrame(wx.Frame):
         self.status_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.clear_status, self.status_timer)
 
+        # TODO remove me when it all works
+        self.project_print_timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.debug_print_project, self.project_print_timer)
+        self.project_print_timer.Start(5000)
+
         self.main_panel = MainPanel(self, wx.ID_ANY)
         self.load_settings()
         self.Layout()
@@ -64,16 +69,13 @@ class MainFrame(wx.Frame):
         _("MainFrame initialized")
 
     def init(self):
+        # Tell the world we started anew
+        ee.emit("project.new", self.project)
         # Register events
         ee.on("status", self.on_status)
-        ee.on("audiobook.mp3s", self.audiobook.add_all)
-        ee.on("audiobook.grouping", self.audiobook.set_grouping)
-        ee.on("audiobook.title", self.audiobook.set_title)
-        ee.on("audiobook.artist", self.audiobook.set_artist)
-        ee.on("audiobook.disc", self.audiobook.set_disc)
-        ee.on("audiobook.disc_total", self.audiobook.set_disc_total)
-        ee.on("audiobook.comment", self.audiobook.set_comment)
-        ee.on("audiobook.year", self.audiobook.set_year)
+
+    def debug_print_project(self, event):
+        _(self.project)
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -137,9 +139,10 @@ class MainFrame(wx.Frame):
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):
-        status("Starting new Audiobook")
-        log("Starting new Audiobook")
-        self.audiobook = Audiobook()
+        status("Starting new project")
+        self.project = Project()
+        ee.emit("project.new", self.project)
+        log("Starting new project")
 
     def on_status(self, msg):
         self.SetStatusText(msg)

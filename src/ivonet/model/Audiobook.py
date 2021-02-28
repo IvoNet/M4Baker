@@ -11,7 +11,7 @@ __doc__ = """
 from io import BytesIO
 
 import ivonet
-from ivonet.events import _, ee, log
+from ivonet.events import log
 from ivonet.model.Track import Track
 
 
@@ -32,7 +32,7 @@ class Audiobook(object):
         self.disc_total = 1
         self.cover_art = None
         self.year = None
-        ee.emit("audiobook.new")
+        # ee.emit("audiobook.new")
         log("New Audiobook initialized")
 
     def add_all(self, filenames: list):
@@ -41,37 +41,37 @@ class Audiobook(object):
                 track = Track(name)
                 self.sorted.append(name)
                 self.tracks[name] = track
-                ee.emit("audiobook.track", track)
+                # ee.emit("audiobook.track", track)
             else:
                 log(f"File {name} is not an mp3 file or already in the list.")
 
     def set_grouping(self, value):
         self.grouping = value
-        _(self)
+        # _(self)
 
     def set_title(self, value):
         self.title = value
-        _(self)
+        # _(self)
 
     def set_artist(self, value):
         self.artist = value
-        _(self)
+        # _(self)
 
     def set_disc(self, value):
         self.disc = value
-        _(self)
+        # _(self)
 
     def set_disc_total(self, value):
         self.disc_total = value
-        _(self)
+        # _(self)
 
     def set_comment(self, value):
         self.comment = value
-        _(self)
+        # _(self)
 
     def set_year(self, value):
         self.year = value
-        _(self)
+        # _(self)
 
     def set_cover_art(self, image):
         self.cover_art = image

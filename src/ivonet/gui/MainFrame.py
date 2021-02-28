@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 13:21:13$"
+__revised__ = "$revised: 2021-02-28 15:21:03$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
 The Main Application Panel
 """
+
+import ast
+import os
+from configparser import ConfigParser
 
 import wx
 import wx.adv
@@ -23,8 +27,6 @@ try:
     from ivonet.image.images import yoda
 except ImportError:
     raise ImportError("The images file was not found. Did you forget to generate them?")
-
-from ivonet.sys.application import data_directory
 
 
 def status(msg):
@@ -56,9 +58,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.clear_status, self.status_timer)
 
         self.main_panel = MainPanel(self, wx.ID_ANY)
-
+        self.load_settings()
         self.Layout()
-        self.Center()
         self.init()
         _("MainFrame initialized")
 
@@ -97,6 +98,7 @@ class MainFrame(wx.Frame):
     # noinspection PyUnusedLocal
     def on_exit(self, event):
         """Close the frame, terminating the application."""
+        self.save_settings()
         self.Close(True)
 
     # noinspection PyUnusedLocal
@@ -131,7 +133,7 @@ class MainFrame(wx.Frame):
     @staticmethod
     def on_select_dir(event):
         status("Select directory")
-        _("TODO: on_select_dir -> " + data_directory())
+        _("TODO: on_select_dir")
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):
@@ -151,3 +153,22 @@ class MainFrame(wx.Frame):
         if self.status_timer.IsRunning():
             _("Stopping the StatusBar timer")
             self.status_timer.Stop()
+
+    def save_settings(self):
+        """save_settings() -> Saves default settings to the application settings location"""
+        ini = ConfigParser()
+        ini.add_section("Settings")
+        ini.set('Settings', 'screen_size', str(self.GetSize()))
+        ini.set('Settings', 'screen_pos', str(self.GetPosition()))
+        with open(ivonet.SETTINGS_FILE, "w") as fp:
+            ini.write(fp)
+
+    def load_settings(self):
+        """Load_ settings() -> Loads and activates the settings saved by save_settings()"""
+        if os.path.isfile(ivonet.SETTINGS_FILE):
+            ini = ConfigParser()
+            ini.read(ivonet.SETTINGS_FILE)
+            self.SetSize(ast.literal_eval(ini.get('Settings', 'screen_size')))
+            self.SetPosition(ast.literal_eval(ini.get('Settings', 'screen_pos')))
+        else:
+            self.Center()

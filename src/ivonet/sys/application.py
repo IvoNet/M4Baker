@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 13:21:13$"
+__revised__ = "$revised: 2021-02-28 14:45:53$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -14,10 +14,8 @@ from os import path
 
 import sys
 
-import ivonet
 
-
-def data_directory(application_name=ivonet.TXT_APP_NAME):
+def data_directory(application_name) -> str:
     """Specialised code for retrieving the allplication data folder where they save """
     if sys.platform == 'darwin':
         # https://stackoverflow.com/questions/1084697/how-do-i-store-desktop-application-data-in-a-cross-platform-way-for-python
@@ -28,8 +26,3 @@ def data_directory(application_name=ivonet.TXT_APP_NAME):
         from os import environ
         return path.join(environ['APPDATA'], application_name)
     return path.expanduser(path.join("~", "." + application_name))
-
-
-if __name__ == '__main__':
-    print(data_directory())
-    print(data_directory("FooBarBaz is a long name"))

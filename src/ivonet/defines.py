@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 13:21:13$"
+__revised__ = "$revised: 2021-02-28 14:45:47$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -10,9 +10,18 @@ Global defines
 
 import os
 
+from ivonet.sys.application import data_directory
+
+TXT_APP_NAME = "M4Baker"
 HERE = os.path.abspath(os.path.dirname(__file__))
 RESOURCE = os.path.abspath(HERE + '/../resources/')
 ICON_APP = RESOURCE + "/yoda.png"
+
+SETTINGS_DIRECTORY = data_directory(TXT_APP_NAME)
+if not os.path.isdir(SETTINGS_DIRECTORY):
+    os.mkdir(SETTINGS_DIRECTORY)
+
+SETTINGS_FILE = os.path.join(SETTINGS_DIRECTORY, f"{TXT_APP_NAME}.ini")
 
 try:
     VERSION = open(os.path.join(RESOURCE, "VERSION"), "r").read().strip()
@@ -27,7 +36,6 @@ DEVELOPERS = [
 ART_PREFIX = "inART_"
 
 # texts
-TXT_APP_NAME = "M4Baker"
 TXT_DESCRIPTION_BLOG = "Ivo's blog"
 TXT_URL_BLOG = "https://www.ivonet.nl"
 TXT_COMMENT = "Converted with M4Baker.\nhttps://github.com/IvoNet/ivonet-audiobook"

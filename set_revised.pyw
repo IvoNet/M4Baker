@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 13:45:20$"
+__revised__ = "$revised: 2021-02-28 14:34:39$"
 __copyright__ = "Copyright (c) 2004 - 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -90,10 +90,8 @@ class MyFrame(wx.Frame):
         # import IvoNet.Editor.IniFile as IniFile
         from ivonet.io import walk
         import re
-        # ini=IniFile.IniFile()
-        pat = re.compile("__revised__.*=.*(\$.*\$)")  # __revised__   = "$revised: 2021-02-28 13:45:20$"
+        pat = re.compile("__revised__.*=.*(\$.*\$)")  # __revised__   = "$revised: 2021-02-28 14:34:39$"
         for file in walk('.', True, '*.py;*.pyw', False):
-            # if os.path.basename(file).lower() == 'set_revised.py': continue
             inh = open(file, 'r').read()
             found = pat.findall(inh)
             if found:

@@ -68,7 +68,7 @@ class Track(object):
                 else:
                     log(f"Ignoring year tag [{self.tag.year}] as it is not numeric.")
             if self.tag.get_image():
-                ee.emit("track.cover_art", BytesIO(self.tag.get_image()))
+                ee.emit("track.cover_art", self.get_cover_art())
 
     def get(self, key) -> any:
         return self.tag.as_dict().get(key)

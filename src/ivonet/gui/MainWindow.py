@@ -5,7 +5,7 @@ __revised__ = "$revised: 2021-02-28 15:21:03$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
-The Main Application Panel
+The Main Application Window
 """
 
 import ast

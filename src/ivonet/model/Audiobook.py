@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 13:21:13$"
+__revised__ = "$revised: 2021-02-28 16:36:41$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -19,7 +19,8 @@ class Audiobook(object):
     """Represents an audiobook"""
 
     def __init__(self) -> None:
-        self.tracks = []
+        self.sorted = []
+        self.tracks = {}
         self.title = None
         self.artist = None
         self.grouping = None
@@ -36,11 +37,13 @@ class Audiobook(object):
 
     def add_all(self, filenames: list):
         for name in filenames:
-            if name.lower().endswith(".mp3"):
-                self.tracks.append(Track(name))
+            if name.lower().endswith(".mp3") and name not in self.sorted:
+                track = Track(name)
+                self.sorted.append(name)
+                self.tracks[name] = track
+                ee.emit("audiobook.track", track)
             else:
-                log(f"File {name} is not an mp3 file")
-        ee.emit("audiobook.tracks", self.tracks)
+                log(f"File {name} is not an mp3 file or already in the list.")
 
     def set_grouping(self, value):
         self.grouping = value
@@ -100,19 +103,3 @@ class Audiobook(object):
             ret = False
 
         return ret
-
-
-if __name__ == '__main__':
-    import pprint
-
-
-    @ee.on("track.*")
-    def event(evt):
-        print(str(evt))
-
-
-    track = Track("/Users/iwo16283/dev/ivonet-audiobook/test/test.mp3")
-    pprint.pprint(track)
-    print("Duration:", track.get("duration"))
-
-    track = Track("/Users/iwo16283/dev/ivonet-audiobook/test/wrong.mp3")

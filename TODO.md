@@ -14,7 +14,9 @@
 * √ Create process dialog
 * √ Create About dialog
 * Application Settings Panel (ini file)
-  * where to save this? ~/Library/Application Support/m4baker or something?
+  * √ where to save this? ~/Library/Application Support/m4baker or something?
+  * √ Save Screen size
+  * √ Save Screen position
 * √ Drag and Drop panel for mp3
 * √ Drag and Drop panel for Cover art
 

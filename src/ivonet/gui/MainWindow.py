@@ -29,9 +29,6 @@ try:
 except ImportError:
     raise ImportError("The images file was not found. Did you forget to generate them?")
 
-WILDCARD = "M4Baker (*.ivo)|*.ivo|" \
-           "All files (*.*)|*.*"
-
 
 def status(msg):
     """Emits a status bar event message."""
@@ -146,7 +143,7 @@ class MainFrame(wx.Frame):
                                  message="Choose a file...",
                                  defaultDir=os.getcwd(),
                                  defaultFile="",
-                                 wildcard=WILDCARD,
+                                 wildcard=ivonet.FILE_WILDCARD,
                                  style=wx.FD_OPEN |
                                        wx.FD_CHANGE_DIR |
                                        wx.FD_FILE_MUST_EXIST |
@@ -163,17 +160,20 @@ class MainFrame(wx.Frame):
     # noinspection PyUnusedLocal
     def on_save_project(self, event):
         status("Save Project")
+        filename = self.project.title or "Untitled" + ".ivo"
         save_dlg = wx.FileDialog(self,
                                  message="Save file as ...",
                                  defaultDir=os.getcwd(),
-                                 defaultFile=f"{self.project.title}.ivo",
-                                 wildcard=WILDCARD,
+                                 defaultFile=f"{filename}",
+                                 wildcard=ivonet.FILE_WILDCARD,
                                  style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
                                  )
         save_dlg.SetFilterIndex(0)
 
         if save_dlg.ShowModal() == wx.ID_OK:
             path = save_dlg.GetPath()
+            if not path.endswith(".ivo"):
+                path += ".ivo"
             with open(path, 'wb') as fo:
                 pickle.dump(self.project, fo)
             log(f'Saved to: {path}')
@@ -201,6 +201,7 @@ class MainFrame(wx.Frame):
 
     def save_settings(self):
         """save_settings() -> Saves default settings to the application settings location"""
+        # TODO Add "recent" list
         ini = ConfigParser()
         ini.add_section("Settings")
         ini.set('Settings', 'screen_size', str(self.GetSize()))

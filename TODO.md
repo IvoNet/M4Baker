@@ -73,4 +73,5 @@
   * already clean
   * Can't stop what not has been started
   * ?
-*    
+* When loading a saved project check if all is still in order
+  * Do the mp3 file references still exist?

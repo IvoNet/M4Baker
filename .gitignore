@@ -21,3 +21,4 @@ __pycache__
 *.wxg~
 *.pyc
 /src/ivonet/image/images.py
+*.ivo

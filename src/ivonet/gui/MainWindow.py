@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 15:21:03$"
+__revised__ = "$revised: 2021-03-02 00:02:17$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -70,6 +70,7 @@ class MainFrame(wx.Frame):
 
         # Register events
         ee.on("status", self.ee_on_status)
+        ee.on("project.open", self.ee_project_open)
 
     def new_project(self):
         ee.emit("project.new", self.project)
@@ -152,12 +153,15 @@ class MainFrame(wx.Frame):
         if open_dlg.ShowModal() == wx.ID_OK:
             path = open_dlg.GetPath()
             log(f"Opening file: {path}")
-            with open(path, 'rb') as fi:
-                self.project = pickle.load(fi)
-                self.new_project()
+            self.ee_project_open(path)
             ee.emit("project.history", path)
         open_dlg.Destroy()
 
+    def ee_project_open(self, path):
+        """Handler for th 'project.open' event and the Project open dialog"""
+        with open(path, 'rb') as fi:
+            self.project = pickle.load(fi)
+            self.new_project()
 
     # noinspection PyUnusedLocal
     def on_save_project(self, event):

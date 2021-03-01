@@ -17,6 +17,7 @@
   * √ where to save this? ~/Library/Application Support/m4baker or something?
   * √ Save Screen size
   * √ Save Screen position
+  * Default work base dir location
 * √ Drag and Drop panel for mp3
 * √ Drag and Drop panel for Cover art
 
@@ -59,5 +60,17 @@
 * Clean temp space
 * √ Create model
 * Create queue
-* PyDoc
-* Unit tests for business logic. 
+* √ PyDoc
+* Unit tests for business logic.
+* Recent file history
+  * √ max 9 entries
+  * √ Save Settings when history added
+  * √ Read history on startup
+  * Delete history item if not exists anymore (on selecting it)
+  * Remove history item if wanted
+* GUI enable/disable buttons and menu items if project not ready to
+  * Process
+  * already clean
+  * Can't stop what not has been started
+  * ?
+*    

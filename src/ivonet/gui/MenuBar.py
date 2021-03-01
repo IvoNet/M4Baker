@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 13:21:13$"
+__revised__ = "$revised: 2021-03-02 00:02:09$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
-
+The Menubar
 """
 
 import os
@@ -22,6 +22,7 @@ FILE_MENU_TO_DIR = wx.NewIdRef()
 
 
 class MenuBar(wx.MenuBar):
+    """The Application menu."""
     def __init__(self, parent, style=0):
         super().__init__(style)
         self.parent = parent
@@ -70,6 +71,7 @@ class MenuBar(wx.MenuBar):
         """Handler for the event on file history selection in the file menu"""
         file_num = event.GetId() - wx.ID_FILE1
         path = self.file_history.GetHistoryFile(file_num)
+        ee.emit("project.open", path)
         self.ee_project_history(path)
         log(f"You selected {path}")
 

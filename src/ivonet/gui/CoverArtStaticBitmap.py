@@ -94,5 +94,4 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
         an opened project"""
         _("ee_on_project_new")
         if project.has_cover_art():
-            _("ee_on_project_new: ", project.cover_art)
             self.ee_on_cover_art(project.cover_art)

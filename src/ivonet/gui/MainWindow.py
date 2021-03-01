@@ -155,13 +155,21 @@ class MainFrame(wx.Frame):
             with open(path, 'rb') as fi:
                 self.project = pickle.load(fi)
                 self.new_project()
+            ee.emit("project.history", path)
         open_dlg.Destroy()
+
 
     # noinspection PyUnusedLocal
     def on_save_project(self, event):
         status("Save Project")
         filename = self.project.title or "Untitled"
         filename += ".ivo"
+        base_dir = None
+        if self.project.name:
+            base_dir, filename = os.path.split(self.project.name)
+        elif self.project.tracks:
+            base_dir = os.path.split(self.project.tracks[0])[0]
+
         save_dlg = wx.FileDialog(self,
                                  message="Save file as ...",
                                  defaultDir=os.getcwd(),
@@ -169,14 +177,19 @@ class MainFrame(wx.Frame):
                                  wildcard=ivonet.FILE_WILDCARD,
                                  style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
                                  )
+
         save_dlg.SetFilterIndex(0)
+        if base_dir:
+            save_dlg.SetDirectory(base_dir)
 
         if save_dlg.ShowModal() == wx.ID_OK:
             path = save_dlg.GetPath()
             if not path.endswith(".ivo"):
                 path += ".ivo"
             with open(path, 'wb') as fo:
+                self.project.name = path
                 pickle.dump(self.project, fo)
+            ee.emit("project.history", path)
             log(f'Saved to: {path}')
 
         save_dlg.Destroy()
@@ -219,3 +232,4 @@ class MainFrame(wx.Frame):
             self.SetPosition(ast.literal_eval(ini.get('Settings', 'screen_pos')))
         else:
             self.Center()
+        ee.emit("project.load_history_file")

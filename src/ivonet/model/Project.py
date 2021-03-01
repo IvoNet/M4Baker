@@ -15,6 +15,7 @@ import ivonet
 
 class Project(object):
     def __init__(self) -> None:
+        self.name = None
         self.tracks = []
         self.title = ""
         self.artist = ""
@@ -33,7 +34,8 @@ class Project(object):
 
     def __repr__(self) -> str:
         return f"""Project [
-    tracks={self.tracks}
+    project_name={self.name},
+    tracks={self.tracks},
     title={self.title}, 
     artist={self.artist}, 
     grouping={self.grouping},

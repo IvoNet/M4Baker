@@ -22,6 +22,7 @@ if not os.path.isdir(SETTINGS_DIRECTORY):
     os.mkdir(SETTINGS_DIRECTORY)
 
 SETTINGS_FILE = os.path.join(SETTINGS_DIRECTORY, f"{TXT_APP_NAME}.ini")
+HISTORY_FILE = os.path.join(SETTINGS_DIRECTORY, f"{TXT_APP_NAME}.history")
 
 try:
     VERSION = open(os.path.join(RESOURCE, "VERSION"), "r").read().strip()

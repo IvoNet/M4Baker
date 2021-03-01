@@ -14,7 +14,6 @@ import os
 import time
 
 from ivonet.events.EventEmitter import EventEmitter
-from ivonet.events.defines import *
 
 ee = EventEmitter(wildcard=True)
 

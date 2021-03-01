@@ -58,9 +58,9 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.clear_status, self.status_timer)
 
         # TODO remove me when it all works
-        self.project_print_timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.debug_print_project, self.project_print_timer)
-        self.project_print_timer.Start(5000)
+        # self.project_print_timer = wx.Timer(self)
+        # self.Bind(wx.EVT_TIMER, self.debug_print_project, self.project_print_timer)
+        # self.project_print_timer.Start(5000)
 
         self.main_panel = MainPanel(self, wx.ID_ANY)
         self.load_settings()
@@ -74,6 +74,7 @@ class MainFrame(wx.Frame):
         # Register events
         ee.on("status", self.on_status)
 
+    # TODO Remove me when the timer has been removed
     def debug_print_project(self, event):
         _(self.project)
 

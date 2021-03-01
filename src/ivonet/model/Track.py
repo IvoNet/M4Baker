@@ -9,7 +9,6 @@ __doc__ = """
 """
 
 import os
-from io import BytesIO
 
 from tinytag import TinyTag, TinyTagException
 
@@ -76,7 +75,7 @@ class Track(object):
 
     def get_cover_art(self):
         if self.tag.get_image():
-            return BytesIO(self.tag.get_image())
+            return self.tag.get_image()
         return None
 
     def get_ctrl(self) -> tuple:

@@ -8,10 +8,12 @@ __doc__ = """
 
 """
 
+from io import BytesIO
+
 import wx
 
 from ivonet.events import log, _, ee
-from ivonet.gui.ConverArtDropTarget import CoverArtDropTarget
+from ivonet.gui.CoverArtDropTarget import CoverArtDropTarget
 from ivonet.image.images import yoda
 
 
@@ -32,6 +34,7 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
 
         self.cover_art_pristine = False
         self.on_reset_cover_art(None)
+        ee.on("project.new", self.ee_on_project_new)
         ee.on("cover_art.force", self.ee_on_cover_art)
         ee.on("track.cover_art", self.ee_on_cover_art_from_mp3)
 
@@ -45,6 +48,7 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
 
     def on_reset_cover_art(self, event):
         """Resets the cover art on double clicking the image"""
+        _(f"on_reset_cover_art {event}")
         self.reset()
 
     def reset(self):
@@ -62,7 +66,7 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
         """
         log("Setting Cover Art")
         self.dirty()
-        img = wx.Image(image, wx.BITMAP_TYPE_ANY)
+        img = wx.Image(BytesIO(image), wx.BITMAP_TYPE_ANY)
         width = img.GetWidth()
         height = img.GetHeight()
         if width > height:
@@ -75,6 +79,7 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
 
         self.SetBitmap(wx.Bitmap(img))
         self.Center()
+        self.Refresh()
         self.parent.Refresh()
         ee.emit("project.cover_art", image)
 
@@ -83,3 +88,11 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
         if self.is_pristine():
             self.dirty()
             self.ee_on_cover_art(image)
+
+    def ee_on_project_new(self, project):
+        """Handles the 'project.new' event to look for existing cover art if it was
+        an opened project"""
+        _("ee_on_project_new")
+        if project.has_cover_art():
+            _("ee_on_project_new: ", project.cover_art)
+            self.ee_on_cover_art(project.cover_art)

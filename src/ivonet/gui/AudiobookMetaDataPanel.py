@@ -208,7 +208,8 @@ class AudiobookMetaDataPanel(wx.Panel):
         _("ee_reset_metadata", project)
         self.project = project
         self.genre_pristine = True
-        self.cover_art.reset()
+        if not project.has_cover_art():
+            self.cover_art.reset()
         self.tc_title.SetValue(project.title)
         self.tc_artist.SetValue(project.artist)
         self.tc_grouping.SetValue(project.grouping)

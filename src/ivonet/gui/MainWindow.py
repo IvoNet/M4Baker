@@ -10,6 +10,7 @@ The Main Application Window
 
 import ast
 import os
+import pickle
 from configparser import ConfigParser
 
 import wx
@@ -27,6 +28,9 @@ try:
     from ivonet.image.images import yoda
 except ImportError:
     raise ImportError("The images file was not found. Did you forget to generate them?")
+
+WILDCARD = "M4Baker (*.ivo)|*.ivo|" \
+           "All files (*.*)|*.*"
 
 
 def status(msg):
@@ -55,12 +59,7 @@ class MainFrame(wx.Frame):
         self.SetStatusText(ivonet.TXT_COPYRIGHT)
 
         self.status_timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.clear_status, self.status_timer)
-
-        # TODO remove me when it all works
-        # self.project_print_timer = wx.Timer(self)
-        # self.Bind(wx.EVT_TIMER, self.debug_print_project, self.project_print_timer)
-        # self.project_print_timer.Start(5000)
+        self.Bind(wx.EVT_TIMER, self.on_clear_status, self.status_timer)
 
         self.main_panel = MainPanel(self, wx.ID_ANY)
         self.load_settings()
@@ -70,13 +69,14 @@ class MainFrame(wx.Frame):
 
     def init(self):
         # Tell the world we started anew
-        ee.emit("project.new", self.project)
-        # Register events
-        ee.on("status", self.on_status)
+        self.new_project()
 
-    # TODO Remove me when the timer has been removed
-    def debug_print_project(self, event):
-        _(self.project)
+        # Register events
+        ee.on("status", self.ee_on_status)
+
+    def new_project(self):
+        ee.emit("project.new", self.project)
+        log("Starting new project or loading one")
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -84,6 +84,7 @@ class MainFrame(wx.Frame):
         tool_bar = self.CreateToolBar((wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT | wx.TB_TEXT))
         tool_bar.SetToolBitmapSize(tool_bar_size)
 
+        # TODO Open and close buttons?
         tool_buttons = [
             ("process", "Start processing", self.on_process),
             ("stop", "Stop processing", self.on_stop_process),
@@ -139,20 +140,60 @@ class MainFrame(wx.Frame):
         _("TODO: on_select_dir")
 
     # noinspection PyUnusedLocal
+    def on_open_project(self, event):
+        status("Open Project")
+        open_dlg = wx.FileDialog(self,
+                                 message="Choose a file...",
+                                 defaultDir=os.getcwd(),
+                                 defaultFile="",
+                                 wildcard=WILDCARD,
+                                 style=wx.FD_OPEN |
+                                       wx.FD_CHANGE_DIR |
+                                       wx.FD_FILE_MUST_EXIST |
+                                       wx.FD_PREVIEW
+                                 )
+        if open_dlg.ShowModal() == wx.ID_OK:
+            path = open_dlg.GetPath()
+            log(f"Opening file: {path}")
+            with open(path, 'rb') as fi:
+                self.project = pickle.load(fi)
+                self.new_project()
+        open_dlg.Destroy()
+
+    # noinspection PyUnusedLocal
+    def on_save_project(self, event):
+        status("Save Project")
+        save_dlg = wx.FileDialog(self,
+                                 message="Save file as ...",
+                                 defaultDir=os.getcwd(),
+                                 defaultFile=f"{self.project.title}.ivo",
+                                 wildcard=WILDCARD,
+                                 style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
+                                 )
+        save_dlg.SetFilterIndex(0)
+
+        if save_dlg.ShowModal() == wx.ID_OK:
+            path = save_dlg.GetPath()
+            with open(path, 'wb') as fo:
+                pickle.dump(self.project, fo)
+            log(f'Saved to: {path}')
+
+        save_dlg.Destroy()
+
+    # noinspection PyUnusedLocal
     def on_clear(self, event):
         status("Starting new project")
         self.project = Project()
-        ee.emit("project.new", self.project)
-        log("Starting new project")
+        self.new_project()
 
-    def on_status(self, msg):
+    def ee_on_status(self, msg):
         self.SetStatusText(msg)
         if not self.status_timer.IsRunning():
             _("Starting the StatusBar timer")
             self.status_timer.Start(3000)
 
     # noinspection PyUnusedLocal
-    def clear_status(self, event):
+    def on_clear_status(self, event):
         self.SetStatusText(ivonet.TXT_COPYRIGHT)
         if self.status_timer.IsRunning():
             _("Stopping the StatusBar timer")

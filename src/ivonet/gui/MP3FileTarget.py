@@ -117,4 +117,4 @@ class MP3FileTarget(wx.Panel):
     # noinspection PyUnusedLocal
     def ee_on_new_audiobook(self, project):
         """Handler for the 'project.new' event"""
-        self.mp3_list_box.clear()
+        self.mp3_list_box.SetStrings(project.tracks)

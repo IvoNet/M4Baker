@@ -47,7 +47,8 @@ class CoverArtDropTarget(wx.FileDropTarget):
             log("The file dropped is probably not an image.")
             return False
         if split_filename[1] in IMAGE_TYPES:
-            ee.emit("cover_art.force", filenames[0])
+            with open(filenames[0], 'rb') as img:
+                ee.emit("cover_art.force", img.read())
         elif filenames[0].lower().endswith(".mp3"):
             track = Track(filenames[0], silent=True)
             if track.get_cover_art():

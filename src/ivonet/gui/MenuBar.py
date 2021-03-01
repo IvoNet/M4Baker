@@ -12,9 +12,10 @@ import wx
 
 # File Menu
 FILE_MENU_PROCESS = wx.NewIdRef()
-FILE_MENU_CLEAR = wx.NewIdRef()
+FILE_MENU_NEW = wx.NewIdRef()
 FILE_MENU_STOP_PROCESS = wx.NewIdRef()
-FILE_MENU_SHOW_LOG = wx.NewIdRef()
+FILE_MENU_OPEN = wx.NewIdRef()
+FILE_MENU_SAVE = wx.NewIdRef()
 FILE_MENU_TO_DIR = wx.NewIdRef()
 
 
@@ -24,14 +25,15 @@ class MenuBar(wx.MenuBar):
         self.parent = parent
 
         file_menu = wx.Menu()
+        file_menu.Append(FILE_MENU_NEW, "New \tCTRL-N")
+        file_menu.AppendSeparator()
+        file_menu.Append(FILE_MENU_OPEN, "Open... \tCTRL-O")
+        file_menu.Append(FILE_MENU_SAVE, "Save... \tCTRL-S")
+        file_menu.AppendSeparator()
         file_menu.Append(FILE_MENU_PROCESS, "Process\tCTRL-P")
-        file_menu.Append(FILE_MENU_STOP_PROCESS, "Stop Processing\tCTRL-S")
+        file_menu.Append(FILE_MENU_STOP_PROCESS, "Stop Processing\tCTRL-E")
         file_menu.AppendSeparator()
-        file_menu.Append(FILE_MENU_CLEAR, "Clear\tCTRL-E")
-        file_menu.AppendSeparator()
-        file_menu.Append(FILE_MENU_SHOW_LOG, "Show output log\tCTRL-L")
-        file_menu.AppendSeparator()
-        file_menu.Append(FILE_MENU_TO_DIR, "Select output folder\tCTRL-F")
+        file_menu.Append(FILE_MENU_TO_DIR, "Select output folder\tCTRL-D")
         file_menu.AppendSeparator()
         file_menu.Append(wx.ID_EXIT, "Quit\tCTRL-Q")
 
@@ -46,8 +48,10 @@ class MenuBar(wx.MenuBar):
         menu_handlers = [
             (FILE_MENU_PROCESS, self.parent.on_process),
             (FILE_MENU_STOP_PROCESS, self.parent.on_stop_process),
-            (FILE_MENU_CLEAR, self.parent.on_clear),
+            (FILE_MENU_NEW, self.parent.on_clear),
             (FILE_MENU_TO_DIR, self.parent.on_select_dir),
+            (FILE_MENU_OPEN, self.parent.on_open_project),
+            (FILE_MENU_SAVE, self.parent.on_save_project),
             (wx.ID_EXIT, self.parent.on_exit),
             (wx.ID_ABOUT, self.parent.on_about),
         ]
@@ -55,54 +59,3 @@ class MenuBar(wx.MenuBar):
             self.parent.Bind(wx.EVT_MENU, handler, id=menu_id)
 
 
-# noinspection PyUnusedLocal
-class Example(wx.Frame):
-
-    def __init__(self, *args, **kw):
-        super(Example, self).__init__(*args, **kw)
-
-        # create a panel in the frame
-        main_panel = wx.Panel(self)
-
-        # put some text with a larger bold font on it
-        st = wx.StaticText(main_panel, label="Look at the menu and the statusbar for the events")
-        font = st.GetFont()
-        font.PointSize += 10
-        font = font.Bold()
-        st.SetFont(font)
-
-        # and create a sizer to manage the layout of child widgets
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(st, wx.SizerFlags().Border(wx.TOP | wx.LEFT, 25))
-
-        self.SetMenuBar(MenuBar(self))
-        self.CreateStatusBar()
-
-    def on_exit(self, event):
-        """Close the frame, terminating the application."""
-        self.Close(True)
-
-    def on_about(self, event):
-        self.SetStatusText("Menu choice -> About")
-
-    def on_process(self, event):
-        self.SetStatusText("Menu choice -> on_process")
-
-    def on_stop_process(self, event):
-        self.SetStatusText("Menu choice -> on_stop_process")
-
-    def on_select_dir(self, event):
-        self.SetStatusText("Menu choice -> on_select_dir")
-
-    def on_clear(self, event):
-        self.SetStatusText("Menu choice -> on_clear")
-
-    def on_show_log(self, event):
-        self.SetStatusText("Menu choice -> on_show_log")
-
-
-if __name__ == '__main__':
-    app = wx.App()
-    ex = Example(None, size=(600, 100))
-    ex.Show()
-    app.MainLoop()

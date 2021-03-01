@@ -160,7 +160,8 @@ class MainFrame(wx.Frame):
     # noinspection PyUnusedLocal
     def on_save_project(self, event):
         status("Save Project")
-        filename = self.project.title or "Untitled" + ".ivo"
+        filename = self.project.title or "Untitled"
+        filename += ".ivo"
         save_dlg = wx.FileDialog(self,
                                  message="Save file as ...",
                                  defaultDir=os.getcwd(),

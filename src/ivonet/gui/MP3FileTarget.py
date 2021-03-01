@@ -16,6 +16,7 @@ from ivonet.model.Track import Track
 
 
 class MP3DropTarget(wx.FileDropTarget):
+    """Handler for the Drag and Drop events of MP3 files"""
 
     def __init__(self, target):
         super().__init__()
@@ -33,9 +34,8 @@ class MP3DropTarget(wx.FileDropTarget):
         return True
 
 
-# TODO re-evaluate this inspection later...
-# noinspection PyMethodMayBeStatic
 class MP3ListBox(wx.adv.EditableListBox):
+    """MP3 specialised EditableListBox"""
 
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
@@ -44,46 +44,57 @@ class MP3ListBox(wx.adv.EditableListBox):
         self.SetToolTip("Drag and Drop MP3 files here")
         self.del_button = self.GetDelButton()
         self.GetDownButton().Bind(wx.EVT_LEFT_DOWN, self.tracks_changed)
-        # self.GetDownButton().Bind(wx.EVT_LEFT_DOWN, self.on_move_down)
 
         self.GetUpButton().Bind(wx.EVT_LEFT_DOWN, self.tracks_changed)
-        # self.GetUpButton().Bind(wx.EVT_LEFT_DOWN, self.on_move_up)
-
-        # self.GetDelButton().Bind(wx.EVT_LEFT_DOWN, self.on_delete)
 
         self.GetListCtrl().Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_selected)
         self.GetListCtrl().Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.on_selected_right_click)
 
         self.GetListCtrl().Bind(wx.EVT_LIST_DELETE_ITEM, self.tracks_changed)
         self.GetListCtrl().Bind(wx.EVT_LIST_INSERT_ITEM, self.tracks_changed)
-        # self.GetListCtrl().Bind(wx.EVT_LIST_DELETE_ITEM, self.on_delete)
-        # self.GetListCtrl().Bind(wx.EVT_LIST_INSERT_ITEM, self.on_insert_item)
+
+        self.change_timer = wx.Timer()
+        self.change_timer.Bind(wx.EVT_TIMER, self.on_change_timer)
 
     def append(self, line):
+        """Add a line to the list."""
         lines = list(self.GetStrings())
         lines.append(line)
         self.SetStrings(lines)
         # ee.emit("mp3.added", line)
 
     def clear(self):
+        """Resets the list"""
         self.SetStrings([])
 
-    def tracks_changed(self, event):
+    def on_change_timer(self, event):
+        """This event has been added."""
+        self.change_timer.Stop()
         ee.emit("project.tracks", self.GetStrings())
-        # TODO This event is too early! the change takes place after
-        #  this event in the propagaton. How to fix?!
+
+    def tracks_changed(self, event):
+        """All events on buttons like moves up/down and deletes or inserts"""
+        self.change_timer.Start(350)
         event.Skip()
 
+    # noinspection PyMethodMayBeStatic
     def on_selected(self, event):
         _(f"Item selected [{event.GetItem().GetText()}]")
         event.Skip()
 
-    def on_selected_right_click(self, event):
-        _("TODO on_selected_right_click")
+    @staticmethod
+    def on_selected_right_click(event):
+        selected = event.GetItem().GetText()
+        if selected:
+            track = Track(selected, silent=True)
+            if track.get_cover_art():
+                ee.emit("cover_art.force", track.get_cover_art())
         event.Skip()
 
 
 class MP3FileTarget(wx.Panel):
+    """The Panel where the MP3 Drag and Drop target resides"""
+
     def __init__(self, *args, **kwds):
         kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
         wx.Panel.__init__(self, *args, **kwds)
@@ -101,11 +112,9 @@ class MP3FileTarget(wx.Panel):
         self.SetSizer(hs_right_pnl_m4b_page)
 
         self.Layout()
-        # ee.on("audiobook.track", self.ee_on_track)
         ee.on("project.new", self.ee_on_new_audiobook)
 
-    def ee_on_track(self, track: Track):
-        self.mp3_list_box.append(track.mp3)
-
+    # noinspection PyUnusedLocal
     def ee_on_new_audiobook(self, project):
+        """Handler for the 'project.new' event"""
         self.mp3_list_box.clear()

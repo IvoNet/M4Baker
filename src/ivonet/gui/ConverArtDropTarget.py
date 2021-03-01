@@ -36,7 +36,7 @@ class CoverArtDropTarget(wx.FileDropTarget):
         """Covers the DropFiles event.
         - Checks if it is an image
         - if a list of images just take the first
-        - emit a "coverart.dnd" event with the name of the file
+        - emit a "cover_art.force" event with the name of the file
         """
         log("Cover art dropped")
         if len(filenames) > 1:
@@ -47,11 +47,11 @@ class CoverArtDropTarget(wx.FileDropTarget):
             log("The file dropped is probably not an image.")
             return False
         if split_filename[1] in IMAGE_TYPES:
-            ee.emit("coverart.dnd", filenames[0])
+            ee.emit("cover_art.force", filenames[0])
         elif filenames[0].lower().endswith(".mp3"):
             track = Track(filenames[0], silent=True)
             if track.get_cover_art():
-                ee.emit("coverart.dnd", track.get_cover_art())
+                ee.emit("cover_art.force", track.get_cover_art())
             else:
                 log("Could not retrieve any Cover Art from the dropped mp3 file.")
         else:

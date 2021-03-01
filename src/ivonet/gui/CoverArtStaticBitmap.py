@@ -16,6 +16,7 @@ from ivonet.image.images import yoda
 
 
 class CoverArtStaticBitmap(wx.StaticBitmap):
+    """CoverArt specialised StaticBitmap"""
     def __init__(self, parent, id=wx.ID_ANY):
         """StaticBitmap(parent, id=ID_ANY,
         bitmap=NullBitmap, pos=DefaultPosition,
@@ -31,16 +32,19 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
 
         self.cover_art_pristine = False
         self.on_reset_cover_art(None)
-        ee.on("coverart.dnd", self.ee_on_cover_art)
+        ee.on("cover_art.force", self.ee_on_cover_art)
         ee.on("track.cover_art", self.ee_on_cover_art_from_mp3)
 
     def dirty(self):
+        """Marks the Cover Art set 'dirty'."""
         self.cover_art_pristine = False
 
     def is_pristine(self):
+        """True if no cover art has been set"""
         return self.cover_art_pristine
 
     def on_reset_cover_art(self, event):
+        """Resets the cover art on double clicking the image"""
         self.reset()
 
     def reset(self):
@@ -52,9 +56,8 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
             self.parent.Refresh()
             self.cover_art_pristine = True
 
-    # TODO Move to CoverArtClass with all events and configs
     def ee_on_cover_art(self, image):
-        """handles the 'coverart.dnd' and 'track.cover_art' events.
+        """handles the 'cover_art.force' and 'track.cover_art' events.
         gets an image file object or file location as input.
         """
         log("Setting Cover Art")
@@ -76,6 +79,7 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
         ee.emit("project.cover_art", image)
 
     def ee_on_cover_art_from_mp3(self, image):
+        """handles the "track.cover_art" event if the images has not already been set"""
         if self.is_pristine():
             self.dirty()
             self.ee_on_cover_art(image)

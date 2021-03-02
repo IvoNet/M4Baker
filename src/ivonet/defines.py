@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 14:45:47$"
+__revised__ = "$revised: 2021-03-02 21:17:52$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -23,6 +23,7 @@ if not os.path.isdir(SETTINGS_DIRECTORY):
 
 SETTINGS_FILE = os.path.join(SETTINGS_DIRECTORY, f"{TXT_APP_NAME}.ini")
 HISTORY_FILE = os.path.join(SETTINGS_DIRECTORY, f"{TXT_APP_NAME}.history")
+LOG_FILE = os.path.join(SETTINGS_DIRECTORY, f"{TXT_APP_NAME}.log")
 
 try:
     VERSION = open(os.path.join(RESOURCE, "VERSION"), "r").read().strip()
@@ -59,3 +60,11 @@ limitations under the License.
 
 FILE_WILDCARD = "M4Baker (*.ivo)|*.ivo|" \
                 "All files (*.*)|*.*"
+
+# Toolbar IDs
+TOOLBAR_ID_OPEN_PROJECT = 1
+TOOLBAR_ID_SAVE_PROJECT = 2
+TOOLBAR_ID_PROCESS_START = 3
+TOOLBAR_ID_PROCESS_STOP = 4
+TOOLBAR_ID_CLEAN = 5
+TOOLBAR_ID_SEPARATOR = 0

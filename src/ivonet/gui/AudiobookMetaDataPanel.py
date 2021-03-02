@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 13:21:13$"
+__revised__ = "$revised: 2021-03-02 21:18:50$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -198,7 +198,8 @@ class AudiobookMetaDataPanel(wx.Panel):
         ee.on("track.genre", self.ee_on_genre)
         ee.on("track.comment", self.ee_on_comment)
         ee.on("track.year", self.ee_on_year)
-        # ee.on("track.mp3", self.ee_on_mp3)
+
+        ee.on("reset.cover_art", self.ee_reset_cover_art)
 
         # 'dirty' flags
         self.genre_pristine = True
@@ -215,7 +216,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.tc_grouping.SetValue(project.grouping)
         self.cb_genre.SetValue(project.genre)
         self.tc_chapter_text.SetValue(project.chapter_text)
-        self.cb_chapterisation.SetSelection(project.chapter_method)
+        self.cb_chapterisation.SetValue(project.chapter_method)
         self.sc_disc.SetValue(project.disc)
         self.sc_disk_total.SetValue(project.disc_total)
         self.tc_year.SetValue(project.year)
@@ -302,6 +303,7 @@ class AudiobookMetaDataPanel(wx.Panel):
 
     def on_chapter_method(self, event):
         """Handler for the chapter convert method field event"""
+        _("!!!", event)
         self.project.chapter_method = event.GetString()
         _(event.GetString())
         event.StopPropagation()
@@ -360,3 +362,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         if self.sc_disk_total.GetValue() < self.sc_disc.GetValue():
             log("Correcting disk total as it can not be smaller than the disk.")
             self.sc_disk_total.SetValue(self.sc_disc.GetValue())
+
+    def ee_reset_cover_art(self):
+        """Handles the "reset.cover_art" event"""
+        self.project.cover_art = None

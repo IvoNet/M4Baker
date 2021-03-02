@@ -10,9 +10,9 @@ and some convenience methods
 """
 
 import os
-
 import time
 
+import ivonet
 from ivonet.events.EventEmitter import EventEmitter
 
 ee = EventEmitter(wildcard=True)
@@ -31,12 +31,16 @@ def _(*args):
     if DEBUG:
         ee.emit("debug", *args)
 
-
 @ee.on_any
 def print_any_event_to_stdout(*args):
     """Prints all message events if DEBUG = True"""
     if DEBUG:
-        print(time.strftime('%X'), "[DEBUG]", " ".join([str(x) for x in args]))
+        msg = " ".join([str(x) for x in args])
+        with open(ivonet.LOG_FILE, "a") as fo:
+            fo.write(msg + "\n")
+        if len(msg) > 750:
+            msg = msg[:750] + "..."
+        print(time.strftime('%X'), "[DEBUG]", msg)
 
 
 def log(*args):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 28/02/2021 23:16$"
+__revised__ = "$revised: 2021-03-02 21:18:58$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -50,6 +50,7 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
         """Resets the cover art on double clicking the image"""
         _(f"on_reset_cover_art {event}")
         self.reset()
+        ee.emit("reset.cover_art")
 
     def reset(self):
         _("Reset Cover Art event")

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 28/02/2021 17:58$"
+__revised__ = "$revised: 2021-03-02 21:18:42$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -22,7 +22,7 @@ class Project(object):
         self.grouping = ""
         self.genre = "Urban Fantasy"
         self.chapter_text = "Chapter"
-        self.chapter_method = 0
+        self.chapter_method = "Based on mp3 length"
         self.comment = ivonet.TXT_COMMENT
         self.disc = 1
         self.disc_total = 1
@@ -47,3 +47,8 @@ class Project(object):
     comment={self.comment},
     cover_art={self.has_cover_art()}
     ]"""
+
+    def verify(self) -> bool:
+        if self.name and self.title and self.tracks and self.artist and self.chapter_method and self.has_cover_art():
+            return True
+        return False

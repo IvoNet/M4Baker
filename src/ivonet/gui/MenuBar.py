@@ -14,7 +14,7 @@ import wx
 
 # File Menu
 import ivonet
-from ivonet.events import log, ee, _
+from ivonet.events import log, ee, dbg
 
 FILE_MENU_PROCESS = wx.NewIdRef()
 FILE_MENU_STOP_PROCESS = wx.NewIdRef()
@@ -86,7 +86,7 @@ class MenuBar(wx.MenuBar):
 
     def save_history(self):
         """Saves the recent file history to disk"""
-        _("save_history")
+        dbg("save_history")
         history_config = wx.FileConfig()
         self.file_history.Save(history_config)
         with open(ivonet.HISTORY_FILE, "wb") as fo:
@@ -95,7 +95,7 @@ class MenuBar(wx.MenuBar):
     def ee_load_history_file(self):
         """Loads last file history settings from disk"""
         # TODO AutoSave option exists. should I use it?
-        _("ee_load_history_file")
+        dbg("ee_load_history_file")
         if os.path.isfile(ivonet.HISTORY_FILE):
             history_config = wx.FileConfig(localFilename=ivonet.HISTORY_FILE,
                                            style=wx.CONFIG_USE_LOCAL_FILE)

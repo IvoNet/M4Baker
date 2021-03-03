@@ -26,7 +26,7 @@ except KeyError:
     DEBUG = False
 
 
-def _(*args):
+def dbg(*args):
     """Emit a 'debug' event convenience method"""
     if DEBUG:
         ee.emit("debug", *args)
@@ -50,6 +50,6 @@ def log(*args):
 
 __all__ = [
     "ee",
-    "_",
+    "dbg",
     "log",
 ]

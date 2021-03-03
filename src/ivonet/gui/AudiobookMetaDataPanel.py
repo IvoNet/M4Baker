@@ -12,7 +12,7 @@ import wx
 
 import ivonet
 from ivonet.book.meta import GENRES, CHAPTER_LIST
-from ivonet.events import ee, log, _
+from ivonet.events import ee, log, dbg
 from ivonet.gui.CoverArtStaticBitmap import CoverArtStaticBitmap
 
 try:
@@ -206,7 +206,7 @@ class AudiobookMetaDataPanel(wx.Panel):
 
     def ee_reset_metadata(self, project):
         """Handles the 'audiobook.new' event to reset the whole space"""
-        _("ee_reset_metadata", project)
+        dbg("ee_reset_metadata", project)
         self.project = project
         self.genre_pristine = True
         if not project.has_cover_art():
@@ -227,13 +227,13 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.project.tracks = tracks
 
     def ee_project_cover_art(self, image):
-        _("Adding Cover Art to project")
+        dbg("Adding Cover Art to project")
         self.project.cover_art = image
 
     def on_title(self, event):
         """Handler for the title field event"""
         self.project.title = event.GetString()
-        _(event.GetString())
+        dbg(event.GetString())
         event.StopPropagation()
 
     def ee_on_title(self, value):
@@ -248,7 +248,7 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_artist(self, event):
         """Handler for the artist field event"""
         self.project.artist = event.GetString()
-        _(event.GetString())
+        dbg(event.GetString())
         event.StopPropagation()
 
     def ee_on_artist(self, value):
@@ -263,7 +263,7 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_grouping(self, event):
         """Handler for the grouping field event"""
         self.project.grouping = event.GetString()
-        _(event.GetString())
+        dbg(event.GetString())
         event.StopPropagation()
 
     def ee_on_grouping(self, value):
@@ -278,7 +278,7 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_genre(self, event):
         """Handler for the genre field event"""
         self.project.genre = event.GetString()
-        _(event.GetString())
+        dbg(event.GetString())
         event.StopPropagation()
 
     def ee_on_genre(self, value):
@@ -298,14 +298,14 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_chapter_text(self, event):
         """Handler for the chapter text field event"""
         self.project.chapter_text = event.GetString()
-        _(event.GetString())
+        dbg(event.GetString())
         event.StopPropagation()
 
     def on_chapter_method(self, event):
         """Handler for the chapter convert method field event"""
-        _("!!!", event)
+        dbg("!!!", event)
         self.project.chapter_method = event.GetString()
-        _(event.GetString())
+        dbg(event.GetString())
         event.StopPropagation()
 
     def on_disc(self, event):
@@ -313,7 +313,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.check_disc()
         self.project.disc = self.sc_disc.GetValue()
         self.project.disc_total = self.sc_disk_total.GetValue()
-        _(self.project)
+        dbg(self.project)
         event.StopPropagation()
 
     def ee_on_disc(self, value):

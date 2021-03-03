@@ -14,7 +14,7 @@ import this :-)
 
 import wx
 
-from ivonet.events import _
+from ivonet.events import dbg
 from ivonet.gui import MainFrame
 
 
@@ -23,7 +23,7 @@ class M4Baker(wx.App):
 
     def __init__(self, redirect=False, filename=None, use_best_visual=False, clear_sig_int=True):
         super(M4Baker, self).__init__(redirect, filename, use_best_visual, clear_sig_int)
-        _("Initializing app")
+        dbg("Initializing app")
         self.Bind(wx.EVT_ACTIVATE_APP, self.on_activate)
 
     def on_activate(self, event):

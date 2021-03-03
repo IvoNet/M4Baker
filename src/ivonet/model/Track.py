@@ -12,7 +12,7 @@ import os
 
 from tinytag import TinyTag, TinyTagException
 
-from ivonet.events import _, ee, log
+from ivonet.events import dbg, ee, log
 
 
 class Track(object):
@@ -27,10 +27,10 @@ class Track(object):
         self.mp3 = filename
         try:
             self.tag = TinyTag.get(self.mp3, image=True)
-            _("Track:", self.tag)
+            dbg("Track:", self.tag)
         except TinyTagException as e:
             log(f"Could not retrieve metadata from: {os.path.splitext(filename)[1]}")
-            _(e)
+            dbg(e)
             return
         if not silent:
             ee.emit("track.mp3", self.mp3)

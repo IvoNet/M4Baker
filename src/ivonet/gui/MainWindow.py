@@ -18,7 +18,7 @@ import wx.adv
 from wx.lib.wordwrap import wordwrap
 
 import ivonet
-from ivonet.events import ee, _, log
+from ivonet.events import ee, dbg, log
 from ivonet.gui.MainPanel import MainPanel
 from ivonet.gui.MenuBar import MenuBar, FILE_MENU_PROCESS, FILE_MENU_STOP_PROCESS
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
@@ -65,7 +65,7 @@ class MainFrame(wx.Frame):
         self.load_settings()
         self.Layout()
         self.init()
-        _("MainFrame initialized")
+        dbg("MainFrame initialized")
 
     def init(self):
         # Remove old log file if still exists
@@ -91,7 +91,7 @@ class MainFrame(wx.Frame):
         enable_disable = self.project.verify()
         self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_PROCESS_START, enable_disable)
         self.GetMenuBar().Enable(FILE_MENU_PROCESS, enable_disable)
-        _("on_verify_project:", enable_disable)
+        dbg("on_verify_project:", enable_disable)
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -166,7 +166,7 @@ class MainFrame(wx.Frame):
     @staticmethod
     def on_select_dir(event):
         status("Select directory")
-        _("TODO: on_select_dir")
+        dbg("TODO: on_select_dir")
 
     # noinspection PyUnusedLocal
     def on_open_project(self, event):
@@ -239,14 +239,14 @@ class MainFrame(wx.Frame):
     def ee_on_status(self, msg):
         self.SetStatusText(msg)
         if not self.status_timer.IsRunning():
-            _("Starting the StatusBar timer")
+            dbg("Starting the StatusBar timer")
             self.status_timer.Start(3000)
 
     # noinspection PyUnusedLocal
     def on_clear_status(self, event):
         self.SetStatusText(ivonet.TXT_COPYRIGHT)
         if self.status_timer.IsRunning():
-            _("Stopping the StatusBar timer")
+            dbg("Stopping the StatusBar timer")
             self.status_timer.Stop()
 
     def save_settings(self):

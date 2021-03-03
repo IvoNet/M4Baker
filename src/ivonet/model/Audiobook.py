@@ -47,31 +47,31 @@ class Audiobook(object):
 
     def set_grouping(self, value):
         self.grouping = value
-        # _(self)
+        # dbg(self)
 
     def set_title(self, value):
         self.title = value
-        # _(self)
+        # dbg(self)
 
     def set_artist(self, value):
         self.artist = value
-        # _(self)
+        # dbg(self)
 
     def set_disc(self, value):
         self.disc = value
-        # _(self)
+        # dbg(self)
 
     def set_disc_total(self, value):
         self.disc_total = value
-        # _(self)
+        # dbg(self)
 
     def set_comment(self, value):
         self.comment = value
-        # _(self)
+        # dbg(self)
 
     def set_year(self, value):
         self.year = value
-        # _(self)
+        # dbg(self)
 
     def set_cover_art(self, image):
         self.cover_art = image

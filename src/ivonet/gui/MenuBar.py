@@ -16,7 +16,7 @@ import wx
 import ivonet
 from ivonet.events import log, ee, dbg
 
-FILE_MENU_PROCESS = wx.NewIdRef()
+FILE_MENU_QUEUE = wx.NewIdRef()
 FILE_MENU_STOP_PROCESS = wx.NewIdRef()
 FILE_MENU_TO_DIR = wx.NewIdRef()
 
@@ -34,10 +34,12 @@ class MenuBar(wx.MenuBar):
         file_menu.Append(wx.ID_OPEN, "Open... \tCTRL-O")
         file_menu.Append(wx.ID_SAVE, "Save... \tCTRL-S")
         file_menu.AppendSeparator()
-        file_menu.Append(FILE_MENU_PROCESS, "Process\tCTRL-P")
-        file_menu.Append(FILE_MENU_STOP_PROCESS, "Stop Processing\tCTRL-E")
+        file_menu.Append(FILE_MENU_QUEUE, "Process\tCTRL-A")
+        # file_menu.Append(FILE_MENU_STOP_PROCESS, "Stop Processing\tCTRL-E")
         file_menu.AppendSeparator()
         file_menu.Append(FILE_MENU_TO_DIR, "Select output folder\tCTRL-D")
+        # TODO Implement output folder selection
+        #  - default Music folder?
         file_menu.AppendSeparator()
         file_menu.Append(wx.ID_EXIT, "Quit\tCTRL-Q")
 
@@ -56,8 +58,8 @@ class MenuBar(wx.MenuBar):
 
         # Create event handlers
         menu_handlers = [
-            (FILE_MENU_PROCESS, self.parent.on_process),
-            (FILE_MENU_STOP_PROCESS, self.parent.on_stop_process),
+            (FILE_MENU_QUEUE, self.parent.on_queue),
+            # (FILE_MENU_STOP_PROCESS, self.parent.on_stop_process),
             (wx.ID_NEW, self.parent.on_clear),
             (FILE_MENU_TO_DIR, self.parent.on_select_dir),
             (wx.ID_OPEN, self.parent.on_open_project),

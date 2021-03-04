@@ -20,7 +20,7 @@ from wx.lib.wordwrap import wordwrap
 import ivonet
 from ivonet.events import ee, dbg, log
 from ivonet.gui.MainPanel import MainPanel
-from ivonet.gui.MenuBar import MenuBar, FILE_MENU_PROCESS, FILE_MENU_STOP_PROCESS
+from ivonet.gui.MenuBar import MenuBar, FILE_MENU_QUEUE
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
 from ivonet.model.Project import Project
 
@@ -89,8 +89,8 @@ class MainFrame(wx.Frame):
         It feels a bit like a hack but the cleanest I could think of for now.
         """
         enable_disable = self.project.verify()
-        self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_PROCESS_START, enable_disable)
-        self.GetMenuBar().Enable(FILE_MENU_PROCESS, enable_disable)
+        self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_QUEUE, enable_disable)
+        self.GetMenuBar().Enable(FILE_MENU_QUEUE, enable_disable)
         # dbg("on_verify_project:", enable_disable)
 
     def __make_toolbar(self):
@@ -103,10 +103,7 @@ class MainFrame(wx.Frame):
             (ivonet.TOOLBAR_ID_OPEN_PROJECT, "open", "Open project", self.on_open_project, True),
             (ivonet.TOOLBAR_ID_SAVE_PROJECT, "save", "Save project", self.on_save_project, True),
             (ivonet.TOOLBAR_ID_SEPARATOR, None, None, None, False),
-            (ivonet.TOOLBAR_ID_PROCESS_START, "process", "Start processing", self.on_process, False),
-            (ivonet.TOOLBAR_ID_PROCESS_STOP, "stop", "Stop processing", self.on_stop_process, False),
-            (ivonet.TOOLBAR_ID_SEPARATOR, None, None, None, False),
-            (ivonet.TOOLBAR_ID_CLEAN, "clear", "Clean Audiobook", self.on_clear, True),
+            (ivonet.TOOLBAR_ID_QUEUE, "queue", "Queue for processing", self.on_queue, False),
         ]
         for art_id, label, short_help, func, enabled in tool_buttons:
             if art_id <= 0:
@@ -144,23 +141,13 @@ class MainFrame(wx.Frame):
         wx.adv.AboutBox(info, self)
 
     # noinspection PyUnusedLocal
-    def on_process(self, event):
+    def on_queue(self, event):
         status("Processing...")
-        self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_PROCESS_STOP, True)
-        self.GetMenuBar().Enable(FILE_MENU_STOP_PROCESS, True)
         # TODO Clean project on process (will also disable the process button)
         #  Disables the process button
-        ee.emit("processing.start", event)
-        log("Started processing")
-
-    # noinspection PyUnusedLocal
-    def on_stop_process(self, event):
-        status("Stop processing")
-        self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_PROCESS_STOP, False)
-        self.GetMenuBar().Enable(FILE_MENU_STOP_PROCESS, False)
-
-        ee.emit("processing.stop", event)
-        log("Stopped processing")
+        ee.emit("queue.project", self.project)
+        self.on_clear(None)
+        log("Queued audiobook for processing")
 
     # noinspection PyUnusedLocal
     @staticmethod

@@ -14,13 +14,12 @@ import wx.lib.scrolledpanel as scrolled
 
 class DownloadPanel(wx.Panel):
 
-    def __init__(self, parent, filename, size):
+    # TODO change filename to audiobook
+    def __init__(self, parent, filename):
         wx.Panel.__init__(self, parent)
 
-        self.size = size
-
         self.f = wx.StaticText(self, -1, filename)
-        self.p = wx.Gauge(self, -1, size, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH)
+        self.p = wx.Gauge(self, -1, 205, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH)
         b = wx.Button(self, -1, "Cancel")
 
         sz = wx.BoxSizer(wx.HORIZONTAL)
@@ -51,8 +50,8 @@ class DownloadContainer(scrolled.ScrolledPanel):
         self.SetAutoLayout(1)
         self.SetupScrolling()
 
-    def AddDownload(self, filename, size):
-        d = DownloadPanel(self, filename, size)
+    def AddDownload(self, filename):
+        d = DownloadPanel(self, filename)
         self.sizer.Prepend(d, 0, wx.ALL, 2)
         self.Layout()
         return d  # for later calls to d.UpdateProgress(...)
@@ -63,19 +62,19 @@ class MyFrame(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, -1, "UltimateListCtrl Demo")
 
-        list = DownloadContainer(self)
+        mydl = DownloadContainer(self)
 
-        list.AddDownload("Filename.m4b", 100)
-        list.AddDownload("Filename.m4b", 100)
-        list.AddDownload("Filename.m4b", 50)
-        list.AddDownload("Filename.m4b", 100)
-        list.AddDownload("Filename.m4b", 100)
-        list.AddDownload("Filename.m4b", 100)
-        list.AddDownload("Filename.m4b", 10)
-        list.AddDownload("Filename.m4b", 100)
+        mydl.AddDownload("Filename.m4b")
+        mydl.AddDownload("Filename.m4b")
+        mydl.AddDownload("Filename.m4b")
+        mydl.AddDownload("Filename.m4b")
+        mydl.AddDownload("Filename.m4b")
+        mydl.AddDownload("Filename.m4b")
+        mydl.AddDownload("Filename.m4b")
+        mydl.AddDownload("Filename.m4b")
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(list, 1, wx.EXPAND)
+        sizer.Add(mydl, 1, wx.EXPAND)
         self.SetSizer(sizer)
 
 

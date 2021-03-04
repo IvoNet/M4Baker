@@ -37,8 +37,9 @@ class MP3DropTarget(wx.FileDropTarget):
 class MP3ListBox(wx.adv.EditableListBox):
     """MP3 specialised EditableListBox"""
 
-    def __init__(self, *args, **kw):
-        super().__init__(*args, **kw)
+    def __init__(self, *args, **kwds):
+
+        super().__init__(*args, **kwds)
         self.SetStrings([])
         self.SetDropTarget(MP3DropTarget(self))
         self.SetToolTip("Drag and Drop MP3 files here")
@@ -96,7 +97,7 @@ class MP3FileTarget(wx.Panel):
     """The Panel where the MP3 Drag and Drop target resides"""
 
     def __init__(self, *args, **kwds):
-        kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL
+        kwds["style"] = kwds.get("style", 0) | wx.TAB_TRAVERSAL | wx.BORDER_NONE
         wx.Panel.__init__(self, *args, **kwds)
 
         hs_right_pnl_m4b_page = wx.BoxSizer(wx.HORIZONTAL)

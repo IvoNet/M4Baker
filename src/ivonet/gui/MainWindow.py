@@ -91,7 +91,7 @@ class MainFrame(wx.Frame):
         enable_disable = self.project.verify()
         self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_PROCESS_START, enable_disable)
         self.GetMenuBar().Enable(FILE_MENU_PROCESS, enable_disable)
-        dbg("on_verify_project:", enable_disable)
+        # dbg("on_verify_project:", enable_disable)
 
     def __make_toolbar(self):
         """Toolbar"""

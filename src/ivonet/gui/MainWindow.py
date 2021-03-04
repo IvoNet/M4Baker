@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-03-02 21:19:04$"
+__revised__ = "$revised: 2021-03-04 22:53:22$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -155,6 +155,7 @@ class MainFrame(wx.Frame):
     @staticmethod
     def on_select_dir(event):
         status("Select directory")
+        # TODO implement me or design something better like a global settings thingy to be saved on exit or sumsuch
         dbg("TODO: on_select_dir")
 
     # noinspection PyUnusedLocal

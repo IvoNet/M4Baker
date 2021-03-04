@@ -16,8 +16,9 @@ __history__ = """
 -New
 """
 
-import wx
 from time import localtime, strftime
+
+import wx
 
 
 # noinspection PyUnusedLocal
@@ -124,7 +125,7 @@ class MyFrame(wx.Frame):
 
 class MyApp(wx.App):
     def OnInit(self):
-        wx.InitAllImageHandlers()
+        # wx.InitAllImageHandlers()
         frame_1 = MyFrame(None, -1, "", size=(800, 25))
         self.SetTopWindow(frame_1)
         frame_1.Show(1)

@@ -57,6 +57,8 @@ class MainFrame(wx.Frame):
         self.status_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_clear_status, self.status_timer)
 
+        # This timer checks every half second if the project has
+        # enough information to enable queue
         self.verify_project_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_verify_project, self.verify_project_timer)
         self.verify_project_timer.Start(500)

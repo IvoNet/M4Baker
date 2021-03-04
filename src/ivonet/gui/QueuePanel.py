@@ -27,9 +27,9 @@ class AudiobookEntry(wx.Panel):
         # TODO Tooltip with with complete representation of the book?
         sizer.Add(self.filename, 5, wx.ALIGN_CENTER_VERTICAL, 0)
 
-        self.timer = wx.StaticText(self, wx.ID_ANY,
-                                   project.artist)  # TODO Timer functionality here iso artist (just placeholder)
-        sizer.Add(self.timer, 1, wx.ALIGN_CENTER_VERTICAL, 0)
+        self.elapsed = wx.StaticText(self, wx.ID_ANY,
+                                     project.artist)  # TODO Timer functionality here iso artist (just placeholder)
+        sizer.Add(self.elapsed, 1, wx.ALIGN_CENTER_VERTICAL, 0)
 
         self.progress = wx.Gauge(self, wx.ID_ANY, 100, style=wx.GA_HORIZONTAL | wx.GA_SMOOTH)
         sizer.Add(self.progress, 3, wx.ALIGN_CENTER_VERTICAL, 0)

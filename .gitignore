@@ -21,3 +21,4 @@ __pycache__
 *.pyc
 /src/ivonet/image/images.py
 *.ivo
+mp3_tests/

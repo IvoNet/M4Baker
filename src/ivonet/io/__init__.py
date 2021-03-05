@@ -8,8 +8,10 @@ __doc__ = """
 
 """
 
+from ivonet.io.UniqueName import unique_name
 from ivonet.io.walk import walk
 
 __all__ = [
     "walk",
+    "unique_name",
 ]

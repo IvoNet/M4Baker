@@ -5,14 +5,14 @@ __revised__ = "$revised: 2021-02-28 13:21:13$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
-The SplitterWindow containing the AudioBookMetadata and the MP3FileTarget panels.
+The SplitterWindow containing the AudioBookMetadata and the MP3FilePanel panels.
 aka the main part if the screen.
 """
 
 import wx
 
 from ivonet.gui.AudiobookMetaDataPanel import AudiobookMetaDataPanel
-from ivonet.gui.MP3FileTarget import MP3FileTarget
+from ivonet.gui.MP3FilePanel import MP3FilePanel
 
 
 class MetadataPanel(wx.Panel):
@@ -31,7 +31,7 @@ class MetadataPanel(wx.Panel):
 
         self.pnl_left_m4b_page = AudiobookMetaDataPanel(self.sw_m4b_page, wx.ID_ANY)
 
-        self.pnl_right_m4b_page = MP3FileTarget(self.sw_m4b_page, wx.ID_ANY)
+        self.pnl_right_m4b_page = MP3FilePanel(self.sw_m4b_page, wx.ID_ANY)
 
         self.sw_m4b_page.SplitVertically(self.pnl_left_m4b_page, self.pnl_right_m4b_page, 352)
 

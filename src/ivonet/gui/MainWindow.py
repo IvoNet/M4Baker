@@ -67,7 +67,6 @@ class MainFrame(wx.Frame):
         self.load_settings()
         self.Layout()
         self.init()
-        dbg("MainFrame initialized")
 
     def init(self):
         # Remove old log file if still exists
@@ -83,6 +82,7 @@ class MainFrame(wx.Frame):
 
     def new_project(self):
         ee.emit("project.new", self.project)
+        # dbg(self.project)
         log("Starting new project or loading one")
 
     # noinspection PyUnusedLocal
@@ -229,14 +229,12 @@ class MainFrame(wx.Frame):
     def ee_on_status(self, msg):
         self.SetStatusText(msg)
         if not self.status_timer.IsRunning():
-            dbg("Starting the StatusBar timer")
-            self.status_timer.Start(3000)
+            self.status_timer.Start(2000)
 
     # noinspection PyUnusedLocal
     def on_clear_status(self, event):
         self.SetStatusText(ivonet.TXT_COPYRIGHT)
         if self.status_timer.IsRunning():
-            dbg("Stopping the StatusBar timer")
             self.status_timer.Stop()
 
     def save_settings(self):

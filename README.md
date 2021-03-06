@@ -14,6 +14,7 @@ To be placed in src/resources:
 - mp4chaps (brew install mp4v2)
 - mp4art
 - AtomicParsley (brew install AtomicParsley)
+- mp3binder (build from source https://github.com/crra/mp3binder)
 
 how...
 

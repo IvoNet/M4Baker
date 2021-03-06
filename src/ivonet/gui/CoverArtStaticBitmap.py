@@ -12,7 +12,7 @@ from io import BytesIO
 
 import wx
 
-from ivonet.events import log, dbg, ee
+from ivonet.events import log, ee
 from ivonet.gui.CoverArtDropTarget import CoverArtDropTarget
 from ivonet.image.images import yoda
 
@@ -48,12 +48,12 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
 
     def on_reset_cover_art(self, event):
         """Resets the cover art on double clicking the image"""
-        dbg(f"on_reset_cover_art {event}")
+        # dbg(f"on_reset_cover_art {event}")
         self.reset()
         ee.emit("reset.cover_art")
 
     def reset(self):
-        dbg("Reset Cover Art event")
+        # dbg("Reset Cover Art event")
         if not self.cover_art_pristine:
             log("Resetting Cover Art")
             self.SetBitmap(yoda.GetBitmap())
@@ -93,6 +93,6 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
     def ee_on_project_new(self, project):
         """Handles the 'project.new' event to look for existing cover art if it was
         an opened project"""
-        dbg("ee_on_project_new")
+        # dbg("ee_on_project_new: ", project)
         if project.has_cover_art():
             self.ee_on_cover_art(project.cover_art)

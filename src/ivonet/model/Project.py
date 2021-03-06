@@ -11,6 +11,7 @@ Audiobook configuration.
 """
 
 import ivonet
+from ivonet.model.Track import Track
 
 
 class Project(object):
@@ -32,10 +33,35 @@ class Project(object):
     def has_cover_art(self):
         return self.cover_art is not None
 
+    def final_name(self, extension=".m4b"):
+        if self.grouping:
+            return f"{self.artist} - {self.grouping.replace('#', '')} - {self.title}{extension}"
+        return f"{self.artist} - {self.title}"
+
+    def chapter_file(self, chapter_start=1):
+        total_seconds = 0.0
+        ret = [f"00:00:00.000 {self.chapter_text} {chapter_start}"]
+        for idx, track in enumerate(self.tracks, start=chapter_start + 1):
+            trk = Track(track, silent=True)
+            total_seconds += float(trk.get("duration"))
+            hours = int(total_seconds / 3600)
+            minutes = int((total_seconds - (hours * 3600)) / 60)
+            seconds = int(total_seconds - (hours * 3600) - (minutes * 60))
+            mills = str(total_seconds).split(".")[1]
+            ret.append(f"{hours:02d}:{minutes:02d}:{seconds:02d}.{mills[:3]} {self.chapter_text} {idx}")
+        return "\n".join(ret)
+
+    def verify(self) -> bool:
+        if self.name and self.title and self.tracks and self.artist and self.chapter_method and self.has_cover_art():
+            return True
+        return False
+
+    def get_comment(self):
+        return self.comment.replace('"', "").replace("\n", " ").replace("  ", " ").replace("\t", " ")
+
     def __repr__(self) -> str:
         return f"""Project [
     project_name={self.name},
-    tracks={self.tracks},
     title={self.title}, 
     artist={self.artist}, 
     grouping={self.grouping},
@@ -46,9 +72,5 @@ class Project(object):
     chapter_method={self.chapter_method},
     comment={self.comment},
     cover_art={self.has_cover_art()}
+    tracks={self.tracks},
     ]"""
-
-    def verify(self) -> bool:
-        if self.name and self.title and self.tracks and self.artist and self.chapter_method and self.has_cover_art():
-            return True
-        return False

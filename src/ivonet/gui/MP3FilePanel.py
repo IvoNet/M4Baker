@@ -11,7 +11,7 @@ MP3 File Drag and Drop code
 import wx
 import wx.adv
 
-from ivonet.events import log, ee, dbg
+from ivonet.events import log, ee
 from ivonet.model.Track import Track
 
 
@@ -80,7 +80,7 @@ class MP3ListBox(wx.adv.EditableListBox):
 
     # noinspection PyMethodMayBeStatic
     def on_selected(self, event):
-        dbg(f"Item selected [{event.GetItem().GetText()}]")
+        # dbg(f"Item selected [{event.GetItem().GetText()}]")
         event.Skip()
 
     @staticmethod
@@ -93,7 +93,7 @@ class MP3ListBox(wx.adv.EditableListBox):
         event.Skip()
 
 
-class MP3FileTarget(wx.Panel):
+class MP3FilePanel(wx.Panel):
     """The Panel where the MP3 Drag and Drop target resides"""
 
     def __init__(self, *args, **kwds):

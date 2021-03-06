@@ -44,6 +44,7 @@ GENRES = [
     'Satire',
     'Science',
     'Science Fiction',
+    'Science Fiction & Fantasy',
     'Self help',
     'Short story',
     'Sports and leisure',

@@ -8,11 +8,11 @@ __doc__ = """
 Th Botebook pannel
 """
 
-from ivonet.gui.MP3FileTarget import MP3FileTarget
+from ivonet.gui.MP3FilePanel import MP3FilePanel
 from ivonet.gui.MainWindow import MainFrame
 from ivonet.gui.MenuBar import MenuBar
 
 __all__ = [
     "MainFrame",
-    "MP3FileTarget",
+    "MP3FilePanel",
 ]

@@ -124,8 +124,10 @@ class ProjectConverterWorker(object):
             self.target.stage = 5
             shutil.move(m4b, unique_name(os.path.join(os.environ["HOME"],
                                                       "Music/" + self.project.final_name())))
+            self.target.update(50)
             shutil.move(cover, unique_name(os.path.join(os.environ["HOME"],
                                                         "Music/" + self.project.final_name(".png"))))
+            self.target.update(100)
 
             if self.keep_going:
                 self.target.update(100)
@@ -146,7 +148,11 @@ class ProjectConverterWorker(object):
         total = len(self.project.tracks)
         count = 0
         while self.keep_going:
-            line = self.process.stdout.readline()
+            try:
+                line = self.process.stdout.readline()
+            except UnicodeDecodeError:
+                #  just skip a line
+                continue
             if not line:
                 dbg(f"Finished Merge for: {self.project.title}")
                 break
@@ -175,7 +181,11 @@ class ProjectConverterWorker(object):
 
         log(f"Conversion has started for: {self.project.title}")
         while self.keep_going:
-            line = self.process.stdout.readline()
+            try:
+                line = self.process.stdout.readline()
+            except UnicodeDecodeError:
+                #  just skip a line
+                continue
             if not line:
                 dbg(f"Conversion finished for: {self.project.title}")
                 break
@@ -224,7 +234,11 @@ class ProjectConverterWorker(object):
 
         log(f"Adding metadata to: {self.project.title}")
         while self.keep_going:
-            line = self.process.stdout.readline()
+            try:
+                line = self.process.stdout.readline()
+            except UnicodeDecodeError:
+                #  just skip a line
+                continue
             if not line:
                 dbg(f"Finished Adding metadata to {self.project.title}")
                 break
@@ -235,7 +249,8 @@ class ProjectConverterWorker(object):
                         percentage = int(ret[0].split()[-1])
                         self.target.update(percentage)
                         dbg(percentage)
-                    except IndexError:
+                    except (IndexError, ValueError):
+                        # Just ignore... probably bad line
                         pass
         self.target.update(100)
         self.__check_process(cmd)
@@ -260,7 +275,11 @@ class ProjectConverterWorker(object):
 
         log(f"Adding chapter information to {self.project.title}")
         while self.keep_going:
-            line = self.process.stdout.readline()
+            try:
+                line = self.process.stdout.readline()
+            except UnicodeDecodeError:
+                #  just skip a line
+                continue
             if not line:
                 dbg(f"Chapter information done: {self.project.title}")
                 break
@@ -283,7 +302,11 @@ class ProjectConverterWorker(object):
 
         log(f"Adding Cover Art to: {self.project.title}")
         while self.keep_going:
-            line = self.process.stdout.readline()
+            try:
+                line = self.process.stdout.readline()
+            except UnicodeDecodeError:
+                #  just skip a line
+                continue
             if not line:
                 dbg(f"Finished Adding Cover Art to {self.project.title}")
                 break

@@ -28,6 +28,7 @@ class Project(object):
         self.disc_total = 1
         self.year = ""
         self.cover_art = None
+        self.m4b_name = None
 
     def has_cover_art(self):
         return self.cover_art is not None
@@ -59,8 +60,10 @@ class Project(object):
         return self.comment.replace('"', "").replace("\n", " ").replace("  ", " ").replace("\t", " ")
 
     def __repr__(self) -> str:
-        return f"""Project [
+        try:
+            return f"""Project [
     project_name={self.name},
+    m4b_name={self.m4b_name},
     title={self.title}, 
     artist={self.artist}, 
     grouping={self.grouping},
@@ -70,6 +73,23 @@ class Project(object):
     chapter_text={self.chapter_text},
     chapter_method={self.chapter_method},
     comment={self.comment},
-    cover_art={self.has_cover_art()}
+    cover_art={self.has_cover_art()},
     tracks={self.tracks},
     ]"""
+        except AttributeError:
+            self.m4b_name = None
+            return f"""Project [
+                project_name={self.name},
+                m4b_name={self.m4b_name},
+                title={self.title}, 
+                artist={self.artist}, 
+                grouping={self.grouping},
+                genre={self.genre},
+                disk={self.disc}/{self.disc_total},
+                year={self.year},
+                chapter_text={self.chapter_text},
+                chapter_method={self.chapter_method},
+                comment={self.comment},
+                cover_art={self.has_cover_art()},
+                tracks={self.tracks},
+                ]"""

@@ -15,6 +15,7 @@ import wx.lib.newevent
 
 from ivonet.events import ee, log, dbg
 from ivonet.events.custom import EVT_PROCESS_DONE
+from ivonet.io.save import save_project
 from ivonet.model.Project import Project
 from ivonet.threading.ProjectConverterWorker import ProjectConverterWorker
 
@@ -33,9 +34,8 @@ class AudiobookEntry(wx.Panel):
 
         self.filename = wx.StaticText(self, wx.ID_ANY,
                                       project.title)  #
-        # TODO Tooltip with with complete representation of the book?
-        sizer.Add(self.filename, 5, wx.ALIGN_CENTER_VERTICAL, 0)
         self.filename.SetToolTip(str(project))
+        sizer.Add(self.filename, 5, wx.ALIGN_CENTER_VERTICAL, 0)
 
         self.elapsed = wx.StaticText(self, wx.ID_ANY, "00:00:00")
         sizer.Add(self.elapsed, 1, wx.ALIGN_CENTER_VERTICAL, 0)
@@ -55,6 +55,7 @@ class AudiobookEntry(wx.Panel):
         sizer.Add((10, 10), 0, 0, 0)
         self.SetSizer(sizer)
 
+        self.Bind(wx.EVT_LEFT_DCLICK, self.on_save, self)
         self.Layout()
         ee.on("process.exception", self.ee_exception)
         self.process = ProjectConverterWorker(self, self.project)
@@ -95,3 +96,7 @@ class AudiobookEntry(wx.Panel):
     # noinspection PyUnusedLocal
     def on_time_indicator(self, event):
         self.elapsed.SetLabel(time.strftime("%H:%M:%S", time.gmtime(time.perf_counter() - self.start_time)))
+
+    def on_save(self, event):
+        dbg("on_save event!")
+        save_project(self, self.project)

@@ -61,7 +61,9 @@ CHAPTER_LIST = [
     "Based on mp3 length",
     "Fixed 3 minutes",
     "Fixed 10 minutes",
+    "Fixed 15 minutes",
     "Fixed 30 minutes",
+    "Fixed 45 minutes",
     "Fixed 60 minutes"
 ]
 

@@ -22,6 +22,7 @@ from ivonet.events import ee, dbg, log
 from ivonet.gui.MainPanel import MainPanel
 from ivonet.gui.MenuBar import MenuBar, FILE_MENU_QUEUE
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
+from ivonet.io.save import save_project
 from ivonet.model.Project import Project
 
 try:
@@ -43,6 +44,7 @@ class MainFrame(wx.Frame):
         super().__init__(*args, **kw)
 
         self.project = Project()
+        self.default_save_path = ivonet.DEFAULT_SAVE_PATH
         wx.ArtProvider.Push(IvoNetArtProvider())
 
         self.SetSize((1024, 768))
@@ -145,17 +147,36 @@ class MainFrame(wx.Frame):
     # noinspection PyUnusedLocal
     def on_queue(self, event):
         status("Processing...")
-        # TODO Clean project on process (will also disable the process button)
-        #  Disables the process button
+        with wx.FileDialog(self, "Save XYZ file",
+                           defaultDir=self.default_save_path,
+                           defaultFile=self.project.final_name(),
+                           wildcard=ivonet.FILE_WILDCARD_M4B,
+                           style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return
+
+            # save the current contents in the file
+            pathname = fileDialog.GetPath()
+            if not pathname.endswith(".m4b"):
+                pathname += ".m4b"
+            self.project.m4b_name = pathname
+
         ee.emit("queue.project", self.project)
         self.on_clear(None)
         log("Queued audiobook for processing")
 
     # noinspection PyUnusedLocal
-    @staticmethod
-    def on_select_dir(event):
+    def on_select_dir(self, event):
         status("Select directory")
-        # TODO implement me or design something better like a global settings thingy to be saved on exit or sumsuch
+        with wx.DirDialog(self, "Choose a directory:",
+                          style=wx.DD_DEFAULT_STYLE
+                                | wx.DD_DIR_MUST_EXIST
+                                | wx.DD_CHANGE_DIR
+                          ) as dir_dialog:
+            if dir_dialog.ShowModal() == wx.ID_OK:
+                self.default_save_path = dir_dialog.GetPath()
+
         dbg("TODO: on_select_dir")
 
     # noinspection PyUnusedLocal
@@ -185,41 +206,7 @@ class MainFrame(wx.Frame):
     # noinspection PyUnusedLocal
     def on_save_project(self, event):
         status("Save Project")
-        filename = self.project.title or "Untitled"
-        filename += ".ivo"
-        base_dir = None
-        if self.project.name:
-            base_dir, filename = os.path.split(self.project.name)
-        elif self.project.tracks:
-            base_dir = os.path.split(self.project.tracks[0])[0]
-
-        default_dir = os.environ["HOME"] or os.getcwd()
-
-        # TODO use with... https://wxpython.org/Phoenix/docs/html/wx.FileDialog.html
-        save_dlg = wx.FileDialog(
-            self,
-            message="Save file as ...",
-            defaultDir=default_dir,
-            defaultFile=f"{filename}",
-            wildcard=ivonet.FILE_WILDCARD_PROJECT,
-            style=wx.FD_SAVE
-        )
-
-        save_dlg.SetFilterIndex(0)
-        if base_dir:
-            save_dlg.SetDirectory(base_dir)
-
-        if save_dlg.ShowModal() == wx.ID_OK:
-            path = save_dlg.GetPath()
-            if not path.endswith(".ivo"):
-                path += ".ivo"
-            with open(path, 'wb') as fo:
-                self.project.name = path
-                pickle.dump(self.project, fo)
-            ee.emit("project.history", path)
-            log(f'Saved to: {path}')
-
-        save_dlg.Destroy()
+        save_project(self, self.project)
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):
@@ -244,6 +231,7 @@ class MainFrame(wx.Frame):
         ini.add_section("Settings")
         ini.set('Settings', 'screen_size', str(self.GetSize()))
         ini.set('Settings', 'screen_pos', str(self.GetPosition()))
+        ini.set('Settings', 'default_save_path', self.default_save_path)
         with open(ivonet.SETTINGS_FILE, "w") as fp:
             ini.write(fp)
 
@@ -254,6 +242,7 @@ class MainFrame(wx.Frame):
             ini.read(ivonet.SETTINGS_FILE)
             self.SetSize(ast.literal_eval(ini.get('Settings', 'screen_size')))
             self.SetPosition(ast.literal_eval(ini.get('Settings', 'screen_pos')))
+            self.default_save_path = ini.get('Settings', 'default_save_path', fallback=ivonet.DEFAULT_SAVE_PATH)
         else:
             self.Center()
         ee.emit("project.load_history_file")

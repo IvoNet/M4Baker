@@ -123,14 +123,9 @@ class ProjectConverterWorker(object):
                 self.running = False
                 return
 
-            # TODO Check and select target folder
-            #  - its own method
             self.target.stage = 5
-            shutil.move(m4b, unique_name(os.path.join(os.environ["HOME"],
-                                                      "Music/" + self.project.final_name())))
-            self.target.update(50)
-            shutil.move(cover, unique_name(os.path.join(os.environ["HOME"],
-                                                        "Music/" + self.project.final_name(".png"))))
+            self.target.update(25)
+            shutil.move(m4b, unique_name(self.project.m4b_name))
             self.target.update(100)
 
             if self.keep_going:

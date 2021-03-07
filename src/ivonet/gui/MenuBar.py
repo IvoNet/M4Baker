@@ -34,12 +34,9 @@ class MenuBar(wx.MenuBar):
         file_menu.Append(wx.ID_OPEN, "Open... \tCTRL-O")
         file_menu.Append(wx.ID_SAVE, "Save... \tCTRL-S")
         file_menu.AppendSeparator()
-        file_menu.Append(FILE_MENU_QUEUE, "Process\tCTRL-A")
-        # file_menu.Append(FILE_MENU_STOP_PROCESS, "Stop Processing\tCTRL-E")
+        file_menu.Append(FILE_MENU_QUEUE, "Queue\tCTRL-A")
         file_menu.AppendSeparator()
         file_menu.Append(FILE_MENU_TO_DIR, "Select output folder\tCTRL-D")
-        # TODO Implement output folder selection
-        #  - default Music folder?
         file_menu.AppendSeparator()
         file_menu.Append(wx.ID_EXIT, "Quit\tCTRL-Q")
 
@@ -56,10 +53,8 @@ class MenuBar(wx.MenuBar):
         ee.on("project.history", self.ee_project_history)
         ee.on("project.load_history_file", self.ee_load_history_file)
 
-        # Create event handlers
         menu_handlers = [
             (FILE_MENU_QUEUE, self.parent.on_queue),
-            # (FILE_MENU_STOP_PROCESS, self.parent.on_stop_process),
             (wx.ID_NEW, self.parent.on_clear),
             (FILE_MENU_TO_DIR, self.parent.on_select_dir),
             (wx.ID_OPEN, self.parent.on_open_project),
@@ -95,7 +90,6 @@ class MenuBar(wx.MenuBar):
 
     def ee_load_history_file(self):
         """Loads last file history settings from disk"""
-        # TODO AutoSave option exists. should I use it?
         if os.path.isfile(ivonet.HISTORY_FILE):
             history_config = wx.FileConfig(localFilename=ivonet.HISTORY_FILE,
                                            style=wx.CONFIG_USE_LOCAL_FILE)

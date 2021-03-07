@@ -38,6 +38,16 @@ SETTINGS_DIRECTORY = data_directory(TXT_APP_NAME)
 if not os.path.isdir(SETTINGS_DIRECTORY):
     os.mkdir(SETTINGS_DIRECTORY)
 
+DEFAULT_SAVE_PATH = os.path.join(os.environ["HOME"], "Music")
+if not os.path.isdir(DEFAULT_SAVE_PATH):
+    DEFAULT_SAVE_PATH = os.path.join(os.environ["HOME"], "Documents")
+if not os.path.isdir(DEFAULT_SAVE_PATH):
+    DEFAULT_SAVE_PATH = os.path.join(os.environ["HOME"], "Downloads")
+if not os.path.isdir(DEFAULT_SAVE_PATH):
+    DEFAULT_SAVE_PATH = os.environ["HOME"]
+if not os.path.isdir(DEFAULT_SAVE_PATH):
+    DEFAULT_SAVE_PATH = "/"
+
 SETTINGS_FILE = os.path.join(SETTINGS_DIRECTORY, f"{TXT_APP_NAME}.ini")
 HISTORY_FILE = os.path.join(SETTINGS_DIRECTORY, f"{TXT_APP_NAME}.history")
 LOG_FILE = os.path.join(SETTINGS_DIRECTORY, f"{TXT_APP_NAME}.log")
@@ -74,12 +84,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-FILE_WILDCARD_PROJECT = "M4Baker (*.ivo)|*.ivo|" \
-                        "All files (*.*)|*.*"
-
-# TODO Implement the save project before queue functionality
-FILE_WILDCARD_M4B = "Audiobook (*.m4b)|*.m4b|" \
-                    "All files (*.*)|*.*"
+FILE_WILDCARD_PROJECT = "M4Baker (*.ivo)|*.ivo"
+FILE_WILDCARD_M4B = "Audiobook (*.m4b)|*.m4b"
 
 # Toolbar IDs
 TOOLBAR_ID_OPEN_PROJECT = 1

@@ -135,6 +135,13 @@ class ProjectConverterWorker(object):
             self.keep_going = False
 
     def merge_mp3_files(self, merged):
+
+        if len(self.project.tracks) == 1:
+            self.target.update(25)
+            shutil.copyfile(self.project.tracks[0], merged)
+            self.target.update(100)
+            return
+
         cmd = [ivonet.APP_MP3_BINDER, '-out', merged]
         [cmd.append(mp3) for mp3 in self.project.tracks]
 

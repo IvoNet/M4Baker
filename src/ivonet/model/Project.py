@@ -57,7 +57,7 @@ class Project(object):
         return False
 
     def get_comment(self):
-        return self.comment.replace('"', "").replace("\n", " ").replace("  ", " ").replace("\t", " ")
+        return self.comment.replace('"', "").replace("'", "").replace("  ", " ").replace("\t", " ")
 
     def __repr__(self) -> str:
         # TODO remove Attribute Error code as it is plumbing code to allow unpickle of objects not having m4b_name

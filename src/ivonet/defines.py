@@ -15,7 +15,23 @@ from ivonet.sys.application import data_directory
 TXT_APP_NAME = "M4Baker"
 HERE = os.path.abspath(os.path.dirname(__file__))
 RESOURCE = os.path.abspath(HERE + '/../resources/')
-ICON_APP = RESOURCE + "/yoda.png"
+ICON_APP = f"{RESOURCE}/yoda.png"
+
+APP_MP3_BINDER = f'{RESOURCE}/mp3binder'
+APP_FFMPEG = f'{RESOURCE}/ffmpeg'
+APP_ATOMIC_PARSLEY = f"{RESOURCE}/AtomicParsley"
+APP_MP4_CHAPS = f'{RESOURCE}/mp4chaps'
+APP_MP4_ART = f"{RESOURCE}/mp4art"
+if not os.path.isfile(APP_MP3_BINDER):
+    raise IOError("mp3binder not found. Are you sure you copied it to the resource folder? See the README.md")
+if not os.path.isfile(APP_FFMPEG):
+    raise IOError("ffmpeg not found. Are you sure you copied it to the resource folder? See the README.md")
+if not os.path.isfile(APP_ATOMIC_PARSLEY):
+    raise IOError("AtomicParsley not found. Are you sure you copied it to the resource folder? See the README.md")
+if not os.path.isfile(APP_MP4_CHAPS):
+    raise IOError("mp4chaps not found. Are you sure you copied it to the resource folder? See the README.md")
+if not os.path.isfile(APP_MP4_ART):
+    raise IOError("mp4art not found. Are you sure you copied it to the resource folder? See the README.md")
 
 SETTINGS_DIRECTORY = data_directory(TXT_APP_NAME)
 if not os.path.isdir(SETTINGS_DIRECTORY):
@@ -58,12 +74,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-FILE_WILDCARD = "M4Baker (*.ivo)|*.ivo|" \
-                "All files (*.*)|*.*"
+FILE_WILDCARD_PROJECT = "M4Baker (*.ivo)|*.ivo|" \
+                        "All files (*.*)|*.*"
+
+FILE_WILDCARD_M4B = "Audiobook (*.m4b)|*.m4b|" \
+                    "All files (*.*)|*.*"
 
 # Toolbar IDs
 TOOLBAR_ID_OPEN_PROJECT = 1
 TOOLBAR_ID_SAVE_PROJECT = 2
 TOOLBAR_ID_QUEUE = 3
 TOOLBAR_ID_SEPARATOR = 0
-

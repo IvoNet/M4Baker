@@ -166,7 +166,7 @@ class MainFrame(wx.Frame):
             message="Choose a file...",
             defaultDir=os.getcwd(),
             defaultFile="",
-            wildcard=ivonet.FILE_WILDCARD,
+            wildcard=ivonet.FILE_WILDCARD_PROJECT,
             style=wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST | wx.FD_PREVIEW
         )
         if open_dlg.ShowModal() == wx.ID_OK:
@@ -201,7 +201,7 @@ class MainFrame(wx.Frame):
             message="Save file as ...",
             defaultDir=default_dir,
             defaultFile=f"{filename}",
-            wildcard=ivonet.FILE_WILDCARD,
+            wildcard=ivonet.FILE_WILDCARD_PROJECT,
             style=wx.FD_SAVE
         )
 

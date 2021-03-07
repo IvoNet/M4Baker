@@ -219,8 +219,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.sc_disk_total.SetValue(project.disc_total)
         self.tc_year.SetValue(project.year)
         self.tc_comment.SetValue(project.comment)
-        self.Refresh()
-        self.Layout()
+        self.InitDialog()
 
     def ee_tracks_changed(self, tracks):
         """Handles the 'track.mp3' event to reset the whole space"""

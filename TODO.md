@@ -23,6 +23,7 @@
 
 ## Business logic
 
+* PRIO! Confirm Quit when processing or save state!!!
 * Set target dir (default = dir where mp3 came from unless there are more locations otherwise Music folder)
 * Extract number of processors
   * default all -1 for concurrent processes
@@ -52,6 +53,7 @@
   * Documentation
   * clean code
 * Replace current chapter duration with ffprod because it is more accurate now sometimes a few seconds off.
+
 * √ Dirty check for images (if stuff was done manually)
 * √ Save project?!
 * √ Clean project

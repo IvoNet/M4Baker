@@ -45,21 +45,21 @@
 * √ Set Fixed length (default is calculate but override checkbox)
 * X Convert cover to png
 * √ wrap mp3s into one file
-* Convert to m4a
-  * `ffmpeg -i "${GROUPED_MP3_NAME}" -v quiet -stats -threads 4 -vn -y -acodec aac -strict -2 -map_metadata 0 -map_metadata:s:a 0:s:a -ab "${BITRATE}"k -ar "${SAMPLERATE}" -ac 1 "${AUDIOBOOK}.m4a"`
-  * parse stats for progress
-* add Tags
-  * `AtomicParsley "${AUDIOBOOK}.m4a" --title "${TITLE}" --grouping "${GROUPING}" --sortOrder album "${GROUPING}" --album "${ALBUM}" --artist "${AUTHOR}" --genre "${GENRE}" --tracknum "${TRACK}" --disk "${TRACK}" --comment "${COMMENT}" --year "${YEAR}" --stik Audiobook --overWrite`
-* convert to m4b (see add Tags `--stik Audiobook --overWrite`)
-* Set Chapter info on m4b
-  * if chapter file: `mp4chaps -i "${AUDIOBOOK}.m4b"`
-  * if fixed length: `mp4chaps -e "${CHAPTER_LENGTH}" "${AUDIOBOOK}.m4b"`
-* Add CoverArt to m4b
-  * `mp4art --add "$(find . -name '*.jpg' | head -n 1)" "${AUDIOBOOK}.m4b"`
+* √ Convert to m4a
+  * √ parse stats for progress
+* √ add Tags
+  *
+  √ `AtomicParsley "${AUDIOBOOK}.m4a" --title "${TITLE}" --grouping "${GROUPING}" --sortOrder album "${GROUPING}" --album "${ALBUM}" --artist "${AUTHOR}" --genre "${GENRE}" --tracknum "${TRACK}" --disk "${TRACK}" --comment "${COMMENT}" --year "${YEAR}" --stik Audiobook --overWrite`
+* √ convert to m4b (see add Tags `--stik Audiobook --overWrite`)
+* √ Set Chapter info on m4b
+  * √ if chapter file: `mp4chaps -i "${AUDIOBOOK}.m4b"`
+  * √ if fixed length: `mp4chaps -e "${CHAPTER_LENGTH}" "${AUDIOBOOK}.m4b"`
+* √ Add CoverArt to m4b
+  * √ `mp4art --add "$(find . -name '*.jpg' | head -n 1)" "${AUDIOBOOK}.m4b"`
 * Move finished audiobook to target location
-* Clean temp space
+* √ Clean temp space
 * √ Create model
-* Create queue
+* √ Create queue
 * √ PyDoc
 * Unit tests for business logic.
 * Recent file history
@@ -68,10 +68,20 @@
   * √ Read history on startup
   * Delete history item if not exists anymore (on selecting it)
   * Remove history item if wanted
-* GUI enable/disable buttons and menu items if project not ready to
-  * Process
-  * already clean
-  * Can't stop what not has been started
-  * ?
+* √ GUI enable/disable buttons and menu items if project not ready to
+  * √ Process
+  * √ already clean
+  * √ Can't stop what not has been started
 * When loading a saved project check if all is still in order
   * Do the mp3 file references still exist?
+* Save queue on exit for continuation on restart
+* Remove from Queue when done
+* Choose output folder
+  * per project?
+  * default output folder?
+* Clean up GUI
+* Clean dbg() statements
+* Improve Log statements
+* Clean log on to big?!
+* Save project form queue
+  * if forgotten on double click?

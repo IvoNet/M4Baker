@@ -195,13 +195,14 @@ class MainFrame(wx.Frame):
 
         default_dir = os.environ["HOME"] or os.getcwd()
 
+        # TODO use with... https://wxpython.org/Phoenix/docs/html/wx.FileDialog.html
         save_dlg = wx.FileDialog(
             self,
             message="Save file as ...",
             defaultDir=default_dir,
             defaultFile=f"{filename}",
             wildcard=ivonet.FILE_WILDCARD,
-            style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
+            style=wx.FD_SAVE
         )
 
         save_dlg.SetFilterIndex(0)
@@ -239,7 +240,6 @@ class MainFrame(wx.Frame):
 
     def save_settings(self):
         """save_settings() -> Saves default settings to the application settings location"""
-        # TODO Add "recent" list
         ini = ConfigParser()
         ini.add_section("Settings")
         ini.set('Settings', 'screen_size', str(self.GetSize()))

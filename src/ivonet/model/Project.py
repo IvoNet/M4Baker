@@ -52,7 +52,7 @@ class Project(object):
         return "\n".join(ret)
 
     def verify(self) -> bool:
-        if self.name and self.title and self.tracks and self.artist and self.chapter_method and self.has_cover_art():
+        if self.title and self.tracks and self.artist and self.has_cover_art():
             return True
         return False
 
@@ -60,6 +60,7 @@ class Project(object):
         return self.comment.replace('"', "").replace("\n", " ").replace("  ", " ").replace("\t", " ")
 
     def __repr__(self) -> str:
+        # TODO remove Attribute Error code as it is plumbing code to allow unpickle of objects not having m4b_name
         try:
             return f"""Project [
     project_name={self.name},

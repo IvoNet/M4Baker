@@ -13,13 +13,13 @@ The design is with ease of use in mind.
     * Cover Art
     * MP3 files
 * When at least the mandatory fields are filled the "Queue" button will become available
-* When Queued processing of the project will begin, and a new project windows will be shown
+* When Queued processing of the project will begin, and the current project windows will be cleaned to start a new one.
 * The progress of all queued projects can be seen on the Queue tab.
 * In theory, you can Queue as many projects as you want, depending on the capacity of your machine.
 
 ![](doc/Screen-queue.png)
 
-* Processes that are stopped (x) or have failed for some reason (should be rare) will show as in red
+* Processes that are stopped (x) or have failed for some reason will show as in red
 * Successfully completed projects will show up green.
 * If a process has stopped you can use the (x) to remove it from the queue.
 

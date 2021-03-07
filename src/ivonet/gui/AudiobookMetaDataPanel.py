@@ -47,21 +47,21 @@ class AudiobookMetaDataPanel(wx.Panel):
         lbl_title = wx.StaticText(self, wx.ID_ANY, "Title")
         fgs_mp3_metadata.Add(lbl_title, 1, 0, 0)
 
-        self.tc_title = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.tc_title = wx.TextCtrl(self, wx.ID_ANY)
         self.tc_title.SetToolTip("Title of the book")
         fgs_mp3_metadata.Add(self.tc_title, 0, wx.EXPAND, 0)
 
         lbl_artist = wx.StaticText(self, wx.ID_ANY, "Artist")
         fgs_mp3_metadata.Add(lbl_artist, 0, wx.EXPAND, 0)
 
-        self.tc_artist = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.tc_artist = wx.TextCtrl(self, wx.ID_ANY)
         self.tc_artist.SetToolTip("The author or album artist")
         fgs_mp3_metadata.Add(self.tc_artist, 0, wx.EXPAND, 0)
 
         lbl_grouping = wx.StaticText(self, wx.ID_ANY, "Grouping")
         fgs_mp3_metadata.Add(lbl_grouping, 1, 0, 0)
 
-        self.tc_grouping = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.tc_grouping = wx.TextCtrl(self, wx.ID_ANY)
         self.tc_grouping.SetToolTip("Grouping e.g. series")
         fgs_mp3_metadata.Add(self.tc_grouping, 0, wx.EXPAND, 0)
 
@@ -170,8 +170,6 @@ class AudiobookMetaDataPanel(wx.Panel):
 
         self.SetSizer(hs_left_pnl_m4b_page)
 
-        self.Layout()
-
         # Bind the field events to methods
         self.Bind(wx.EVT_TEXT, self.on_title, self.tc_title)
         self.Bind(wx.EVT_TEXT, self.on_artist, self.tc_artist)
@@ -203,6 +201,8 @@ class AudiobookMetaDataPanel(wx.Panel):
         # 'dirty' flags
         self.genre_pristine = True
 
+        self.Layout()
+
     def ee_reset_metadata(self, project):
         """Handles the 'audiobook.new' event to reset the whole space"""
         self.project = project
@@ -219,6 +219,8 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.sc_disk_total.SetValue(project.disc_total)
         self.tc_year.SetValue(project.year)
         self.tc_comment.SetValue(project.comment)
+        self.Refresh()
+        self.Layout()
 
     def ee_tracks_changed(self, tracks):
         """Handles the 'track.mp3' event to reset the whole space"""

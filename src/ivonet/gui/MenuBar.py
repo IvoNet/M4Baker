@@ -34,7 +34,7 @@ class MenuBar(wx.MenuBar):
         file_menu.Append(wx.ID_OPEN, "Open... \tCTRL-O")
         file_menu.Append(wx.ID_SAVE, "Save... \tCTRL-S")
         file_menu.AppendSeparator()
-        file_menu.Append(FILE_MENU_QUEUE, "Queue\tCTRL-A")
+        file_menu.Append(FILE_MENU_QUEUE, "Queue\tCTRL-R")
         file_menu.AppendSeparator()
         file_menu.Append(FILE_MENU_TO_DIR, "Select output folder\tCTRL-D")
         file_menu.AppendSeparator()

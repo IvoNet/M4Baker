@@ -13,6 +13,7 @@ import os
 from ivonet.sys.application import data_directory
 
 TXT_APP_NAME = "M4Baker"
+TXT_APP_TINY_URL = "http://ivo2u.nl/ZR"
 HERE = os.path.abspath(os.path.dirname(__file__))
 RESOURCE = os.path.abspath(HERE + '/../resources/')
 ICON_APP = f"{RESOURCE}/yoda.png"
@@ -77,6 +78,7 @@ limitations under the License.
 FILE_WILDCARD_PROJECT = "M4Baker (*.ivo)|*.ivo|" \
                         "All files (*.*)|*.*"
 
+# TODO Implement the save project before queue functionality
 FILE_WILDCARD_M4B = "Audiobook (*.m4b)|*.m4b|" \
                     "All files (*.*)|*.*"
 

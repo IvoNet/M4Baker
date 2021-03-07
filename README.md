@@ -1,6 +1,6 @@
 # M4B Baker
 
-This audiobook maker is an attempt to make a gui application for my
+This audiobook maker is an attempt to make a gui application as more beautiful macOS replacement for my
 [m4b](https://github.com/IvoNet/docker-mediatools/blob/master/bin/m4b) command-line tool
 
 # Requirements
@@ -10,11 +10,10 @@ This audiobook maker is an attempt to make a gui application for my
 To be placed in src/resources:
 
 - ffmpeg (brew install ffmpeg)
-- ffprobe
 - mp4chaps (brew install mp4v2)
-- mp4art
+- mp4art (brew install mp4v2)
 - AtomicParsley (brew install AtomicParsley)
-- mp3binder (build from source https://github.com/crra/mp3binder)
+- mp3binder (build from source: https://github.com/crra/mp3binder)
 
 how...
 
@@ -55,7 +54,7 @@ source venv/bin/activate
 ```
 
 The clean option will first remove the build and dist folder before rendering all the images to the
-ivonet.image.images.py file and building the application
+ivonet/image/images.py file and building the application
 
 See also the build.sh script
 

@@ -5,7 +5,7 @@ __revised__ = "$revised: 2021-03-04 22:53:09$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
-Yup the Queue Panel. 
+Yup the Queue Panel Scrollable window. 
 """
 
 import wx

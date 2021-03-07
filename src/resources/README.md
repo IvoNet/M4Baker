@@ -1,10 +1,11 @@
 # Needed Files
 
-- ffmpeg / ffprobe
+- ffmpeg
 - mp4v2: mp4art / mp4chaps
 - AtomicParsley
+- mp3binder (https://github.com/crra/mp3binder)
 
-The license files explain the contraints. In this application only binary versions are distributed build from an
+The license files explain the constraints. In this application only binary versions are distributed build from an
 unchanged codebase.
 
 # ffmpeg
@@ -18,6 +19,10 @@ unchanged codebase.
 # mp4v2
 
 * Version: 2.0.0
+
+# mp3binder
+
+* Version used: 3.0.0-1-g7e2e54c
 
 # Installation
 

@@ -21,6 +21,4 @@ echo "Building..."
 echo "Building the m4baker.app"
 pyinstaller --noconsole -y m4baker.spec
 
-if [ "$1" == "clean" ]; then
-  ./tag.sh
-fi
+./tag.sh

@@ -1,9 +1,40 @@
 # M4B Baker
 
-This audiobook maker is an attempt to make a gui application as more beautiful macOS replacement for my
-[m4b](https://github.com/IvoNet/docker-mediatools/blob/master/bin/m4b) command-line tool
+M4Baker bakes mp3 files to Audiobook format (m4b).
 
-# Requirements
+I am building it with my personal wishes and needs in mind as I am the developer and the main user :-)
+The design is with ease of use in mind.
+
+![](doc/Screen-meta.png)
+
+* Mandatory fields
+    * Title
+    * Artist
+    * Cover Art
+    * MP3 files
+* When at least the mandatory fields are filled the "Queue" button will become available
+* When Queued processing of the project will begin, and a new project windows will be shown
+* The progress of all queued projects can be seen on the Queue tab.
+* In theory, you can Queue as many projects as you want, depending on the capacity of your machine.
+
+![](doc/Screen-queue.png)
+
+* Processes that are stopped (x) or have failed for some reason (should be rare) will show as in red
+* Successfully completed projects will show up green.
+* If a process has stopped you can use the (x) to remove it from the queue.
+
+## Download release
+
+* TODO no official release has been made yet als I am very much in testing phase now, but you can build from source. for
+  instructions see the Developers section. Richt now I am building this with a MacBook in mind but as it is written in
+  Python with wxPython it should be portable to Windows / Linux? I will probably not invest any time it porting, but if
+  you want to collaborate or improve the code in any other way please drop me a PM on twitter @ivonet.
+
+* As of version 0.1.2 (see tags) it should build into a fully working version with lots of rough edges (very alpha!)
+
+# If you are a Developers
+
+# # Requirements
 
 - Python 3.9 (brew install python)
 
@@ -65,3 +96,13 @@ See also the build.sh script
 ```
 
 This script will convert all the ./images/*.{bmp,png} images to a format easily understood by wxPython.
+
+## Collaboration
+
+If you want to collaborate on this project to improve it or give in more functionality please drop me a PM on twitter (
+@ivonet)
+
+# See also
+
+* Command line tool doing the [here](https://github.com/IvoNet/docker-mediatools/)
+* [My Blog](https://www.ivonet.nl) 

@@ -13,7 +13,7 @@ import time
 import wx
 import wx.lib.newevent
 
-from ivonet.events import log
+from ivonet.events import ee, log, dbg
 from ivonet.events.custom import EVT_PROCESS_DONE
 from ivonet.model.Project import Project
 from ivonet.threading.ProjectConverterWorker import ProjectConverterWorker
@@ -35,6 +35,7 @@ class AudiobookEntry(wx.Panel):
                                       project.title)  #
         # TODO Tooltip with with complete representation of the book?
         sizer.Add(self.filename, 5, wx.ALIGN_CENTER_VERTICAL, 0)
+        self.filename.SetToolTip(str(project))
 
         self.elapsed = wx.StaticText(self, wx.ID_ANY, "00:00:00")
         sizer.Add(self.elapsed, 1, wx.ALIGN_CENTER_VERTICAL, 0)
@@ -55,6 +56,7 @@ class AudiobookEntry(wx.Panel):
         self.SetSizer(sizer)
 
         self.Layout()
+        ee.on("process.exception", self.ee_exception)
         self.process = ProjectConverterWorker(self, self.project)
 
     def start(self):
@@ -67,7 +69,6 @@ class AudiobookEntry(wx.Panel):
 
     # noinspection PyUnusedLocal
     def stop(self):
-        log(f"Finished converting: {self.project.final_name()}")
         self.process.stop()
         self.refresh_timer.Stop()
         self.running = False
@@ -83,6 +84,12 @@ class AudiobookEntry(wx.Panel):
     # noinspection PyUnusedLocal
     def on_done(self, event):
         self.progress.SetBackgroundColour(wx.GREEN)
+        self.stop()
+
+    def ee_exception(self, cmd, project):
+        log("Processing stopped because an error occurred:", project.title)
+        dbg("Processing error", str(cmd))
+        self.progress.SetBackgroundColour(wx.RED)
         self.stop()
 
     # noinspection PyUnusedLocal

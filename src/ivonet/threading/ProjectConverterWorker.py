@@ -21,7 +21,7 @@ import wx.lib.newevent
 
 import ivonet
 from ivonet.book.meta import CHAPTER_LIST
-from ivonet.events import dbg, log
+from ivonet.events import dbg, log, ee
 from ivonet.events.custom import ProcessDoneEvent
 from ivonet.io import unique_name
 from ivonet.model.Project import Project
@@ -74,6 +74,7 @@ class ProjectConverterWorker(object):
             merged = os.path.join(project_tmpdir, "merged.mp3")
             self.merge_mp3_files(merged)
 
+            dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False
@@ -84,6 +85,7 @@ class ProjectConverterWorker(object):
             m4a = os.path.join(project_tmpdir, "converted.m4a")
             self.convert_2_m4a(merged, m4a)
 
+            dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False
@@ -93,6 +95,7 @@ class ProjectConverterWorker(object):
             self.target.stage = 2
             self.add_metadata(m4a)
 
+            dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False
@@ -103,6 +106,7 @@ class ProjectConverterWorker(object):
             m4b = os.path.join(project_tmpdir, "converted.m4b")
             self.create_chapters(project_tmpdir, m4b)
 
+            dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False
@@ -113,6 +117,7 @@ class ProjectConverterWorker(object):
             cover = os.path.join(project_tmpdir, "cover.png")
             self.add_cover_art(cover, m4b)
 
+            dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False
@@ -149,6 +154,7 @@ class ProjectConverterWorker(object):
             except UnicodeDecodeError:
                 #  just skip a line
                 continue
+            dbg(line)
             if not line:
                 dbg(f"Finished Merge for: {self.project.title}")
                 break
@@ -185,6 +191,7 @@ class ProjectConverterWorker(object):
             if not line:
                 dbg(f"Conversion finished for: {self.project.title}")
                 break
+            dbg(line)
             duration = self.DURATION.match(line)
             if duration:
                 self.total_duration = time_seconds(duration.groups())
@@ -214,8 +221,8 @@ class ProjectConverterWorker(object):
             "--disk", f"{self.project.disc}/{self.project.disc_total}",
             "--comment", f"{self.project.get_comment()}",
             "--year", f"{self.project.year}",
-            "--encodingTool", f"{ivonet.TXT_APP_NAME} ({ivonet.TXT_APP_TINY_URL})"
-                              "--stik", "Audiobook",
+            "--encodingTool", f"{ivonet.TXT_APP_NAME} ({ivonet.TXT_APP_TINY_URL})",
+            "--stik", "Audiobook",
             "--overWrite"
         ]
         self.subprocess(cmd)
@@ -230,6 +237,7 @@ class ProjectConverterWorker(object):
             if not line:
                 dbg(f"Finished Adding metadata to {self.project.title}")
                 break
+            dbg(line)
             if "Progress:" in line:
                 ret = line.split("%")
                 if len(ret) > 1:
@@ -269,6 +277,7 @@ class ProjectConverterWorker(object):
             if not line:
                 dbg(f"Chapter information done: {self.project.title}")
                 break
+            dbg(line)
             if "QuickTime" in line:
                 self.target.update(50)
         self.__check_process(cmd)
@@ -296,6 +305,7 @@ class ProjectConverterWorker(object):
             if not line:
                 dbg(f"Finished Adding Cover Art to {self.project.title}")
                 break
+            dbg(line)
             if "adding" in line:
                 self.target.update(50)
         self.__check_process(cmd)
@@ -329,4 +339,6 @@ class ProjectConverterWorker(object):
         if self.process.returncode != 0 and self.keep_going:
             # Only throw an exception if the process terminated wrong
             # but we wanted to keep going
-            raise subprocess.CalledProcessError(self.process.returncode, cmd)
+            self.keep_going = False
+            dbg("Process exitcode: ", self.process.returncode)
+            ee.emit("process.exception", cmd, self.project)

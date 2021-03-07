@@ -57,7 +57,6 @@ ART_PREFIX = "inART_"
 # texts
 TXT_DESCRIPTION_BLOG = "Ivo's blog"
 TXT_URL_BLOG = "https://www.ivonet.nl"
-TXT_COMMENT = "Converted with M4Baker.\nhttps://github.com/IvoNet/ivonet-audiobook"
 TXT_COPYRIGHT = "M4Baker (c) 2021 Ivo Woltring"
 TXT_ABOUT_DESCRIPTION = """Converts mp3 files to m4b with metadata and chapter information"""
 TXT_LICENSE = """Copyright 2021 Ivo Woltring

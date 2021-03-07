@@ -10,7 +10,6 @@ The idea is that this project can be Pickled to a file and restored again to get
 Audiobook configuration.
 """
 
-import ivonet
 from ivonet.model.Track import Track
 
 
@@ -24,7 +23,7 @@ class Project(object):
         self.genre = "Urban Fantasy"
         self.chapter_text = "Chapter"
         self.chapter_method = "Based on mp3 length"
-        self.comment = ivonet.TXT_COMMENT
+        self.comment = ""
         self.disc = 1
         self.disc_total = 1
         self.year = ""

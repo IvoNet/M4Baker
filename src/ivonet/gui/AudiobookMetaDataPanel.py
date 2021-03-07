@@ -10,7 +10,6 @@ The Audiobook Metadata Panel for all tags.
 
 import wx
 
-import ivonet
 from ivonet.book.meta import GENRES, CHAPTER_LIST
 from ivonet.events import ee, log
 from ivonet.gui.CoverArtStaticBitmap import CoverArtStaticBitmap
@@ -141,7 +140,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         lbl_comment = wx.StaticText(self, wx.ID_ANY, "Comment")
         vs_comment_1.Add(lbl_comment, 0, wx.LEFT, 0)
 
-        self.tc_comment = wx.TextCtrl(self, wx.ID_ANY, ivonet.TXT_COMMENT, style=wx.TE_MULTILINE)
+        self.tc_comment = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_MULTILINE)
         self.tc_comment.SetToolTip("Add your comments here")
         vs_comment_1.Add(self.tc_comment, 2, wx.EXPAND, 0)
 
@@ -354,7 +353,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         or manually this event can be ignored.
         This event is less important then manual or previous set values.
         """
-        if self.tc_comment.IsEmpty() or self.tc_comment.GetValue() == ivonet.TXT_COMMENT:
+        if self.tc_comment.IsEmpty():
             self.tc_comment.SetValue(value)
 
     def check_disc(self):

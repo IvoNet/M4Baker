@@ -2,14 +2,13 @@
 
 VERSION=$(<./VERSION)
 
-if [[ $(git diff --stat) != '' ]]; then
-  echo 'dirty'
-else
-  echo 'clean'
-fi
-
 git add VERSION
 git commit -m "v${VERSION}"
-git push
-git tag "v${VERSION}"
-git push --tags
+
+if [[ $(git diff --stat) == '' ]]; then
+  git tag "v${VERSION}"
+  git push --tags
+else
+  echo "Git is dirty... not tagging a version"
+  exit 1
+fi

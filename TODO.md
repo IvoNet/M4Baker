@@ -51,6 +51,7 @@
   * Process TODO's
   * Documentation
   * clean code
+* Replace current chapter duration with ffprod because it is more accurate now sometimes a few seconds off.
 * √ Dirty check for images (if stuff was done manually)
 * √ Save project?!
 * √ Clean project

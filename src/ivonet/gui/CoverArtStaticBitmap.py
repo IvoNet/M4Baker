@@ -12,7 +12,7 @@ from io import BytesIO
 
 import wx
 
-from ivonet.events import log, ee
+from ivonet.events import log, ee, dbg
 from ivonet.gui.CoverArtDropTarget import CoverArtDropTarget
 from ivonet.image.images import yoda
 
@@ -67,9 +67,14 @@ class CoverArtStaticBitmap(wx.StaticBitmap):
         """
         log("Setting Cover Art")
         self.dirty()
-        img = wx.Image(BytesIO(image), wx.BITMAP_TYPE_ANY)
-        width = img.GetWidth()
-        height = img.GetHeight()
+        try:
+            img = wx.Image(BytesIO(image), wx.BITMAP_TYPE_ANY)
+            width = img.GetWidth()
+            height = img.GetHeight()
+        except AssertionError as e:
+            dbg(e)
+            log("CoverArt found but unknown format")
+            return
         if width > height:
             new_width = self.PhotoMaxSize
             new_height = self.PhotoMaxSize * height / width

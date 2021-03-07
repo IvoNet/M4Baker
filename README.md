@@ -25,12 +25,31 @@ The design is with ease of use in mind.
 
 ## Download release
 
-* TODO no official release has been made yet als I am very much in testing phase now, but you can build from source. for
-  instructions see the Developers section. Richt now I am building this with a MacBook in mind but as it is written in
-  Python with wxPython it should be portable to Windows / Linux? I will probably not invest any time it porting, but if
-  you want to collaborate or improve the code in any other way please drop me a PM on twitter @ivonet.
+* TODO no release has been made yet als I am very much in testing and tuning phase now, but you can build or run from
+  source. for instructions see the Developers section. Richt now I am building this with a MacBook in mind but as it is
+  written in Python with wxPython it should be portable to Windows / Linux? I will probably not invest any time it
+  porting, but if you want to collaborate or improve the code in any other way please drop me a PM on Twitter (@ivonet).
 
-* As of version 0.1.2 (see tags) it should build into a fully working version with lots of rough edges (very alpha!)
+* As of version 0.1.2 it should build into a kinda "fully" working version with lots of rough edges
+  (very alpha!)
+
+## Extra note
+
+* I write this software as OpenSource and don't expect to be paid for it. I write this stuff for myself and that makes
+  me happy.
+* These are the consequences of writing free software:
+    * I am not in the position to [sign](https://developer.apple.com/developer-id/) my code
+      "The Apple Way" as I am not prepared to pay $99 a year to give away (less than) free software 😄. This means that
+      you might have to perform some extra steps to be able to run a (possible future) distribution on your machine.
+    * You can not expect support from me in any way. As long as I am happy with how it works I hope you like it to.
+      Feature requests will only be honoured if I see a benefit in it. You are of course always free to create a Pull
+      Request with your proposed feature.
+
+# Donations / Appreciation
+
+* If you like this software and think I deserve a nice cold beer, or a good cup of coffee you can consider giving me
+  a [donation](http://ivo2u.nl/Zc).
+* Just showing your appreciation on Twitter is almost just as nice!
 
 # If you are a Developers
 

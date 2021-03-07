@@ -19,9 +19,9 @@ The design is with ease of use in mind.
 
 ![](doc/Screen-queue.png)
 
-* Processes that are stopped (x) or have failed for some reason will show as in red
+* Processes that are stopped (x) or have failed for some reason will show in red
 * Successfully completed projects will show up green.
-* If a process has stopped you can use the (x) to remove it from the queue.
+* A stopped process can be removed from the queue by using the (x) in the entry.
 
 ## Download release
 

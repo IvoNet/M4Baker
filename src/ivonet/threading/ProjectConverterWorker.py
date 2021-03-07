@@ -221,7 +221,7 @@ class ProjectConverterWorker(object):
             "--genre", f"{self.project.genre}",
             "--tracknum", f"{self.project.disc}/{self.project.disc_total}",
             "--disk", f"{self.project.disc}/{self.project.disc_total}",
-            "--comment", f"{self.project.get_comment()}",
+            "--comment", f"""{self.project.get_comment()}""",
             "--year", f"{self.project.year}",
             "--encodingTool", f"{ivonet.TXT_APP_NAME} ({ivonet.TXT_APP_TINY_URL})",
             "--stik", "Audiobook",

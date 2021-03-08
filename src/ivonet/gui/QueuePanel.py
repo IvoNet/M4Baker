@@ -45,3 +45,7 @@ class QueuePanel(wx.ScrolledWindow):
         self.Layout()
         self.queue.append(book)
         book.start()
+
+    def remove(self, entry: AudiobookEntry):
+        self.queue.remove(entry)
+        entry.Destroy()

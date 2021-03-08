@@ -39,7 +39,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         hs_left_pnl_m4b_page = wx.BoxSizer(wx.HORIZONTAL)
 
         fgs_lft_pnl_m4b_page = wx.FlexGridSizer(3, 1, 4, 0)
-        hs_left_pnl_m4b_page.Add(fgs_lft_pnl_m4b_page, 1, wx.ALL | wx.EXPAND, 0)
+        hs_left_pnl_m4b_page.Add(fgs_lft_pnl_m4b_page, 1, wx.ALL | wx.EXPAND)
 
         fgs_mp3_metadata = wx.FlexGridSizer(6, 2, 4, 16)
         fgs_lft_pnl_m4b_page.Add(fgs_mp3_metadata, 1, wx.EXPAND, 0)
@@ -47,7 +47,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         lbl_title = wx.StaticText(self, wx.ID_ANY, "Title")
         fgs_mp3_metadata.Add(lbl_title, 1, 0, 0)
 
-        self.tc_title = wx.TextCtrl(self, wx.ID_ANY)
+        self.tc_title = wx.TextCtrl(self, style=wx.TE_LEFT)
         self.tc_title.SetToolTip("Title of the book")
         fgs_mp3_metadata.Add(self.tc_title, 0, wx.EXPAND, 0)
 
@@ -210,6 +210,7 @@ class AudiobookMetaDataPanel(wx.Panel):
         if not project.has_cover_art():
             self.cover_art.reset()
         self.tc_title.SetValue(project.title)
+        self.tc_title.Refresh()
         self.tc_artist.SetValue(project.artist)
         self.tc_grouping.SetValue(project.grouping)
         self.cb_genre.SetValue(project.genre)
@@ -219,7 +220,6 @@ class AudiobookMetaDataPanel(wx.Panel):
         self.sc_disk_total.SetValue(project.disc_total)
         self.tc_year.SetValue(project.year)
         self.tc_comment.SetValue(project.comment)
-        self.InitDialog()
 
     def ee_tracks_changed(self, tracks):
         """Handles the 'track.mp3' event to reset the whole space"""
@@ -231,7 +231,7 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_title(self, event):
         """Handler for the title field event"""
         self.project.title = event.GetString()
-        event.StopPropagation()
+        # event.StopPropagation()
 
     def ee_on_title(self, value):
         """Handler for the 'track.title' event.
@@ -245,7 +245,7 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_artist(self, event):
         """Handler for the artist field event"""
         self.project.artist = event.GetString()
-        event.StopPropagation()
+        # event.StopPropagation()
 
     def ee_on_artist(self, value):
         """Handler for the 'track.artist' event.
@@ -259,7 +259,7 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_grouping(self, event):
         """Handler for the grouping field event"""
         self.project.grouping = event.GetString()
-        event.StopPropagation()
+        # event.StopPropagation()
 
     def ee_on_grouping(self, value):
         """Handler for the 'track.grouping' event.
@@ -273,7 +273,7 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_genre(self, event):
         """Handler for the genre field event"""
         self.project.genre = event.GetString()
-        event.StopPropagation()
+        # event.StopPropagation()
 
     def ee_on_genre(self, value):
         """Handler for the 'track.title' event.
@@ -292,19 +292,19 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_chapter_text(self, event):
         """Handler for the chapter text field event"""
         self.project.chapter_text = event.GetString()
-        event.StopPropagation()
+        # event.StopPropagation()
 
     def on_chapter_method(self, event):
         """Handler for the chapter convert method field event"""
         self.project.chapter_method = event.GetString()
-        event.StopPropagation()
+        # event.StopPropagation()
 
     def on_disc(self, event):
         """Handler for the disc and disc_total field events as they are linked"""
         self.check_disc()
         self.project.disc = self.sc_disc.GetValue()
         self.project.disc_total = self.sc_disk_total.GetValue()
-        event.StopPropagation()
+        # event.StopPropagation()
 
     def ee_on_disc(self, value):
         """Handler for the 'track.disc' event.
@@ -323,7 +323,7 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_year(self, event):
         """Handler for the year field event"""
         self.project.year = event.GetString()
-        event.StopPropagation()
+        # event.StopPropagation()
 
     def ee_on_year(self, value):
         """Handler for the 'track.year' event.
@@ -337,7 +337,7 @@ class AudiobookMetaDataPanel(wx.Panel):
     def on_comment(self, event):
         """Handler for the comment field event"""
         self.project.comment = event.GetString()
-        event.StopPropagation()
+        # event.StopPropagation()
 
     def ee_on_comment(self, value):
         """Handler for the 'track.comment' event.

@@ -74,7 +74,7 @@ class ProjectConverterWorker(object):
             merged = os.path.join(project_tmpdir, "merged.mp3")
             self.merge_mp3_files(merged)
 
-            dbg(os.system(f"ls -lsa {project_tmpdir}"))
+            # dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False
@@ -85,7 +85,7 @@ class ProjectConverterWorker(object):
             m4a = os.path.join(project_tmpdir, "converted.m4a")
             self.convert_2_m4a(merged, m4a)
 
-            dbg(os.system(f"ls -lsa {project_tmpdir}"))
+            # dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False
@@ -95,7 +95,7 @@ class ProjectConverterWorker(object):
             self.target.stage = 2
             self.add_metadata(m4a)
 
-            dbg(os.system(f"ls -lsa {project_tmpdir}"))
+            # dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False
@@ -106,7 +106,7 @@ class ProjectConverterWorker(object):
             m4b = os.path.join(project_tmpdir, "converted.m4b")
             self.create_chapters(project_tmpdir, m4b)
 
-            dbg(os.system(f"ls -lsa {project_tmpdir}"))
+            # dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False
@@ -117,7 +117,7 @@ class ProjectConverterWorker(object):
             cover = os.path.join(project_tmpdir, "cover.png")
             self.add_cover_art(cover, m4b)
 
-            dbg(os.system(f"ls -lsa {project_tmpdir}"))
+            # dbg(os.system(f"ls -lsa {project_tmpdir}"))
             self.process = None
             if not self.keep_going:
                 self.running = False

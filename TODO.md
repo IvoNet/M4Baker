@@ -13,17 +13,20 @@
 * √ Create Log Dialog
 * √ Create process dialog
 * √ Create About dialog
-* Application Settings Panel (ini file)
+* √ Application Settings Panel (ini file)
   * √ where to save this? ~/Library/Application Support/m4baker or something?
   * √ Save Screen size
   * √ Save Screen position
-  * Default work base dir location
+  * √ Default work base dir location
 * √ Drag and Drop panel for mp3
 * √ Drag and Drop panel for Cover art
 
 ## Business logic
 
 * PRIO! Confirm Quit when processing or save state!!!
+* Improve the queue tooltip... "remove the tracks? just metadata?" sometimes too big if many tracks
+* Open a *.ivo file with M4Baker by double clicking in Finder
+* Default save audiobook location to same location as mp3files? (not sure or an option?)
 * Set target dir (default = dir where mp3 came from unless there are more locations otherwise Music folder)
 * Extract number of processors
   * default all -1 for concurrent processes
@@ -88,7 +91,7 @@
 * √ Create model
 * √ Create queue
 * √ PyDoc
-* Unit tests for business logic.
+* X Unit tests for business logic.
 * √ GUI enable/disable buttons and menu items if project not ready to
   * √ Process
   * √ already clean

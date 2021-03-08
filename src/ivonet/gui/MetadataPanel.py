@@ -29,7 +29,7 @@ class MetadataPanel(wx.Panel):
         self.sw_m4b_page.SetMinimumPaneSize(350)
         hs_m4bpage.Add(self.sw_m4b_page, 1, wx.EXPAND, 0)
 
-        self.pnl_left_m4b_page = AudiobookMetaDataPanel(self.sw_m4b_page, wx.ID_ANY)
+        self.pnl_left_m4b_page = AudiobookMetaDataPanel(self.sw_m4b_page, -1)
 
         self.pnl_right_m4b_page = MP3FilePanel(self.sw_m4b_page, wx.ID_ANY)
 

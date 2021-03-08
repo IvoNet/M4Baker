@@ -20,8 +20,8 @@ class NoteBook(wx.Notebook):
         kwds["style"] = kwds.get("style", 0) | wx.NB_TOP
         wx.Notebook.__init__(self, *args, **kwds)
 
-        self.nb_m4b_page = MetadataPanel(self, wx.ID_ANY)
-        self.AddPage(self.nb_m4b_page, "Audio")
+        self.nb_m4b_page = MetadataPanel(self, -1)
+        self.AddPage(self.nb_m4b_page, "Metadata")
 
         self.main_notebook_Queue = QueuePanel(self, wx.ID_ANY)
         self.AddPage(self.main_notebook_Queue, "Queue")

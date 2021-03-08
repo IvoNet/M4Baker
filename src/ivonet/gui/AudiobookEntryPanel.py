@@ -80,7 +80,7 @@ class AudiobookEntry(wx.Panel):
             self.stop()
             self.progress.SetBackgroundColour(wx.RED)
         else:
-            self.Destroy()
+            self.parent.remove(self)
 
     # noinspection PyUnusedLocal
     def on_done(self, event):

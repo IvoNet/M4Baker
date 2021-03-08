@@ -19,8 +19,8 @@ from wx.lib.wordwrap import wordwrap
 
 import ivonet
 from ivonet.events import ee, dbg, log
-from ivonet.gui.MainPanel import MainPanel
 from ivonet.gui.MenuBar import MenuBar, FILE_MENU_QUEUE
+from ivonet.gui.NoteBook import NoteBook
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
 from ivonet.io.save import save_project
 from ivonet.model.Project import Project
@@ -47,7 +47,7 @@ class MainFrame(wx.Frame):
         self.default_save_path = ivonet.DEFAULT_SAVE_PATH
         wx.ArtProvider.Push(IvoNetArtProvider())
 
-        self.SetSize((1024, 768))
+        self.SetSize((1500, 1200))
         self.SetMinSize((1024, 768))
 
         self.__make_toolbar()
@@ -65,7 +65,13 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.on_verify_project, self.verify_project_timer)
         self.verify_project_timer.Start(500)
 
-        self.main_panel = MainPanel(self, wx.ID_ANY)
+        sizer_main_panel = wx.BoxSizer(wx.VERTICAL)
+
+        self.main_notebook = NoteBook(self, -1)
+        sizer_main_panel.Add(self.main_notebook, 1, wx.ALL | wx.EXPAND, 0)
+
+        self.SetSizer(sizer_main_panel)
+
         self.load_settings()
         self.Layout()
         self.init()
@@ -162,6 +168,7 @@ class MainFrame(wx.Frame):
                 pathname += ".m4b"
             self.project.m4b_name = pathname
 
+        # self.main_notebook.SetSelection(1)  # Queue Page
         ee.emit("queue.project", self.project)
         self.on_clear(None)
         log("Queued audiobook for processing")
@@ -181,6 +188,7 @@ class MainFrame(wx.Frame):
 
     # noinspection PyUnusedLocal
     def on_open_project(self, event):
+        self.main_notebook.SetSelection(0)
         status("Open Project")
         open_dlg = wx.FileDialog(
             self,
@@ -199,6 +207,7 @@ class MainFrame(wx.Frame):
 
     def ee_project_open(self, path):
         """Handler for th 'project.open' event and the Project open dialog"""
+        self.main_notebook.SetSelection(0)  # metadata page
         with open(path, 'rb') as fi:
             self.project = pickle.load(fi)
             self.new_project()
@@ -206,11 +215,13 @@ class MainFrame(wx.Frame):
     # noinspection PyUnusedLocal
     def on_save_project(self, event):
         status("Save Project")
+        self.main_notebook.SetSelection(0)
         save_project(self, self.project)
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):
         status("Starting new project")
+        self.main_notebook.SetSelection(0)  # The Metadata Page
         self.project = Project()
         self.new_project()
 

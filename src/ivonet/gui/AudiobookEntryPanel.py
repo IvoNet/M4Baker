@@ -22,7 +22,7 @@ from ivonet.threading.ProjectConverterWorker import ProjectConverterWorker
 
 class AudiobookEntry(wx.Panel):
     def __init__(self, parent, project: Project, panel_id=wx.ID_ANY):
-        wx.Panel.__init__(self, parent, panel_id, style=wx.BORDER_SIMPLE)
+        wx.Panel.__init__(self, parent.queue_window, panel_id, style=wx.BORDER_SIMPLE)
         self.parent = parent
         self.start_time = time.perf_counter()
         self.stage = 0  # used for the progressbar based on the different conversion stages
@@ -35,7 +35,7 @@ class AudiobookEntry(wx.Panel):
         self.filename = wx.StaticText(self, wx.ID_ANY,
                                       project.title)  #
         self.filename.SetToolTip(str(project))
-        sizer.Add(self.filename, 5, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer.Add(self.filename, 6, wx.ALIGN_CENTER_VERTICAL, 0)
 
         self.elapsed = wx.StaticText(self, wx.ID_ANY, "00:00:00")
         sizer.Add(self.elapsed, 1, wx.ALIGN_CENTER_VERTICAL, 0)
@@ -68,35 +68,37 @@ class AudiobookEntry(wx.Panel):
     def update(self, percent):
         self.progress.SetValue(int(self.stage * 100 + percent))
 
-    # noinspection PyUnusedLocal
     def stop(self):
         self.process.stop()
         self.refresh_timer.Stop()
         self.running = False
 
-    # noinspection PyUnusedLocal
     def on_stopped(self, event):
         if self.running:
             self.stop()
-            self.progress.SetBackgroundColour(wx.RED)
+            self.filename.SetBackgroundColour(wx.RED)
+            self.filename.SetForegroundColour(wx.GREEN)
         else:
-            self.parent.remove(self)
+            self.parent.remove_from_queue(self)
+        event.Skip()
 
-    # noinspection PyUnusedLocal
     def on_done(self, event):
-        self.progress.SetBackgroundColour(wx.GREEN)
         self.stop()
+        self.filename.SetForegroundColour(wx.GREEN)
+        event.Skip()
 
     def ee_exception(self, cmd, project):
         log("Processing stopped because an error occurred:", project.title)
         dbg("Processing error", str(cmd))
-        self.progress.SetBackgroundColour(wx.RED)
+        self.filename.SetBackgroundColour(wx.RED)
+        self.filename.SetForegroundColour(wx.GREEN)
         self.stop()
 
-    # noinspection PyUnusedLocal
     def on_time_indicator(self, event):
         self.elapsed.SetLabel(time.strftime("%H:%M:%S", time.gmtime(time.perf_counter() - self.start_time)))
+        event.Skip()
 
     def on_save(self, event):
         dbg("on_save event!")
-        save_project(self, self.project)
+        save_project(self.parent, self.project)
+        event.Skip()

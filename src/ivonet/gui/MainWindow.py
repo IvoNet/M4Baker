@@ -59,6 +59,7 @@ class MainFrame(wx.Frame):
         self.photo_max_size = 350
         self.genre_pristine = True
         self.project = Project()
+        self.queue = []
         self.default_save_path = ivonet.DEFAULT_SAVE_PATH
         wx.ArtProvider.Push(IvoNetArtProvider())
 
@@ -75,7 +76,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.on_clear_status, self.status_timer)
 
         # This timer checks every half second if the project has
-        # enough information to enable queue
+        # enough information to enable queue_window
         self.verify_project_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_verify_project, self.verify_project_timer)
         self.verify_project_timer.Start(500)
@@ -255,16 +256,12 @@ class MainFrame(wx.Frame):
         wx.Log.SetActiveTarget(wx.LogTextCtrl(self.tc_log))
         log_sizer_h.Add(self.tc_log, 1, wx.EXPAND, 0)
 
-        self.queue = wx.ScrolledWindow(self.main_panel, wx.ID_ANY, style=wx.BORDER_RAISED | wx.TAB_TRAVERSAL)
-        self.queue.SetScrollRate(10, 10)
-        vs_main_panel.Add(self.queue, 1, wx.EXPAND, 0)
+        self.queue_window = wx.ScrolledWindow(self.main_panel, wx.ID_ANY, style=wx.BORDER_RAISED | wx.TAB_TRAVERSAL)
+        self.queue_window.SetScrollRate(10, 10)
+        vs_main_panel.Add(self.queue_window, 1, wx.EXPAND, 0)
 
-        queue_sizer_v = wx.BoxSizer(wx.VERTICAL)
-
-        self.process = AudiobookEntry(self.queue, self.project, panel_id=wx.ID_ANY)
-        queue_sizer_v.Add(self.process, 0, wx.ALL | wx.EXPAND, 6)
-
-        self.queue.SetSizer(queue_sizer_v)
+        self.queue_sizer_v = wx.BoxSizer(wx.VERTICAL)
+        self.queue_window.SetSizer(self.queue_sizer_v)
 
         self.log_panel.SetSizer(log_sizer_v)
 
@@ -300,6 +297,16 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TEXT_MAXLEN, self.on_log_max_len, self.tc_log)
         self.Bind(EVT_PROJECT_HISTORY, self.project_history)
 
+        ee.on("track.title", self.ee_on_title)
+        ee.on("track.album", self.ee_on_title)
+        ee.on("track.artist", self.ee_on_artist)
+        ee.on("track.disc", self.ee_on_disc)
+        ee.on("track.disc_total", self.ee_on_disc_total)
+        ee.on("track.genre", self.ee_on_genre)
+        ee.on("track.comment", self.ee_on_comment)
+        ee.on("track.year", self.ee_on_year)
+        ee.on("track.cover_art", self.ee_on_cover_art_from_mp3)
+
         self.init()
 
     def init(self):
@@ -324,7 +331,7 @@ class MainFrame(wx.Frame):
             (ivonet.TOOLBAR_ID_OPEN_PROJECT, "open", "Open project", self.on_open_project, True),
             (ivonet.TOOLBAR_ID_SAVE_PROJECT, "save", "Save project", self.on_save_project, True),
             (ivonet.TOOLBAR_ID_SEPARATOR, None, None, None, False),
-            (ivonet.TOOLBAR_ID_QUEUE, "queue", "Queue for processing", self.on_queue, False),
+            (ivonet.TOOLBAR_ID_QUEUE, "queue_window", "Queue for processing", self.on_queue, False),
         ]
         for art_id, label, short_help, func, enabled in tool_buttons:
             if art_id <= 0:
@@ -352,7 +359,7 @@ class MainFrame(wx.Frame):
     def on_exit(self, event):
         """Close the frame, terminating the application."""
         self.save_settings()
-        self.verify_project_timer.Stop()  # TODO make me not needed
+        self.verify_project_timer.Stop()
         self.Close(True)
         event.Skip()
 
@@ -388,10 +395,24 @@ class MainFrame(wx.Frame):
             self.project.m4b_name = pathname
 
         # self.main_panel.SetSelection(1)  # Queue Page
-        ee.emit("queue.project", self.project)
+        self.convert_project(self.project)
         self.on_clear(None)
         log("Queued audiobook for processing")
         event.Skip()
+
+    def convert_project(self, project: Project):
+        book = AudiobookEntry(self, project)
+        self.queue_sizer_v.Prepend(book, 0, wx.ALL | wx.EXPAND, 0)
+        self.queue_window.Layout()
+        self.Refresh()
+        self.queue.append(book)
+        book.start()
+
+    def remove_from_queue(self, entry: AudiobookEntry):
+        if entry in self.queue:
+            self.queue.remove(entry)
+        entry.stop()
+        entry.Destroy()
 
     def on_select_dir(self, event):
         status("Select directory")
@@ -417,7 +438,7 @@ class MainFrame(wx.Frame):
                 path = open_dlg.GetPath()
                 log(f"Opening file: {path}")
                 self.project_open(path)
-                wx.PostEvent(EVT_PROJECT_HISTORY, ProjectHistoryEvent(path=path))
+                wx.PostEvent(self, ProjectHistoryEvent(path=path))
         event.Skip()
 
     def project_open(self, path):
@@ -445,6 +466,7 @@ class MainFrame(wx.Frame):
         self.sc_disk_total.SetValue(project.disc_total)
         self.tc_year.SetValue(project.year)
         self.tc_comment.SetValue(project.comment)
+        self.lc_mp3.SetStrings(project.tracks)
 
     # noinspection PyUnusedLocal
     def on_save_project(self, event):
@@ -487,15 +509,9 @@ class MainFrame(wx.Frame):
         with open(ivonet.SETTINGS_FILE, "w") as fp:
             ini.write(fp)
 
-    # noinspection PyUnusedLocal
     def on_tracks_changed(self, event):
         self.project.tracks = self.lc_mp3.GetStrings()
-
-    def append_track(self, line):
-        """Add a line to the list."""
-        lines = list(self.lc_mp3.GetStrings())
-        lines.append(line)
-        self.lc_mp3.SetStrings(lines)
+        event.Skip()
 
     def on_selected_right_click(self, event):
         selected = event.GetItem().GetText()
@@ -504,6 +520,12 @@ class MainFrame(wx.Frame):
             if track.get_cover_art():
                 self.set_cover_art(track.get_cover_art())
         event.Skip()
+
+    def append_track(self, line):
+        """Add a line to the list."""
+        lines = list(self.lc_mp3.GetStrings())
+        lines.append(line)
+        self.lc_mp3.SetStrings(lines)
 
     def set_cover_art(self, image):
         """handles the 'cover_art.force' and 'track.cover_art' events.
@@ -554,7 +576,7 @@ class MainFrame(wx.Frame):
         """Handler for the event on file history selection in the file menu"""
         file_num = event.GetId() - wx.ID_FILE1
         path = self.GetMenuBar().file_history.GetHistoryFile(file_num)
-        wx.PostEvent(EVT_PROJECT_HISTORY, ProjectHistoryEvent(path=path))
+        wx.PostEvent(self, ProjectHistoryEvent(path=path))
         self.project_open(path)
         log(f"You selected {path}")
 
@@ -564,6 +586,7 @@ class MainFrame(wx.Frame):
         self.GetMenuBar().file_history.Save(history_config)
         with open(ivonet.HISTORY_FILE, "wb") as fo:
             history_config.Save(fo)
+
 
     def on_title(self, event):
         """Handler for the title field event"""
@@ -628,3 +651,80 @@ class MainFrame(wx.Frame):
         """
         self.GetMenuBar().file_history.AddFileToHistory(event.path)
         self.save_history()
+
+    def ee_on_title(self, value):
+        """Handler for the 'track.title' event.
+        It assumes that if the field has already been set either by a previous event
+        or manually this event can be ignored.
+        This event is less important then manual or previous set values.
+        """
+        if self.tc_title.IsEmpty():
+            self.tc_title.SetValue(value)
+
+    def ee_on_artist(self, value):
+        """Handler for the 'track.artist' event.
+        It assumes that if the field has already been set either by a previous event
+        or manually this event can be ignored.
+        This event is less important then manual or previous set values.
+        """
+        if self.tc_artist.IsEmpty():
+            self.tc_artist.SetValue(value)
+
+    def ee_on_grouping(self, value):
+        """Handler for the 'track.grouping' event.
+        It assumes that if the field has already been set either by a previous event
+        or manually this event can be ignored.
+        This event is less important then manual or previous set values.
+        """
+        if self.tc_grouping.IsEmpty():
+            self.tc_grouping.SetValue(value)
+
+    def ee_on_genre(self, value):
+        """Handler for the 'track.title' event.
+        It assumes that if the field has already been set either by a previous event
+        or manually this event can be ignored.
+        In this case we need a 'dirty' flag to do this as the field is a drop down and is never empty
+        This event is less important then manual or previous set values.
+        """
+        if self.genre_pristine:
+            if value in GENRES:
+                self.genre_pristine = False
+                self.cb_genre.SetValue(value)
+            else:
+                log(f"Genre {value} from the metadata is not a known genre.")
+
+    def ee_on_disc(self, value):
+        """Handler for the 'track.disc' event.
+        It will always set it and that will trigger the on_disc handler
+        to check if all is well...
+        """
+        self.sc_disc.SetValue(int(value))
+
+    def ee_on_disc_total(self, value):
+        """Handler for the 'track.disc_total' event.
+        It will always set it and that will trigger the on_disc handler
+        to check if all is well...
+        """
+        self.sc_disk_total.SetValue(int(value))
+
+    def ee_on_year(self, value):
+        """Handler for the 'track.year' event.
+        It assumes that if the field has already been set either by a previous event
+        or manually this event can be ignored.
+        This event is less important then manual or previous set values.
+        """
+        if self.tc_year.IsEmpty():
+            self.tc_year.SetValue(value)
+
+    def ee_on_comment(self, value):
+        """Handler for the 'track.comment' event.
+        It assumes that if the field has already been set either by a previous event
+        or manually this event can be ignored.
+        This event is less important then manual or previous set values.
+        """
+        if self.tc_comment.IsEmpty():
+            self.tc_comment.SetValue(value)
+
+    def ee_on_cover_art_from_mp3(self, image):
+        if not self.project.has_cover_art():
+            self.set_cover_art(image)

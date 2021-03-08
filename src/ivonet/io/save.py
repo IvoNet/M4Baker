@@ -14,7 +14,8 @@ import pickle
 import wx
 
 import ivonet
-from ivonet.events import ee, log
+from ivonet.events import log
+from ivonet.events.custom import EVT_PROJECT_HISTORY, ProjectHistoryEvent
 
 
 def save_project(window, project):
@@ -48,5 +49,5 @@ def save_project(window, project):
             with open(path, 'wb') as fo:
                 project.name = path
                 pickle.dump(project, fo)
-            ee.emit("project.history", path)
+            wx.PostEvent(EVT_PROJECT_HISTORY, ProjectHistoryEvent(path=path))
             log(f'Saved to: {path}')

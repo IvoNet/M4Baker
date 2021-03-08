@@ -8,13 +8,9 @@ __doc__ = """
 The Menubar
 """
 
-import os
-
 import wx
 
 # File Menu
-import ivonet
-from ivonet.events import log, ee
 
 FILE_MENU_QUEUE = wx.NewIdRef()
 FILE_MENU_STOP_PROCESS = wx.NewIdRef()
@@ -42,7 +38,6 @@ class MenuBar(wx.MenuBar):
 
         self.file_history = wx.FileHistory()
         self.file_history.UseMenu(file_menu)
-        self.Bind(wx.EVT_MENU_RANGE, self.on_file_history, id=wx.ID_FILE1, id2=wx.ID_FILE9)
 
         self.Append(file_menu, "&File")
 
@@ -50,8 +45,6 @@ class MenuBar(wx.MenuBar):
         help_menu.Append(wx.ID_ABOUT)
 
         self.Append(help_menu, "&Help")
-        ee.on("project.history", self.ee_project_history)
-        ee.on("project.load_history_file", self.ee_load_history_file)
 
         menu_handlers = [
             (FILE_MENU_QUEUE, self.parent.on_queue),
@@ -65,32 +58,4 @@ class MenuBar(wx.MenuBar):
         for menu_id, handler in menu_handlers:
             self.parent.Bind(wx.EVT_MENU, handler, id=menu_id)
 
-    def on_file_history(self, event):
-        """Handler for the event on file history selection in the file menu"""
-        file_num = event.GetId() - wx.ID_FILE1
-        path = self.file_history.GetHistoryFile(file_num)
-        ee.emit("project.open", path)
-        self.ee_project_history(path)
-        log(f"You selected {path}")
-
-    def ee_project_history(self, path):
-        """handler for the 'project.history' event.
-        it will add it to the history (again) for the ranking and then save
-        to settings so it can be reloaded on restart.
-        """
-        self.file_history.AddFileToHistory(path)
-        self.save_history()
-
-    def save_history(self):
-        """Saves the recent file history to disk"""
-        history_config = wx.FileConfig()
-        self.file_history.Save(history_config)
-        with open(ivonet.HISTORY_FILE, "wb") as fo:
-            history_config.Save(fo)
-
-    def ee_load_history_file(self):
-        """Loads last file history settings from disk"""
-        if os.path.isfile(ivonet.HISTORY_FILE):
-            history_config = wx.FileConfig(localFilename=ivonet.HISTORY_FILE,
-                                           style=wx.CONFIG_USE_LOCAL_FILE)
-            self.file_history.Load(history_config)
+        self.Bind(wx.EVT_MENU_RANGE, self.parent.on_file_history, id=wx.ID_FILE1, id2=wx.ID_FILE9)

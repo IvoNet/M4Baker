@@ -12,7 +12,7 @@ import os
 
 import wx
 
-from ivonet.events import log, ee
+from ivonet.events import log
 from ivonet.image import IMAGE_TYPES
 from ivonet.model.Track import Track
 
@@ -29,14 +29,15 @@ class CoverArtDropTarget(wx.FileDropTarget):
     The subscriber is responsible for processing the image.
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
+        self.parent = parent
 
     def OnDropFiles(self, x, y, filenames):
         """Covers the DropFiles event.
         - Checks if it is an image
         - if a list of images just take the first
-        - emit a "cover_art.force" event with the name of the file
+        - Sets the cover art
         """
         log("Cover art dropped")
         if len(filenames) > 1:
@@ -48,11 +49,11 @@ class CoverArtDropTarget(wx.FileDropTarget):
             return False
         if split_filename[1] in IMAGE_TYPES:
             with open(filenames[0], 'rb') as img:
-                ee.emit("cover_art.force", img.read())
+                self.parent.set_cover_art(img.read())
         elif filenames[0].lower().endswith(".mp3"):
             track = Track(filenames[0], silent=True)
             if track.get_cover_art():
-                ee.emit("cover_art.force", track.get_cover_art())
+                self.parent.set_cover_art(track.get_cover_art())
             else:
                 log("Could not retrieve any Cover Art from the dropped mp3 file.")
         else:

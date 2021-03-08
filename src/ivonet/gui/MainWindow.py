@@ -12,18 +12,24 @@ import ast
 import os
 import pickle
 from configparser import ConfigParser
+from io import BytesIO
 
 import wx
 import wx.adv
 from wx.lib.wordwrap import wordwrap
 
 import ivonet
+from ivonet.book.meta import GENRES, CHAPTER_LIST
 from ivonet.events import ee, dbg, log
+from ivonet.events.custom import EVT_PROJECT_HISTORY, ProjectHistoryEvent
+from ivonet.gui.AudiobookEntryPanel import AudiobookEntry
+from ivonet.gui.CoverArtDropTarget import CoverArtDropTarget
+from ivonet.gui.MP3DropTarget import MP3DropTarget
 from ivonet.gui.MenuBar import MenuBar, FILE_MENU_QUEUE
-from ivonet.gui.NoteBook import NoteBook
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
 from ivonet.io.save import save_project
 from ivonet.model.Project import Project
+from ivonet.model.Track import Track
 
 try:
     from ivonet.image.images import yoda
@@ -36,6 +42,12 @@ def status(msg):
     ee.emit("status", msg)
 
 
+def handle_numeric_keypress(event):
+    keycode = event.GetKeyCode()
+    if keycode < 255 and chr(keycode).isnumeric():
+        event.Skip()
+
+
 class MainFrame(wx.Frame):
     """The main application Frame holding all the other panels"""
 
@@ -43,6 +55,9 @@ class MainFrame(wx.Frame):
         """Initialize the gui here"""
         super().__init__(*args, **kw)
 
+        #  Startup Settings
+        self.photo_max_size = 350
+        self.genre_pristine = True
         self.project = Project()
         self.default_save_path = ivonet.DEFAULT_SAVE_PATH
         wx.ArtProvider.Push(IvoNetArtProvider())
@@ -65,15 +80,226 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.on_verify_project, self.verify_project_timer)
         self.verify_project_timer.Start(500)
 
-        sizer_main_panel = wx.BoxSizer(wx.VERTICAL)
+        vs_main = wx.BoxSizer(wx.VERTICAL)
 
-        self.main_notebook = NoteBook(self, -1)
-        sizer_main_panel.Add(self.main_notebook, 1, wx.ALL | wx.EXPAND, 0)
+        self.main_panel = wx.Panel(self, wx.ID_ANY)
+        vs_main.Add(self.main_panel, 3, wx.EXPAND, 0)
 
-        self.SetSizer(sizer_main_panel)
+        vs_main_panel = wx.BoxSizer(wx.VERTICAL)
+
+        hs_main_panel = wx.BoxSizer(wx.HORIZONTAL)
+        vs_main_panel.Add(hs_main_panel, 4, wx.EXPAND, 0)
+
+        self.m4b_panel = wx.Panel(self.main_panel, wx.ID_ANY)
+        hs_main_panel.Add(self.m4b_panel, 1, wx.EXPAND, 0)
+
+        vs_m4b_panel = wx.BoxSizer(wx.VERTICAL)
+
+        hs_m4b_panel = wx.BoxSizer(wx.HORIZONTAL)
+        vs_m4b_panel.Add(hs_m4b_panel, 1, wx.EXPAND, 0)
+
+        self.metadata_panel = wx.Panel(self.m4b_panel, wx.ID_ANY, style=wx.BORDER_SIMPLE | wx.TAB_TRAVERSAL)
+        hs_m4b_panel.Add(self.metadata_panel, 2, wx.ALL | wx.EXPAND, 0)
+
+        hs_metadata_panel = wx.BoxSizer(wx.HORIZONTAL)
+
+        fgs_metadata_panel = wx.FlexGridSizer(3, 1, 4, 0)
+        hs_metadata_panel.Add(fgs_metadata_panel, 1, wx.ALL | wx.EXPAND, 2)
+
+        fgs_mp3_metadata = wx.FlexGridSizer(6, 2, 4, 11)
+        fgs_metadata_panel.Add(fgs_mp3_metadata, 1, wx.ALL | wx.EXPAND, 0)
+
+        # MP3 Tags
+        lbl_title = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Title")
+        fgs_mp3_metadata.Add(lbl_title, 1, 0, 0)
+
+        self.tc_title = wx.TextCtrl(self.metadata_panel, wx.ID_ANY, "")
+        self.tc_title.SetToolTip("Title of the book")
+        fgs_mp3_metadata.Add(self.tc_title, 1, wx.EXPAND, 0)
+
+        lbl_artist = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Artist")
+        fgs_mp3_metadata.Add(lbl_artist, 0, wx.EXPAND, 0)
+
+        self.tc_artist = wx.TextCtrl(self.metadata_panel, wx.ID_ANY, "")
+        self.tc_artist.SetToolTip("The author or album artist")
+        fgs_mp3_metadata.Add(self.tc_artist, 0, wx.EXPAND, 0)
+
+        lbl_grouping = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Grouping")
+        fgs_mp3_metadata.Add(lbl_grouping, 1, 0, 0)
+
+        self.tc_grouping = wx.TextCtrl(self.metadata_panel, wx.ID_ANY, "")
+        self.tc_grouping.SetToolTip("Grouping e.g. series")
+        fgs_mp3_metadata.Add(self.tc_grouping, 0, wx.EXPAND, 0)
+
+        lbl_genre = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Genre")
+        fgs_mp3_metadata.Add(lbl_genre, 0, 0, 0)
+
+        self.cb_genre = wx.ComboBox(self.metadata_panel, wx.ID_ANY,
+                                    choices=GENRES,
+                                    style=wx.CB_DROPDOWN | wx.TE_PROCESS_ENTER)
+        self.cb_genre.SetToolTip("Select your genre")
+        self.cb_genre.SetSelection(0)
+        fgs_mp3_metadata.Add(self.cb_genre, 0, wx.ALL | wx.EXPAND | wx.FIXED_MINSIZE, 0)
+
+        label_1 = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Chapter text")
+        fgs_mp3_metadata.Add(label_1, 0, 0, 0)
+
+        self.tc_chapter_text = wx.TextCtrl(self.metadata_panel, wx.ID_ANY, "Chapter")
+        self.tc_chapter_text.SetToolTip("Text to use fore chapterisation")
+        fgs_mp3_metadata.Add(self.tc_chapter_text, 0, wx.EXPAND, 0)
+
+        lbl_chapterisation = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Chapters")
+        fgs_mp3_metadata.Add(lbl_chapterisation, 1, 0, 0)
+
+        self.cb_chapterisation = wx.ComboBox(self.metadata_panel, wx.ID_ANY,
+                                             choices=CHAPTER_LIST,
+                                             style=wx.CB_DROPDOWN | wx.CB_READONLY | wx.CB_SIMPLE)
+        self.cb_chapterisation.SetToolTip("Choose which chapterisation method is prefered")
+        self.cb_chapterisation.SetSelection(0)
+        fgs_mp3_metadata.Add(self.cb_chapterisation, 0, wx.EXPAND, 0)
+
+        vs_track_year_comment = wx.BoxSizer(wx.VERTICAL)
+        fgs_metadata_panel.Add(vs_track_year_comment, 1, wx.EXPAND, 0)
+
+        hs_track_year = wx.BoxSizer(wx.HORIZONTAL)
+        vs_track_year_comment.Add(hs_track_year, 0, wx.ALL | wx.EXPAND, 0)
+
+        lbl_disc = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Disc")
+        hs_track_year.Add(lbl_disc, 0, 0, 0)
+
+        hs_track_year.Add((60, 20), 0, 0, 0)
+
+        self.sc_disc = wx.SpinCtrl(self.metadata_panel, wx.ID_ANY, "1", min=1, max=100)
+        self.sc_disc.SetToolTip("which disk?")
+        hs_track_year.Add(self.sc_disc, 0, 0, 0)
+
+        label_8 = wx.StaticText(self.metadata_panel, wx.ID_ANY, "of")
+        hs_track_year.Add(label_8, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+
+        self.sc_disk_total = wx.SpinCtrl(self.metadata_panel, wx.ID_ANY, "1", min=1, max=100)
+        self.sc_disk_total.SetToolTip("Total number of discs for this book")
+        hs_track_year.Add(self.sc_disk_total, 0, 0, 0)
+
+        hs_track_year.Add((32, 20), 0, 0, 0)
+
+        lbl_year = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Year")
+        hs_track_year.Add(lbl_year, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+
+        self.tc_year = wx.TextCtrl(self.metadata_panel, wx.ID_ANY, "")
+        self.tc_year.Bind(wx.EVT_CHAR, handle_numeric_keypress)
+        self.tc_year.SetToolTip("Publication year")
+        hs_track_year.Add(self.tc_year, 1, wx.EXPAND, 0)
+
+        vs_comment = wx.BoxSizer(wx.VERTICAL)
+        vs_track_year_comment.Add(vs_comment, 0, wx.EXPAND, 0)
+
+        vs_comment_1 = wx.BoxSizer(wx.VERTICAL)
+        vs_comment.Add(vs_comment_1, 2, wx.ALL | wx.EXPAND, 0)
+
+        lbl_comment = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Comment")
+        vs_comment_1.Add(lbl_comment, 0, wx.LEFT, 0)
+
+        self.tc_comment = wx.TextCtrl(self.metadata_panel, wx.ID_ANY, "",
+                                      style=wx.TE_MULTILINE)
+        self.tc_comment.SetToolTip("Add your comments here.")
+        vs_comment_1.Add(self.tc_comment, 2, wx.EXPAND, 0)
+
+        cover_art_wrapper_sizer_v = wx.BoxSizer(wx.VERTICAL)
+        fgs_metadata_panel.Add(cover_art_wrapper_sizer_v, 1, wx.ALL | wx.EXPAND, 0)
+
+        # Cover Art section
+        label_11 = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Cover art")
+        cover_art_wrapper_sizer_v.Add(label_11, 0, 0, 0)
+
+        self.cover_art_panel = wx.Panel(self.metadata_panel, wx.ID_ANY)
+        self.cover_art_panel.SetToolTip("Drag and drop Cover Art here")
+        cover_art_wrapper_sizer_v.Add(self.cover_art_panel, 1, wx.ALL | wx.EXPAND, 0)
+
+        cover_art_sizer_h = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.cover_art = wx.StaticBitmap(self.cover_art_panel)
+        self.cover_art.SetBitmap(yoda.GetBitmap())
+        self.SetToolTip("Drag and drop Cover Art here. Double click to reset.")
+        self.cover_art.SetDropTarget(CoverArtDropTarget(self))
+        self.cover_art.Bind(wx.EVT_LEFT_DCLICK, self.on_reset_cover_art)
+        cover_art_sizer_h.Add(self.cover_art, 1, wx.EXPAND, 0)
+
+        # MP3 Drag n Drop section
+        self.lc_mp3 = wx.adv.EditableListBox(self, wx.ID_ANY, "Drag and Drop mp3 files below...",
+                                             style=wx.adv.EL_ALLOW_DELETE)
+        self.lc_mp3.SetToolTip("Drag and Drop MP3 files here")
+        self.lc_mp3.SetDropTarget(MP3DropTarget(self))
+        self.lc_mp3.SetToolTip("Drag and Drop MP3 files here")
+        self.lc_mp3.del_button = self.lc_mp3.GetDelButton()
+        self.lc_mp3.GetDownButton().Bind(wx.EVT_LEFT_DOWN, self.on_tracks_changed)
+        self.lc_mp3.GetUpButton().Bind(wx.EVT_LEFT_DOWN, self.on_tracks_changed)
+        self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_INSERT_ITEM, self.on_tracks_changed)
+        self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_DELETE_ITEM, self.on_tracks_changed)
+        # self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_selected)
+        self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.on_selected_right_click)
+
+        hs_m4b_panel.Add(self.lc_mp3, 5, wx.ALL | wx.EXPAND, 2)
+
+        self.log_panel = wx.Panel(self.main_panel, wx.ID_ANY)
+        vs_main_panel.Add(self.log_panel, 1, wx.EXPAND, 0)
+
+        log_sizer_v = wx.BoxSizer(wx.VERTICAL)
+
+        log_sizer_h = wx.BoxSizer(wx.HORIZONTAL)
+        log_sizer_v.Add(log_sizer_h, 1, wx.EXPAND, 0)
+
+        self.tc_log = wx.TextCtrl(self.log_panel, wx.ID_ANY, "",
+                                  style=wx.TE_MULTILINE | wx.TE_LEFT | wx.TE_READONLY | wx.HSCROLL)
+        self.tc_log.SetFont(
+            wx.Font(12, wx.FONTFAMILY_TELETYPE, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, "Courier New"))
+        wx.Log.SetActiveTarget(wx.LogTextCtrl(self.tc_log))
+        log_sizer_h.Add(self.tc_log, 1, wx.EXPAND, 0)
+
+        self.queue = wx.ScrolledWindow(self.main_panel, wx.ID_ANY, style=wx.BORDER_RAISED | wx.TAB_TRAVERSAL)
+        self.queue.SetScrollRate(10, 10)
+        vs_main_panel.Add(self.queue, 1, wx.EXPAND, 0)
+
+        queue_sizer_v = wx.BoxSizer(wx.VERTICAL)
+
+        self.process = AudiobookEntry(self.queue, self.project, panel_id=wx.ID_ANY)
+        queue_sizer_v.Add(self.process, 0, wx.ALL | wx.EXPAND, 6)
+
+        self.queue.SetSizer(queue_sizer_v)
+
+        self.log_panel.SetSizer(log_sizer_v)
+
+        self.cover_art_panel.SetSizer(cover_art_sizer_h)
+
+        fgs_mp3_metadata.AddGrowableCol(1)
+
+        fgs_metadata_panel.AddGrowableRow(2)
+        fgs_metadata_panel.AddGrowableCol(0)
+
+        self.metadata_panel.SetSizer(hs_metadata_panel)
+
+        self.m4b_panel.SetSizer(vs_m4b_panel)
+
+        self.main_panel.SetSizer(vs_main_panel)
+
+        self.SetSizer(vs_main)
+        vs_main.SetSizeHints(self)
 
         self.load_settings()
         self.Layout()
+
+        self.Bind(wx.EVT_TEXT, self.on_title, self.tc_title)
+        self.Bind(wx.EVT_TEXT, self.on_artist, self.tc_artist)
+        self.Bind(wx.EVT_TEXT, self.on_grouping, self.tc_grouping)
+        self.Bind(wx.EVT_COMBOBOX, self.on_genre, self.cb_genre)
+        self.Bind(wx.EVT_TEXT, self.on_chapter_text, self.tc_chapter_text)
+        self.Bind(wx.EVT_COMBOBOX, self.on_chapter_method, self.cb_chapterisation)
+        self.Bind(wx.EVT_SPINCTRL, self.on_disc, self.sc_disc)
+        self.Bind(wx.EVT_SPINCTRL, self.on_disc, self.sc_disk_total)
+        self.Bind(wx.EVT_TEXT, self.on_year, self.tc_year)
+        self.Bind(wx.EVT_TEXT, self.on_comment, self.tc_comment)
+        self.Bind(wx.EVT_TEXT_MAXLEN, self.on_log_max_len, self.tc_log)
+        self.Bind(EVT_PROJECT_HISTORY, self.project_history)
+
         self.init()
 
     def init(self):
@@ -82,26 +308,11 @@ class MainFrame(wx.Frame):
             os.remove(ivonet.LOG_FILE)
 
         # Tell the world we started anew
-        self.new_project()
+        self.reset_metadata(self.project)
 
         # Register events
+        # TODO what to do with these?
         ee.on("status", self.ee_on_status)
-        ee.on("project.open", self.ee_project_open)
-
-    def new_project(self):
-        ee.emit("project.new", self.project)
-        # dbg(self.project)
-        log("Starting new project or loading one")
-
-    # noinspection PyUnusedLocal
-    def on_verify_project(self, event):
-        """Handler for the 'verify_project_timer' event
-        It feels a bit like a hack but the cleanest I could think of for now.
-        """
-        enable_disable = self.project.verify()
-        self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_QUEUE, enable_disable)
-        self.GetMenuBar().Enable(FILE_MENU_QUEUE, enable_disable)
-        # dbg("on_verify_project:", enable_disable)
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -129,14 +340,22 @@ class MainFrame(wx.Frame):
 
         tool_bar.Realize()
 
-    # noinspection PyUnusedLocal
+    def on_verify_project(self, event):
+        """Handler for the 'verify_project_timer' event
+        It feels a bit like a hack but the cleanest I could think of for now.
+        """
+        enable_disable = self.project.verify()
+        self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_QUEUE, enable_disable)
+        self.GetMenuBar().Enable(FILE_MENU_QUEUE, enable_disable)
+        event.Skip()
+
     def on_exit(self, event):
         """Close the frame, terminating the application."""
         self.save_settings()
-        self.verify_project_timer.Stop()
+        self.verify_project_timer.Stop()  # TODO make me not needed
         self.Close(True)
+        event.Skip()
 
-    # noinspection PyUnusedLocal
     def on_about(self, event):
         """Display an About Dialog"""
         info = wx.adv.AboutDialogInfo()
@@ -149,8 +368,8 @@ class MainFrame(wx.Frame):
         info.SetLicense(wordwrap(ivonet.TXT_LICENSE, 500, wx.ClientDC(self)))
         info.SetIcon(yoda.GetIcon())
         wx.adv.AboutBox(info, self)
+        event.Skip()
 
-    # noinspection PyUnusedLocal
     def on_queue(self, event):
         status("Processing...")
         with wx.FileDialog(self, "Save XYZ file",
@@ -164,16 +383,16 @@ class MainFrame(wx.Frame):
 
             # save the current contents in the file
             pathname = fileDialog.GetPath()
-            if not pathname.endswith(".m4b"):
+            if not pathname.endswith(".m4b"):  # TODO Make me a constant
                 pathname += ".m4b"
             self.project.m4b_name = pathname
 
-        # self.main_notebook.SetSelection(1)  # Queue Page
+        # self.main_panel.SetSelection(1)  # Queue Page
         ee.emit("queue.project", self.project)
         self.on_clear(None)
         log("Queued audiobook for processing")
+        event.Skip()
 
-    # noinspection PyUnusedLocal
     def on_select_dir(self, event):
         status("Select directory")
         with wx.DirDialog(self, "Choose a directory:",
@@ -183,49 +402,62 @@ class MainFrame(wx.Frame):
                           ) as dir_dialog:
             if dir_dialog.ShowModal() == wx.ID_OK:
                 self.default_save_path = dir_dialog.GetPath()
+        event.Skip()
 
-        dbg("TODO: on_select_dir")
-
-    # noinspection PyUnusedLocal
     def on_open_project(self, event):
-        self.main_notebook.SetSelection(0)
         status("Open Project")
-        open_dlg = wx.FileDialog(
-            self,
-            message="Choose a file...",
-            defaultDir=os.getcwd(),
-            defaultFile="",
-            wildcard=ivonet.FILE_WILDCARD_PROJECT,
-            style=wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST | wx.FD_PREVIEW
-        )
-        if open_dlg.ShowModal() == wx.ID_OK:
-            path = open_dlg.GetPath()
-            log(f"Opening file: {path}")
-            self.ee_project_open(path)
-            ee.emit("project.history", path)
-        open_dlg.Destroy()
+        with wx.FileDialog(self,
+                           message="Choose a file...",
+                           defaultDir=os.getcwd(),
+                           defaultFile="",
+                           wildcard=ivonet.FILE_WILDCARD_PROJECT,
+                           style=wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST | wx.FD_PREVIEW
+                           ) as open_dlg:
+            if open_dlg.ShowModal() == wx.ID_OK:
+                path = open_dlg.GetPath()
+                log(f"Opening file: {path}")
+                self.project_open(path)
+                wx.PostEvent(EVT_PROJECT_HISTORY, ProjectHistoryEvent(path=path))
+        event.Skip()
 
-    def ee_project_open(self, path):
-        """Handler for th 'project.open' event and the Project open dialog"""
-        self.main_notebook.SetSelection(0)  # metadata page
+    def project_open(self, path):
+        """Open a Saved project"""
         with open(path, 'rb') as fi:
             self.project = pickle.load(fi)
-            self.new_project()
+            self.reset_metadata(self.project)
+
+    def reset_metadata(self, project):
+        """Handles the 'audiobook.new' event to reset the whole space"""
+        self.project = project
+        self.genre_pristine = True
+        if project.has_cover_art():
+            self.set_cover_art(self.project.cover_art)
+        else:
+            self.on_reset_cover_art(None)
+        self.tc_title.SetValue(project.title)
+        self.tc_title.Refresh()
+        self.tc_artist.SetValue(project.artist)
+        self.tc_grouping.SetValue(project.grouping)
+        self.cb_genre.SetValue(project.genre)
+        self.tc_chapter_text.SetValue(project.chapter_text)
+        self.cb_chapterisation.SetValue(project.chapter_method)
+        self.sc_disc.SetValue(project.disc)
+        self.sc_disk_total.SetValue(project.disc_total)
+        self.tc_year.SetValue(project.year)
+        self.tc_comment.SetValue(project.comment)
 
     # noinspection PyUnusedLocal
     def on_save_project(self, event):
         status("Save Project")
-        self.main_notebook.SetSelection(0)
         save_project(self, self.project)
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):
         status("Starting new project")
-        self.main_notebook.SetSelection(0)  # The Metadata Page
         self.project = Project()
-        self.new_project()
+        self.reset_metadata(self.project)
 
-    def ee_on_status(self, msg):
+    def ee_on_status(self, msg):  # TODO eliminate ee event
         self.SetStatusText(msg)
         if not self.status_timer.IsRunning():
             self.status_timer.Start(2000)
@@ -235,6 +467,15 @@ class MainFrame(wx.Frame):
         self.SetStatusText(ivonet.TXT_COPYRIGHT)
         if self.status_timer.IsRunning():
             self.status_timer.Stop()
+
+    # noinspection PyUnusedLocal
+    def on_reset_cover_art(self, event):
+        """Resets the cover art on double clicking the image"""
+        self.project.cover_art = None
+        self.cover_art.SetBitmap(yoda.GetBitmap())
+        self.cover_art.Center()
+        self.Refresh()
+        # TODO eliminate me -> ee.emit("reset.cover_art")
 
     def save_settings(self):
         """save_settings() -> Saves default settings to the application settings location"""
@@ -246,6 +487,50 @@ class MainFrame(wx.Frame):
         with open(ivonet.SETTINGS_FILE, "w") as fp:
             ini.write(fp)
 
+    # noinspection PyUnusedLocal
+    def on_tracks_changed(self, event):
+        self.project.tracks = self.lc_mp3.GetStrings()
+
+    def append_track(self, line):
+        """Add a line to the list."""
+        lines = list(self.lc_mp3.GetStrings())
+        lines.append(line)
+        self.lc_mp3.SetStrings(lines)
+
+    def on_selected_right_click(self, event):
+        selected = event.GetItem().GetText()
+        if selected:
+            track = Track(selected, silent=True)
+            if track.get_cover_art():
+                self.set_cover_art(track.get_cover_art())
+        event.Skip()
+
+    def set_cover_art(self, image):
+        """handles the 'cover_art.force' and 'track.cover_art' events.
+        gets an image file object or file location as input.
+        """
+        self.project.cover_art = image
+        log("Setting Cover Art")
+        try:
+            img = wx.Image(BytesIO(image), wx.BITMAP_TYPE_ANY)
+            width = img.GetWidth()
+            height = img.GetHeight()
+        except AssertionError as e:
+            dbg(e)
+            log("CoverArt found but unknown format")
+            return
+        if width > height:
+            new_width = self.photo_max_size
+            new_height = self.photo_max_size * height / width
+        else:
+            new_height = self.photo_max_size
+            new_width = self.photo_max_size * width / height
+        img = img.Scale(new_width, new_height)
+
+        self.cover_art.SetBitmap(wx.Bitmap(img))
+        self.cover_art.Center()
+        self.cover_art.Refresh()
+
     def load_settings(self):
         """Load_ settings() -> Loads and activates the settings saved by save_settings()"""
         if os.path.isfile(ivonet.SETTINGS_FILE):
@@ -256,4 +541,90 @@ class MainFrame(wx.Frame):
             self.default_save_path = ini.get('Settings', 'default_save_path', fallback=ivonet.DEFAULT_SAVE_PATH)
         else:
             self.Center()
-        ee.emit("project.load_history_file")
+        self.load_history_file()
+
+    def load_history_file(self):
+        """Loads last file history settings from disk"""
+        if os.path.isfile(ivonet.HISTORY_FILE):
+            history_config = wx.FileConfig(localFilename=ivonet.HISTORY_FILE,
+                                           style=wx.CONFIG_USE_LOCAL_FILE)
+            self.GetMenuBar().file_history.Load(history_config)
+
+    def on_file_history(self, event):
+        """Handler for the event on file history selection in the file menu"""
+        file_num = event.GetId() - wx.ID_FILE1
+        path = self.GetMenuBar().file_history.GetHistoryFile(file_num)
+        wx.PostEvent(EVT_PROJECT_HISTORY, ProjectHistoryEvent(path=path))
+        self.project_open(path)
+        log(f"You selected {path}")
+
+    def save_history(self):
+        """Saves the recent file history to disk"""
+        history_config = wx.FileConfig()
+        self.GetMenuBar().file_history.Save(history_config)
+        with open(ivonet.HISTORY_FILE, "wb") as fo:
+            history_config.Save(fo)
+
+    def on_title(self, event):
+        """Handler for the title field event"""
+        self.project.title = event.GetString()
+        event.Skip()
+
+    def on_artist(self, event):
+        """Handler for the artist field event"""
+        self.project.artist = event.GetString()
+        event.Skip()
+
+    def on_grouping(self, event):
+        """Handler for the grouping field event"""
+        self.project.grouping = event.GetString()
+        event.Skip()
+
+    def on_genre(self, event):
+        """Handler for the genre field event"""
+        self.project.genre = event.GetString()
+        event.Skip()
+
+    def on_chapter_text(self, event):
+        """Handler for the chapter text field event"""
+        self.project.chapter_text = event.GetString()
+        event.Skip()
+
+    def on_chapter_method(self, event):
+        """Handler for the chapter convert method field event"""
+        self.project.chapter_method = event.GetString()
+        event.Skip()
+
+    def on_disc(self, event):
+        """Handler for the disc and disc_total field events as they are linked"""
+        self.check_disc()
+        self.project.disc = self.sc_disc.GetValue()
+        self.project.disc_total = self.sc_disk_total.GetValue()
+        event.Skip()
+
+    def on_year(self, event):
+        """Handler for the year field event"""
+        self.project.year = event.GetString()
+        event.Skip()
+
+    def on_comment(self, event):
+        """Handler for the comment field event"""
+        self.project.comment = event.GetString()
+        event.Skip()
+
+    def on_log_max_len(self, event):
+        self.tc_log.SetValue("")
+        event.Skip()
+
+    def check_disc(self):
+        if self.sc_disk_total.GetValue() < self.sc_disc.GetValue():
+            log("Correcting disk total as it can not be smaller than the disk.")
+            self.sc_disk_total.SetValue(self.sc_disc.GetValue())
+
+    def project_history(self, event: ProjectHistoryEvent):
+        """handler for the 'EVT_PROJECT_HISTORY' event.
+        it will add it to the history (again) for the ranking and then save
+        to settings so it can be reloaded on restart.
+        """
+        self.GetMenuBar().file_history.AddFileToHistory(event.path)
+        self.save_history()

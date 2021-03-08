@@ -12,6 +12,8 @@ and some convenience methods
 import os
 import time
 
+import wx
+
 import ivonet
 from ivonet.events.EventEmitter import EventEmitter
 
@@ -45,7 +47,8 @@ def print_any_event_to_stdout(*args):
 
 def log(*args):
     """Emit a 'log' event convenience method"""
-    ee.emit("log", *args)
+    message = " ".join([str(x) for x in args])
+    wx.LogMessage("{timestamp} - {message}".format(timestamp=time.strftime('%X'), message=message))
 
 
 __all__ = [

@@ -5,14 +5,5 @@ __revised__ = "$revised: 2021-02-28 13:21:13$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
-Th Botebook pannel
+GUI stuff here
 """
-
-from ivonet.gui.MP3FilePanel import MP3FilePanel
-from ivonet.gui.MainWindow import MainFrame
-from ivonet.gui.MenuBar import MenuBar
-
-__all__ = [
-    "MainFrame",
-    "MP3FilePanel",
-]

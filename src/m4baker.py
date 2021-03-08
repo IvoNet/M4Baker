@@ -15,7 +15,7 @@ import this :-)
 import wx
 
 from ivonet.events import dbg
-from ivonet.gui import MainFrame
+from ivonet.gui.MainWindow import MainFrame
 
 
 class M4Baker(wx.App):

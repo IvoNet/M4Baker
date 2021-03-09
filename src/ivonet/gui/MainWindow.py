@@ -59,7 +59,6 @@ class MainFrame(wx.Frame):
         self.photo_max_size = 350
         self.genre_pristine = True
         self.project = Project()
-        self.queue = []
         self.default_save_path = ivonet.DEFAULT_SAVE_PATH
         wx.ArtProvider.Push(IvoNetArtProvider())
 
@@ -239,7 +238,7 @@ class MainFrame(wx.Frame):
         # self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_selected)
         self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.on_selected_right_click)
 
-        hs_m4b_panel.Add(self.lc_mp3, 5, wx.ALL | wx.EXPAND, 2)
+        hs_m4b_panel.Add(self.lc_mp3, 5, wx.ALL | wx.EXPAND, 0)
 
         self.log_panel = wx.Panel(self.main_panel, wx.ID_ANY)
         vs_main_panel.Add(self.log_panel, 1, wx.EXPAND, 0)
@@ -331,7 +330,7 @@ class MainFrame(wx.Frame):
             (ivonet.TOOLBAR_ID_OPEN_PROJECT, "open", "Open project", self.on_open_project, True),
             (ivonet.TOOLBAR_ID_SAVE_PROJECT, "save", "Save project", self.on_save_project, True),
             (ivonet.TOOLBAR_ID_SEPARATOR, None, None, None, False),
-            (ivonet.TOOLBAR_ID_QUEUE, "queue_window", "Queue for processing", self.on_queue, False),
+            (ivonet.TOOLBAR_ID_QUEUE, "queue", "Queue for processing", self.on_queue, False),
         ]
         for art_id, label, short_help, func, enabled in tool_buttons:
             if art_id <= 0:
@@ -401,17 +400,14 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def convert_project(self, project: Project):
-        book = AudiobookEntry(self, project)
+        book = AudiobookEntry(self.queue_window, project)
         self.queue_sizer_v.Prepend(book, 0, wx.ALL | wx.EXPAND, 0)
         self.queue_window.Layout()
         self.Refresh()
-        self.queue.append(book)
         book.start()
 
-    def remove_from_queue(self, entry: AudiobookEntry):
-        if entry in self.queue:
-            self.queue.remove(entry)
-        entry.stop()
+    @staticmethod
+    def remove_from_queue(entry: AudiobookEntry):
         entry.Destroy()
 
     def on_select_dir(self, event):
@@ -586,7 +582,6 @@ class MainFrame(wx.Frame):
         self.GetMenuBar().file_history.Save(history_config)
         with open(ivonet.HISTORY_FILE, "wb") as fo:
             history_config.Save(fo)
-
 
     def on_title(self, event):
         """Handler for the title field event"""

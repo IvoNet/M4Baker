@@ -55,7 +55,7 @@ associate the files to the app but don't know how yet.
 
 # If you are a Developers
 
-# # Requirements
+## Requirements
 
 - Python 3.9 (brew install python)
 

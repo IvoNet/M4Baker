@@ -5,7 +5,7 @@ M4Baker bakes mp3 files to Audiobook format (m4b).
 I am building it with my personal wishes and needs in mind as I am the developer and the main user :-)
 The design is with ease of use in mind.
 
-![](doc/Screen-meta.png)
+![](doc/Screen-main.png)
 
 * Mandatory fields
     * Title
@@ -16,12 +16,12 @@ The design is with ease of use in mind.
 * When Queued processing of the project will begin, and the current project windows will be cleaned to start a new one.
 * The progress of all queued projects can be seen on the Queue tab.
 * In theory, you can Queue as many projects as you want, depending on the capacity of your machine.
-
-![](doc/Screen-queue.png)
-
 * Processes that are stopped (x) or have failed for some reason will show in red
 * Successfully completed projects will show up green.
 * A stopped process can be removed from the queue by using the (x) in the entry.
+
+Projects can be saved to files called *.ivo (for now) and reopened through the app or recent history. I want to
+associate the files to the app but don't know how yet.
 
 ## Download release
 
@@ -32,6 +32,8 @@ The design is with ease of use in mind.
 
 * As of version 0.1.2 it should build into a kinda "fully" working version with lots of rough edges
   (very alpha!)
+
+* Version 0.4.4 has a newer look and feel (single page) and should be a bit more stable :-) working on it!
 
 ## Extra note
 

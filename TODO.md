@@ -1,5 +1,11 @@
 # TODO
 
+## Whaat?
+
+* Text -> Open TODO
+* √ Text -> Done
+* X Text -> Won't do
+
 ## POCs
 
 * √ Event emitter tests / Singleton? / Module? -> Implemented.
@@ -32,7 +38,7 @@
   Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
 * Rename *.ivo to *.m4baker as that is a much better but less ego boosting file extension :-)
 * √ Default save audiobook location to same location as mp3files? (not sure or an option?)
-* Set target dir (default = dir where mp3 came from unless there are more locations otherwise Music folder)
+* √ Set target dir (default = dir where mp3 came from unless there are more locations otherwise Music folder)
 * X Extract number of processors
   * X default all -1 for concurrent processes
   * X overridable with "just do it"

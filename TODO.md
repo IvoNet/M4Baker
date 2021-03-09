@@ -50,10 +50,10 @@
   * Remove history item if wanted
 * When loading a saved project check if all is still in order
   * Do the mp3 file references still exist?
-* Remove from Queue when done
-* Choose output folder
-  * per project?
-  * default output folder?
+* √ Remove from Queue when done -> When pressing the (X) button again
+* √ Choose output folder
+  * √ per project?
+  * √ default output folder?
 * √ Clean up GUI
 * √ Clean dbg() statements
 * √ Improve Log statements

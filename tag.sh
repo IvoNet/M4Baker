@@ -5,7 +5,7 @@ VERSION=$(<./VERSION)
 git add VERSION
 git commit -m "v${VERSION}"
 
-if [[ $(git diff --stat) == '' ]]; then
+if [ -z "$(git diff --stat)" ]; then
   git tag "v${VERSION}"
   git push
   git push --tags

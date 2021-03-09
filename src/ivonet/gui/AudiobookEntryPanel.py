@@ -15,7 +15,7 @@ import wx.lib.newevent
 from wx._core import CommandEvent
 
 from ivonet.events import log, dbg
-from ivonet.events.custom import EVT_PROCESS_DONE, EVT_PROCESS_ERROR, ProcessExceptionEvent
+from ivonet.events.custom import EVT_PROCESS_DONE, EVT_PROCESS_ERROR, ProcessExceptionEvent, ProcessCleanEvent
 from ivonet.io.save import save_project
 from ivonet.model.Project import Project
 from ivonet.threading.ProjectConverterWorker import ProjectConverterWorker
@@ -79,8 +79,9 @@ class AudiobookEntry(wx.Panel):
             self.stop()
             self.filename.SetBackgroundColour(wx.RED)
             self.filename.SetForegroundColour(wx.BLACK)
+            self.Refresh()
         else:
-            self.Destroy()
+            wx.PostEvent(self.parent, ProcessCleanEvent(obj=self))
         event.StopPropagation()
 
     def on_done(self, event):
@@ -93,6 +94,7 @@ class AudiobookEntry(wx.Panel):
         dbg("Processing error", str(event.cmd))
         self.filename.SetBackgroundColour(wx.RED)
         self.filename.SetForegroundColour(wx.BLACK)
+        self.Refresh()
         self.stop()
 
     def on_time_indicator(self, event):

@@ -12,12 +12,12 @@ wx.PostEvent(EVT_PROJECT_HISTORY, CoverArtEvent(cover=img))
 
 
 Bind to events examples:
-self.Bind(EVT_PROJECT_HISTORY, self.project_history)
+self.Bind(EVT_PROJECT_HISTORY, self.on_project_history)
 self.Bind(EVT_PROCESS_DONE, self.on_done)
 self.Bind(EVT_COVER_ART, self.on_cover_art_dropped)
 
 method exampleL
-    def project_history(self, event: ProjectHistoryEvent):
+    def on_project_history(self, event: ProjectHistoryEvent):
         self.GetMenuBar().file_history.AddFileToHistory(event.path)
         self.save_history()
 """
@@ -25,5 +25,6 @@ method exampleL
 from wx.lib.newevent import NewEvent
 
 (ProcessDoneEvent, EVT_PROCESS_DONE) = NewEvent()
+(ProcessCleanEvent, EVT_PROCESS_CLEAN) = NewEvent()
 (ProcessExceptionEvent, EVT_PROCESS_ERROR) = NewEvent()
 (ProjectHistoryEvent, EVT_PROJECT_HISTORY) = NewEvent()

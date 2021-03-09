@@ -21,7 +21,7 @@ from wx.lib.wordwrap import wordwrap
 import ivonet
 from ivonet.book.meta import GENRES, CHAPTER_LIST
 from ivonet.events import ee, dbg, log
-from ivonet.events.custom import EVT_PROJECT_HISTORY, ProjectHistoryEvent
+from ivonet.events.custom import EVT_PROJECT_HISTORY, ProjectHistoryEvent, EVT_PROCESS_CLEAN, ProcessCleanEvent
 from ivonet.gui.AudiobookEntryPanel import AudiobookEntry
 from ivonet.gui.CoverArtDropTarget import CoverArtDropTarget
 from ivonet.gui.MP3DropTarget import MP3DropTarget
@@ -294,7 +294,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TEXT, self.on_year, self.tc_year)
         self.Bind(wx.EVT_TEXT, self.on_comment, self.tc_comment)
         self.Bind(wx.EVT_TEXT_MAXLEN, self.on_log_max_len, self.tc_log)
-        self.Bind(EVT_PROJECT_HISTORY, self.project_history)
+        self.Bind(EVT_PROJECT_HISTORY, self.on_project_history)
+        self.Bind(EVT_PROCESS_CLEAN, self.on_clean_queue_item)
 
         ee.on("track.title", self.ee_on_title)
         ee.on("track.album", self.ee_on_title)
@@ -414,6 +415,11 @@ class MainFrame(wx.Frame):
         self.queue_window.Layout()
         self.Refresh()
         book.start()
+
+    def on_clean_queue_item(self, event: ProcessCleanEvent):
+        """Handles the cleaning of a queued item after it has been stopped and the button is pressed again."""
+        event.obj.Destroy()
+        self.queue_window.Refresh()
 
     @staticmethod
     def remove_from_queue(entry: AudiobookEntry):
@@ -651,7 +657,7 @@ class MainFrame(wx.Frame):
             log("Correcting disk total as it can not be smaller than the disk.")
             self.sc_disk_total.SetValue(self.sc_disc.GetValue())
 
-    def project_history(self, event: ProjectHistoryEvent):
+    def on_project_history(self, event: ProjectHistoryEvent):
         """handler for the 'EVT_PROJECT_HISTORY' event.
         it will add it to the history (again) for the ranking and then save
         to settings so it can be reloaded on restart.

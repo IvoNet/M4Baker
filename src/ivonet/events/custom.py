@@ -25,5 +25,5 @@ method exampleL
 from wx.lib.newevent import NewEvent
 
 (ProcessDoneEvent, EVT_PROCESS_DONE) = NewEvent()
+(ProcessExceptionEvent, EVT_PROCESS_ERROR) = NewEvent()
 (ProjectHistoryEvent, EVT_PROJECT_HISTORY) = NewEvent()
-# (CoverArtEvent, EVT_COVER_ART) = NewEvent()

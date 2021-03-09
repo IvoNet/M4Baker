@@ -14,8 +14,8 @@ import wx
 import wx.lib.newevent
 from wx._core import CommandEvent
 
-from ivonet.events import ee, log, dbg
-from ivonet.events.custom import EVT_PROCESS_DONE
+from ivonet.events import log, dbg
+from ivonet.events.custom import EVT_PROCESS_DONE, EVT_PROCESS_ERROR, ProcessExceptionEvent
 from ivonet.io.save import save_project
 from ivonet.model.Project import Project
 from ivonet.threading.ProjectConverterWorker import ProjectConverterWorker
@@ -23,7 +23,7 @@ from ivonet.threading.ProjectConverterWorker import ProjectConverterWorker
 
 class AudiobookEntry(wx.Panel):
     def __init__(self, parent, project: Project, panel_id=wx.ID_ANY):
-        wx.Panel.__init__(self, parent, panel_id, style=wx.BORDER_SIMPLE)
+        wx.Panel.__init__(self, parent.queue_window, panel_id, style=wx.BORDER_SIMPLE)
         self.parent = parent
         self.start_time = time.perf_counter()
         self.stage = 0  # used for the progressbar based on the different conversion stages
@@ -52,13 +52,13 @@ class AudiobookEntry(wx.Panel):
         sizer.Add(self.stop_button, 0, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.on_stopped, self.stop_button)
         self.Bind(EVT_PROCESS_DONE, self.on_done)
+        self.Bind(EVT_PROCESS_ERROR, self.on_error)
 
         sizer.Add((10, 10), 0, 0, 0)
         self.SetSizer(sizer)
 
         self.Bind(wx.EVT_LEFT_DCLICK, self.on_save, self)
         self.Layout()
-        ee.on("process.exception", self.ee_exception)
         self.process = ProjectConverterWorker(self, self.project)
 
     def start(self):
@@ -78,7 +78,7 @@ class AudiobookEntry(wx.Panel):
         if self.running:
             self.stop()
             self.filename.SetBackgroundColour(wx.RED)
-            self.filename.SetForegroundColour(wx.GREEN)
+            self.filename.SetForegroundColour(wx.BLACK)
         else:
             self.Destroy()
         event.StopPropagation()
@@ -86,20 +86,20 @@ class AudiobookEntry(wx.Panel):
     def on_done(self, event):
         self.stop()
         self.filename.SetForegroundColour(wx.GREEN)
-        # event.Skip()
+        event.Skip()
 
-    def ee_exception(self, cmd, project):
-        log("Processing stopped because an error occurred:", project.title)
-        dbg("Processing error", str(cmd))
+    def on_error(self, event: ProcessExceptionEvent):
+        log("Processing stopped because an error occurred:", event.project.title)
+        dbg("Processing error", str(event.cmd))
         self.filename.SetBackgroundColour(wx.RED)
-        self.filename.SetForegroundColour(wx.GREEN)
+        self.filename.SetForegroundColour(wx.BLACK)
         self.stop()
 
     def on_time_indicator(self, event):
         self.elapsed.SetLabel(time.strftime("%H:%M:%S", time.gmtime(time.perf_counter() - self.start_time)))
-        # event.Skip()
+        event.Skip()
 
     def on_save(self, event):
         dbg("on_save event!")
         save_project(self.parent, self.project)
-        # event.Skip()
+        event.Skip()

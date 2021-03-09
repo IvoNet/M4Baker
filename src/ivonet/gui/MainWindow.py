@@ -378,11 +378,21 @@ class MainFrame(wx.Frame):
 
     def on_queue(self, event):
         status("Processing...")
-        with wx.FileDialog(self, "Save XYZ file",
+
+        base_dir = None
+        if self.project.name:
+            base_dir, filename = os.path.split(self.project.name)
+        elif self.project.tracks:
+            base_dir = os.path.split(self.project.tracks[0])[0]
+
+        with wx.FileDialog(self, "Save audiobook...",
                            defaultDir=self.default_save_path,
                            defaultFile=self.project.final_name(),
                            wildcard=ivonet.FILE_WILDCARD_M4B,
-                           style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
+                           style=wx.FD_SAVE) as fileDialog:
+
+            if base_dir:
+                fileDialog.SetDirectory(base_dir)
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
@@ -393,14 +403,13 @@ class MainFrame(wx.Frame):
                 pathname += ".m4b"
             self.project.m4b_name = pathname
 
-        # self.main_panel.SetSelection(1)  # Queue Page
-        self.convert_project(self.project)
+        self.queue_project(self.project)
         self.on_clear(None)
         log("Queued audiobook for processing")
         event.Skip()
 
-    def convert_project(self, project: Project):
-        book = AudiobookEntry(self.queue_window, project)
+    def queue_project(self, project: Project):
+        book = AudiobookEntry(self, project)
         self.queue_sizer_v.Prepend(book, 0, wx.ALL | wx.EXPAND, 0)
         self.queue_window.Layout()
         self.Refresh()
@@ -439,9 +448,12 @@ class MainFrame(wx.Frame):
 
     def project_open(self, path):
         """Open a Saved project"""
-        with open(path, 'rb') as fi:
-            self.project = pickle.load(fi)
-            self.reset_metadata(self.project)
+        try:
+            with open(path, 'rb') as fi:
+                self.project = pickle.load(fi)
+                self.reset_metadata(self.project)
+        except FileNotFoundError:
+            log(f"File: {path} could not be opened.")
 
     def reset_metadata(self, project):
         """Handles the 'audiobook.new' event to reset the whole space"""
@@ -572,9 +584,9 @@ class MainFrame(wx.Frame):
         """Handler for the event on file history selection in the file menu"""
         file_num = event.GetId() - wx.ID_FILE1
         path = self.GetMenuBar().file_history.GetHistoryFile(file_num)
+        log(f"You selected {path}")
         wx.PostEvent(self, ProjectHistoryEvent(path=path))
         self.project_open(path)
-        log(f"You selected {path}")
 
     def save_history(self):
         """Saves the recent file history to disk"""

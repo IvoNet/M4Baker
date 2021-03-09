@@ -21,8 +21,8 @@ import wx.lib.newevent
 
 import ivonet
 from ivonet.book.meta import CHAPTER_LIST
-from ivonet.events import dbg, log, ee
-from ivonet.events.custom import ProcessDoneEvent
+from ivonet.events import dbg, log
+from ivonet.events.custom import ProcessDoneEvent, ProcessExceptionEvent
 from ivonet.io import unique_name
 from ivonet.model.Project import Project
 
@@ -41,7 +41,7 @@ class ProjectConverterWorker(object):
     TIME_ELAPSED = re.compile(".*size=.*time=([0-9]{2}):([0-9]{2}):([0-9]{2}).([0-9]{2}).*")
 
     def __init__(self, parent, project: Project) -> None:
-        self.target = parent
+        self.parent = parent
         self.project = project
         self.keep_going = False
         self.running = False
@@ -70,7 +70,7 @@ class ProjectConverterWorker(object):
             log("Temp dir:", project_tmpdir)
 
             # bind all mp3 into one file (mp3binder)
-            self.target.stage = 0
+            self.parent.stage = 0
             merged = os.path.join(project_tmpdir, "merged.mp3")
             self.merge_mp3_files(merged)
 
@@ -81,7 +81,7 @@ class ProjectConverterWorker(object):
                 return
 
             # Convert ffmpeg
-            self.target.stage = 1
+            self.parent.stage = 1
             m4a = os.path.join(project_tmpdir, "converted.m4a")
             self.convert_2_m4a(merged, m4a)
 
@@ -92,7 +92,7 @@ class ProjectConverterWorker(object):
                 return
 
             # Add metadata tags
-            self.target.stage = 2
+            self.parent.stage = 2
             self.add_metadata(m4a)
 
             # dbg(os.system(f"ls -lsa {project_tmpdir}"))
@@ -102,7 +102,7 @@ class ProjectConverterWorker(object):
                 return
 
             # Add chapters
-            self.target.stage = 3
+            self.parent.stage = 3
             m4b = os.path.join(project_tmpdir, "converted.m4b")
             self.create_chapters(project_tmpdir, m4b)
 
@@ -113,7 +113,7 @@ class ProjectConverterWorker(object):
                 return
 
             # Add CoverArt
-            self.target.stage = 4
+            self.parent.stage = 4
             cover = os.path.join(project_tmpdir, "cover.png")
             self.add_cover_art(cover, m4b)
 
@@ -123,23 +123,23 @@ class ProjectConverterWorker(object):
                 self.running = False
                 return
 
-            self.target.stage = 5
-            self.target.update(25)
+            self.parent.stage = 5
+            self.parent.update(25)
             shutil.move(m4b, unique_name(self.project.m4b_name))
-            self.target.update(100)
+            self.parent.update(100)
 
             if self.keep_going:
-                self.target.update(100)
-                wx.PostEvent(self.target, ProcessDoneEvent())
+                self.parent.update(100)
+                wx.PostEvent(self.parent, ProcessDoneEvent())
             self.running = False
             self.keep_going = False
 
     def merge_mp3_files(self, merged):
 
         if len(self.project.tracks) == 1:
-            self.target.update(25)
+            self.parent.update(25)
             shutil.copyfile(self.project.tracks[0], merged)
-            self.target.update(100)
+            self.parent.update(100)
             return
 
         cmd = [ivonet.APP_MP3_BINDER, '-out', merged]
@@ -162,7 +162,7 @@ class ProjectConverterWorker(object):
                 break
             if "Processing:" in line:
                 count += 1
-                self.target.update(int((count * 100) / total))
+                self.parent.update(int((count * 100) / total))
         self.__check_process(cmd)
 
     def convert_2_m4a(self, merged, m4a):
@@ -201,7 +201,7 @@ class ProjectConverterWorker(object):
             elapsed = self.TIME_ELAPSED.match(line)
             if elapsed:
                 self.progress = self.calc_percentage_done(elapsed.groups())
-                self.target.update(self.progress)
+                self.parent.update(self.progress)
         self.__check_process(cmd)
 
     def add_metadata(self, m4a):
@@ -245,12 +245,12 @@ class ProjectConverterWorker(object):
                 if len(ret) > 1:
                     try:
                         percentage = int(ret[0].split()[-1])
-                        self.target.update(percentage)
+                        self.parent.update(percentage)
                         dbg(percentage)
                     except (IndexError, ValueError):
                         # Just ignore... probably bad line
                         pass
-        self.target.update(100)
+        self.parent.update(100)
         self.__check_process(cmd)
 
     def create_chapters(self, project_tmpdir, m4b):
@@ -259,7 +259,7 @@ class ProjectConverterWorker(object):
             chapter_file = os.path.join(project_tmpdir, "converted.chapters.txt")
             with open(chapter_file, "w") as fo:
                 fo.write(self.project.chapter_file())
-                self.target.update(10)
+                self.parent.update(10)
             cmd.append("-i")
         else:
             fixed = int(self.project.chapter_method.split()[1].strip()) * 60
@@ -281,9 +281,9 @@ class ProjectConverterWorker(object):
                 break
             dbg(line)
             if "QuickTime" in line:
-                self.target.update(50)
+                self.parent.update(50)
         self.__check_process(cmd)
-        self.target.update(100)
+        self.parent.update(100)
 
     def add_cover_art(self, cover, m4b):
         """add_cover_art(cover_name, audiobook_file) -> audiobook file with cover art
@@ -292,7 +292,7 @@ class ProjectConverterWorker(object):
         """
         img = wx.Image(BytesIO(self.project.cover_art), wx.BITMAP_TYPE_ANY)
         img.SaveFile(cover, wx.BITMAP_TYPE_PNG)
-        self.target.update(10)
+        self.parent.update(10)
         cmd = [ivonet.APP_MP4_ART, "--add", cover, m4b]
 
         self.subprocess(cmd)
@@ -309,9 +309,9 @@ class ProjectConverterWorker(object):
                 break
             dbg(line)
             if "adding" in line:
-                self.target.update(50)
+                self.parent.update(50)
         self.__check_process(cmd)
-        self.target.update(100)
+        self.parent.update(100)
 
     def subprocess(self, cmd: list):
         """subprocess(command_list) -> perfors a system command.
@@ -343,4 +343,4 @@ class ProjectConverterWorker(object):
             # but we wanted to keep going
             self.keep_going = False
             dbg("Process exitcode: ", self.process.returncode)
-            ee.emit("process.exception", cmd, self.project)
+            wx.PostEvent(self.parent, ProcessExceptionEvent(cmd=cmd, project=self.project))

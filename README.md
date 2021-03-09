@@ -34,6 +34,7 @@ associate the files to the app but don't know how yet.
   (very alpha!)
 
 * Version 0.4.4 has a newer look and feel (single page) and should be a bit more stable :-) working on it!
+  Still very alpha phase.
 
 ## Extra note
 

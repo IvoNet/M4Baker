@@ -19,6 +19,6 @@ python ./version.py
 echo "Building..."
 
 echo "Building the m4baker.app"
-pyinstaller --noconsole -y m4baker.spec
+python -OO -m PyInstaller --osx-bundle-identifier nl.ivonet.m4baker --noconsole -y m4baker.spec
 
 ./tag.sh

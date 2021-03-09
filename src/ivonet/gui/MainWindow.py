@@ -16,6 +16,7 @@ from io import BytesIO
 
 import wx
 import wx.adv
+from tinytag import TinyTag
 from wx.lib.wordwrap import wordwrap
 
 import ivonet
@@ -29,7 +30,6 @@ from ivonet.gui.MenuBar import MenuBar, FILE_MENU_QUEUE
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
 from ivonet.io.save import save_project
 from ivonet.model.Project import Project
-from ivonet.model.Track import Track
 
 try:
     from ivonet.image.images import yoda
@@ -297,16 +297,6 @@ class MainFrame(wx.Frame):
         self.Bind(EVT_PROJECT_HISTORY, self.on_project_history)
         self.Bind(EVT_PROCESS_CLEAN, self.on_clean_queue_item)
 
-        ee.on("track.title", self.ee_on_title)
-        ee.on("track.album", self.ee_on_title)
-        ee.on("track.artist", self.ee_on_artist)
-        ee.on("track.disc", self.ee_on_disc)
-        ee.on("track.disc_total", self.ee_on_disc_total)
-        ee.on("track.genre", self.ee_on_genre)
-        ee.on("track.comment", self.ee_on_comment)
-        ee.on("track.year", self.ee_on_year)
-        ee.on("track.cover_art", self.ee_on_cover_art_from_mp3)
-
         self.init()
 
     def init(self):
@@ -530,9 +520,9 @@ class MainFrame(wx.Frame):
     def on_selected_right_click(self, event):
         selected = event.GetItem().GetText()
         if selected:
-            track = Track(selected, silent=True)
-            if track.get_cover_art():
-                self.set_cover_art(track.get_cover_art())
+            tag = TinyTag.get(selected, image=True, ignore_errors=True)
+            if tag.get_image():
+                self.set_cover_art(tag.get_image())
         event.Skip()
 
     def append_track(self, line):
@@ -665,79 +655,3 @@ class MainFrame(wx.Frame):
         self.GetMenuBar().file_history.AddFileToHistory(event.path)
         self.save_history()
 
-    def ee_on_title(self, value):
-        """Handler for the 'track.title' event.
-        It assumes that if the field has already been set either by a previous event
-        or manually this event can be ignored.
-        This event is less important then manual or previous set values.
-        """
-        if self.tc_title.IsEmpty():
-            self.tc_title.SetValue(value)
-
-    def ee_on_artist(self, value):
-        """Handler for the 'track.artist' event.
-        It assumes that if the field has already been set either by a previous event
-        or manually this event can be ignored.
-        This event is less important then manual or previous set values.
-        """
-        if self.tc_artist.IsEmpty():
-            self.tc_artist.SetValue(value)
-
-    def ee_on_grouping(self, value):
-        """Handler for the 'track.grouping' event.
-        It assumes that if the field has already been set either by a previous event
-        or manually this event can be ignored.
-        This event is less important then manual or previous set values.
-        """
-        if self.tc_grouping.IsEmpty():
-            self.tc_grouping.SetValue(value)
-
-    def ee_on_genre(self, value):
-        """Handler for the 'track.title' event.
-        It assumes that if the field has already been set either by a previous event
-        or manually this event can be ignored.
-        In this case we need a 'dirty' flag to do this as the field is a drop down and is never empty
-        This event is less important then manual or previous set values.
-        """
-        if self.genre_pristine:
-            if value in GENRES:
-                self.genre_pristine = False
-                self.cb_genre.SetValue(value)
-            else:
-                log(f"Genre {value} from the metadata is not a known genre.")
-
-    def ee_on_disc(self, value):
-        """Handler for the 'track.disc' event.
-        It will always set it and that will trigger the on_disc handler
-        to check if all is well...
-        """
-        self.sc_disc.SetValue(int(value))
-
-    def ee_on_disc_total(self, value):
-        """Handler for the 'track.disc_total' event.
-        It will always set it and that will trigger the on_disc handler
-        to check if all is well...
-        """
-        self.sc_disk_total.SetValue(int(value))
-
-    def ee_on_year(self, value):
-        """Handler for the 'track.year' event.
-        It assumes that if the field has already been set either by a previous event
-        or manually this event can be ignored.
-        This event is less important then manual or previous set values.
-        """
-        if self.tc_year.IsEmpty():
-            self.tc_year.SetValue(value)
-
-    def ee_on_comment(self, value):
-        """Handler for the 'track.comment' event.
-        It assumes that if the field has already been set either by a previous event
-        or manually this event can be ignored.
-        This event is less important then manual or previous set values.
-        """
-        if self.tc_comment.IsEmpty():
-            self.tc_comment.SetValue(value)
-
-    def ee_on_cover_art_from_mp3(self, image):
-        if not self.project.has_cover_art():
-            self.set_cover_art(image)

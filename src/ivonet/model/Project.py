@@ -10,7 +10,7 @@ The idea is that this project can be Pickled to a file and restored again to get
 Audiobook configuration.
 """
 
-from ivonet.model.Track import Track
+from tinytag import TinyTag
 
 
 class Project(object):
@@ -42,8 +42,8 @@ class Project(object):
         total_seconds = 0.0
         ret = [f"00:00:00.000 {self.chapter_text} {chapter_start}"]
         for idx, track in enumerate(self.tracks, start=chapter_start + 1):
-            trk = Track(track, silent=True)
-            total_seconds += float(trk.get("duration"))
+            trk = TinyTag.get(track, image=False, ignore_errors=True)
+            total_seconds += float(trk.duration)
             hours = int(total_seconds / 3600)
             minutes = int((total_seconds - (hours * 3600)) / 60)
             seconds = int(total_seconds - (hours * 3600) - (minutes * 60))

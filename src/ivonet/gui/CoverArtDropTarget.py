@@ -11,10 +11,10 @@ A Cover Art specialized FileDropTarget
 import os
 
 import wx
+from tinytag import TinyTag
 
 from ivonet.events import log
 from ivonet.image import IMAGE_TYPES
-from ivonet.model.Track import Track
 
 
 class CoverArtDropTarget(wx.FileDropTarget):
@@ -51,9 +51,9 @@ class CoverArtDropTarget(wx.FileDropTarget):
             with open(filenames[0], 'rb') as img:
                 self.parent.set_cover_art(img.read())
         elif filenames[0].lower().endswith(".mp3"):
-            track = Track(filenames[0], silent=True)
-            if track.get_cover_art():
-                self.parent.set_cover_art(track.get_cover_art())
+            tag = TinyTag.get(filenames[0], image=True, ignore_errors=True)
+            if tag.get_image():
+                self.parent.set_cover_art(tag.get_image())
             else:
                 log("Could not retrieve any Cover Art from the dropped mp3 file.")
         else:

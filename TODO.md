@@ -25,7 +25,9 @@
 
 * PRIO! Confirm Quit when processing or save state!!!
 * Improve the queue tooltip... "remove the tracks? just metadata?" sometimes too big if many tracks
-* Open a *.ivo file with M4Baker by double clicking in Finder
+* PRIO! Open a *.ivo file with M4Baker by double clicking in
+  Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
+* Rename *.ivo to *.m4baker as that is a much better but less ego boosting file extension :-)
 * Default save audiobook location to same location as mp3files? (not sure or an option?)
 * Set target dir (default = dir where mp3 came from unless there are more locations otherwise Music folder)
 * Extract number of processors

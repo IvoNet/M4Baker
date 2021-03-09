@@ -23,16 +23,19 @@
 
 ## Business logic
 
+* Eliminate EventEmitter and use wxPython wx.PostEvents. Bad idea to use different event systems mixed.
 * PRIO! Confirm Quit when processing or save state!!!
 * Improve the queue tooltip... "remove the tracks? just metadata?" sometimes too big if many tracks
+* Save queue on exit for continuation on restart
+* Replace current chapter duration with ffprod because it is more accurate now sometimes a few seconds off.
 * PRIO! Open a *.ivo file with M4Baker by double clicking in
   Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
 * Rename *.ivo to *.m4baker as that is a much better but less ego boosting file extension :-)
-* Default save audiobook location to same location as mp3files? (not sure or an option?)
+* √ Default save audiobook location to same location as mp3files? (not sure or an option?)
 * Set target dir (default = dir where mp3 came from unless there are more locations otherwise Music folder)
-* Extract number of processors
-  * default all -1 for concurrent processes
-  * overridable with "just do it"
+* X Extract number of processors
+  * X default all -1 for concurrent processes
+  * X overridable with "just do it"
 * Recent file history
   * √ max 9 entries
   * √ Save Settings when history added
@@ -41,24 +44,21 @@
   * Remove history item if wanted
 * When loading a saved project check if all is still in order
   * Do the mp3 file references still exist?
-* Save queue on exit for continuation on restart
 * Remove from Queue when done
 * Choose output folder
   * per project?
   * default output folder?
-* Clean up GUI
-* Clean dbg() statements
-* Improve Log statements
-* Clean log on to big?!
-* Save project form queue
-  * if forgotten on double click?
-* Refactor code.
-  * Give own places
+* √ Clean up GUI
+* √ Clean dbg() statements
+* √ Improve Log statements
+* √ Clean log on to big?!
+* √ Save project form queue
+  * √ if forgotten on double click?
+* √ Refactor code.
+  * √ Give own places
   * Process TODO's
-  * Documentation
+  * √ Documentation
   * clean code
-* Replace current chapter duration with ffprod because it is more accurate now sometimes a few seconds off.
-
 * √ Dirty check for images (if stuff was done manually)
 * √ Save project?!
 * √ Clean project

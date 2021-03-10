@@ -50,7 +50,7 @@ class MP3DropTarget(wx.FileDropTarget):
                     value = getattr(tag, item)
                     if value:
                         dbg("Value:", value)
-                        getattr(self, f"set_{mapping}")(value)
+                        getattr(self, f"set_{mapping}")(value.strip())
             else:
                 log(f"Dropped file '{name}' is not an mp3 file or not unique in the list.")
         return True

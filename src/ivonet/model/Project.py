@@ -34,9 +34,12 @@ class Project(object):
         return self.cover_art is not None
 
     def final_name(self, extension=".m4b"):
+        part = ""
+        if self.disc_total > 1:
+            part = f".Part {self.disc}"
         if self.grouping:
-            return f"{self.artist} - {self.grouping.replace('#', '')} - {self.title}{extension}"
-        return f"{self.artist} - {self.title}"
+            return f"{self.artist} - {self.grouping.replace('#', '')} - {self.title}{extension}{part}"
+        return f"{self.artist} - {self.title}{part}"
 
     def chapter_file(self, chapter_start=1):
         total_seconds = 0.0

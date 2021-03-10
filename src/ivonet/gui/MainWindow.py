@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-03-10 16:32:43$"
+__revised__ = "$revised: 2021-03-10 20:59:56$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -335,7 +335,6 @@ class MainFrame(wx.Frame):
         self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_QUEUE, enable_disable)
         self.GetMenuBar().Enable(FILE_MENU_QUEUE, enable_disable)
         self.queue_window.Refresh()
-        # self.queue_window.Layout()
         self.main_panel.Refresh()
         self.main_panel.Layout()
         self.Refresh()
@@ -385,13 +384,12 @@ class MainFrame(wx.Frame):
 
             # save the current contents in the file
             pathname = fileDialog.GetPath()
-            if not pathname.endswith(".m4b"):  # TODO Make me a constant
+            if not pathname.endswith(".m4b"):
                 pathname += ".m4b"
             self.project.m4b_name = pathname
 
         self.queue_project(self.project)
         self.on_clear(None)
-        log("Queued audiobook for processing")
         event.Skip()
 
     def queue_project(self, project: Project):
@@ -544,6 +542,7 @@ class MainFrame(wx.Frame):
         self.cover_art.Center()
         self.cover_art.Refresh()
 
+    # noinspection PyUnusedLocal
     def on_reset_cover_art(self, event):
         """Resets the cover art on double clicking the image"""
         self.project.cover_art = None

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 07/03/2021 09:40$"
+__revised__ = "$revised: 2021-03-10 21:00:01$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -67,7 +67,8 @@ class ProjectConverterWorker(object):
         self.running = True
 
         with tempfile.TemporaryDirectory() as project_tmpdir:
-            log("Temp dir:", project_tmpdir)
+            dbg("Temp dir:", project_tmpdir)
+            log(f"Creating: {self.project.m4b_name}")
 
             # bind all mp3 into one file (mp3binder)
             self.parent.stage = 0
@@ -120,6 +121,7 @@ class ProjectConverterWorker(object):
 
             self.parent.stage = 5
             self.parent.update(25)
+            log(f"Moving completed audiobook [{self.project.title}] to final destination.")
             shutil.move(m4b, unique_name(self.project.m4b_name))
             self.parent.update(100)
 
@@ -128,6 +130,7 @@ class ProjectConverterWorker(object):
                 wx.PostEvent(self.parent, ProcessDoneEvent())
             self.running = False
             self.keep_going = False
+            log(f"Created: {self.project.m4b_name}")
 
     def merge_mp3_files(self, merged):
 
@@ -264,7 +267,7 @@ class ProjectConverterWorker(object):
 
         self.subprocess(cmd)
 
-        log(f"Adding chapter information to {self.project.title}")
+        log(f"Adding chapter information to: {self.project.title}")
         while self.keep_going:
             try:
                 line = self.process.stdout.readline()
@@ -300,7 +303,7 @@ class ProjectConverterWorker(object):
                 #  just skip a line.
                 continue
             if not line:
-                dbg(f"Finished Adding Cover Art to {self.project.title}")
+                dbg(f"Finished Adding CoverArt to: {self.project.title}")
                 break
             dbg(line)
             if "adding" in line:

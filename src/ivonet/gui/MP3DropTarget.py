@@ -35,9 +35,11 @@ class MP3DropTarget(wx.FileDropTarget):
     def __init__(self, target):
         super().__init__()
         self.target = target
+        self.genre_logged = False
+        self.disc_correction_logged = False
 
     def OnDropFiles(self, x, y, filenames):
-        log("MP3 Files dropped")
+        dbg("MP3 Files dropped", filenames)
 
         for name in filenames:
             if name.lower().endswith(".mp3") and name not in self.target.lc_mp3.GetStrings():
@@ -53,6 +55,8 @@ class MP3DropTarget(wx.FileDropTarget):
                         getattr(self, f"set_{mapping}")(value.strip())
             else:
                 log(f"Dropped file '{name}' is not an mp3 file or not unique in the list.")
+        self.genre_logged = False
+        self.disc_correction_logged = False
         return True
 
     def set_title(self, value):
@@ -94,7 +98,9 @@ class MP3DropTarget(wx.FileDropTarget):
                 self.target.genre_pristine = False
                 self.target.cb_genre.SetValue(value)
             else:
-                log(f"Genre {value} from the metadata is not a known genre.")
+                if not self.genre_logged:
+                    log(f"Genre {value} from the metadata is not a known genre.")
+                    self.genre_logged = True
 
     def set_disc(self, value):
         """Sets the disc.
@@ -102,6 +108,8 @@ class MP3DropTarget(wx.FileDropTarget):
         to check if all is well...
         """
         self.target.sc_disc.SetValue(int(value))
+        if not self.target.check_disc():
+            log("Corrected disk total as it can not be smaller than the disk.")
 
     def set_disc_total(self, value):
         """Sets the disc total.
@@ -109,6 +117,8 @@ class MP3DropTarget(wx.FileDropTarget):
         to check if all is well...
         """
         self.target.sc_disk_total.SetValue(int(value))
+        if not self.target.check_disc():
+            log("Corrected disk total as it can not be smaller than the disk.")
 
     def set_year(self, value):
         """Sets the year.

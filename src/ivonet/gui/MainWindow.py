@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-03-04 22:53:22$"
+__revised__ = "$revised: 2021-03-10 13:09:22$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -21,7 +21,7 @@ from wx.lib.wordwrap import wordwrap
 
 import ivonet
 from ivonet.book.meta import GENRES, CHAPTER_LIST
-from ivonet.events import ee, dbg, log
+from ivonet.events import dbg, log
 from ivonet.events.custom import EVT_PROJECT_HISTORY, ProjectHistoryEvent, EVT_PROCESS_CLEAN, ProcessCleanEvent
 from ivonet.gui.AudiobookEntryPanel import AudiobookEntry
 from ivonet.gui.CoverArtDropTarget import CoverArtDropTarget
@@ -32,14 +32,9 @@ from ivonet.io.save import save_project
 from ivonet.model.Project import Project
 
 try:
-    from ivonet.image.images import yoda
+    from ivonet.image.images import yoda, pixel
 except ImportError:
     raise ImportError("The images file was not found. Did you forget to generate them?")
-
-
-def status(msg):
-    """Emits a status bar event message."""
-    ee.emit("status", msg)
 
 
 def handle_numeric_keypress(event):
@@ -56,7 +51,6 @@ class MainFrame(wx.Frame):
         super().__init__(*args, **kw)
 
         #  Startup Settings
-        self.photo_max_size = 350
         self.genre_pristine = True
         self.project = Project()
         self.default_save_path = ivonet.DEFAULT_SAVE_PATH
@@ -64,6 +58,8 @@ class MainFrame(wx.Frame):
 
         self.SetSize((1500, 1200))
         self.SetMinSize((1024, 768))
+        self.current_size = self.GetSize()
+        self.is_resizing = False
 
         self.__make_toolbar()
         self.SetMenuBar(MenuBar(self))
@@ -73,12 +69,6 @@ class MainFrame(wx.Frame):
 
         self.status_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_clear_status, self.status_timer)
-
-        # This timer checks every half second if the project has
-        # enough information to enable queue_window
-        self.verify_project_timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.on_verify_project, self.verify_project_timer)
-        self.verify_project_timer.Start(500)
 
         vs_main = wx.BoxSizer(wx.VERTICAL)
 
@@ -208,12 +198,12 @@ class MainFrame(wx.Frame):
         fgs_metadata_panel.Add(cover_art_wrapper_sizer_v, 1, wx.ALL | wx.EXPAND, 0)
 
         # Cover Art section
-        label_11 = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Cover art")
-        cover_art_wrapper_sizer_v.Add(label_11, 0, 0, 0)
+        lbl_cover_art = wx.StaticText(self.metadata_panel, wx.ID_ANY, "Cover art")
+        cover_art_wrapper_sizer_v.Add(lbl_cover_art, 0, 0, 0)
 
         self.cover_art_panel = wx.Panel(self.metadata_panel, wx.ID_ANY)
         self.cover_art_panel.SetToolTip("Drag and drop Cover Art here")
-        cover_art_wrapper_sizer_v.Add(self.cover_art_panel, 1, wx.ALL | wx.EXPAND, 0)
+        cover_art_wrapper_sizer_v.Add(self.cover_art_panel, 1, wx.EXPAND, 1)
 
         cover_art_sizer_h = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -231,11 +221,11 @@ class MainFrame(wx.Frame):
         self.lc_mp3.SetDropTarget(MP3DropTarget(self))
         self.lc_mp3.SetToolTip("Drag and Drop MP3 files here")
         self.lc_mp3.del_button = self.lc_mp3.GetDelButton()
+        self.lc_mp3.GetListCtrl().Bind(wx.EVT_LEFT_DCLICK, self.on_tracks_empty)
         self.lc_mp3.GetDownButton().Bind(wx.EVT_LEFT_DOWN, self.on_tracks_changed)
         self.lc_mp3.GetUpButton().Bind(wx.EVT_LEFT_DOWN, self.on_tracks_changed)
         self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_INSERT_ITEM, self.on_tracks_changed)
         self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_DELETE_ITEM, self.on_tracks_changed)
-        # self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_selected)
         self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.on_selected_right_click)
 
         hs_m4b_panel.Add(self.lc_mp3, 5, wx.ALL | wx.EXPAND, 0)
@@ -255,7 +245,9 @@ class MainFrame(wx.Frame):
         wx.Log.SetActiveTarget(wx.LogTextCtrl(self.tc_log))
         log_sizer_h.Add(self.tc_log, 1, wx.EXPAND, 0)
 
-        self.queue_window = wx.ScrolledWindow(self.main_panel, wx.ID_ANY, style=wx.BORDER_RAISED | wx.TAB_TRAVERSAL)
+        # Queue Part
+        self.queue_window = wx.ScrolledWindow(self.main_panel, wx.ID_ANY,
+                                              style=wx.BORDER_RAISED | wx.TAB_TRAVERSAL | wx.HT_WINDOW_VERT_SCROLLBAR)
         self.queue_window.SetScrollRate(10, 10)
         vs_main_panel.Add(self.queue_window, 1, wx.EXPAND, 0)
 
@@ -293,7 +285,11 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_SPINCTRL, self.on_disc, self.sc_disk_total)
         self.Bind(wx.EVT_TEXT, self.on_year, self.tc_year)
         self.Bind(wx.EVT_TEXT, self.on_comment, self.tc_comment)
-        self.Bind(wx.EVT_TEXT_MAXLEN, self.on_log_max_len, self.tc_log)
+        self.Bind(wx.EVT_TEXT_MAXLEN, self.on_log_empty, self.tc_log)
+        self.tc_log.Bind(wx.EVT_LEFT_DCLICK, self.on_log_empty)
+        self.Bind(wx.EVT_UPDATE_UI, self.on_update_ui)
+        self.Bind(wx.EVT_SIZING, self.on_resizing)
+        self.Bind(wx.EVT_IDLE, self.on_idle)
         self.Bind(EVT_PROJECT_HISTORY, self.on_project_history)
         self.Bind(EVT_PROCESS_CLEAN, self.on_clean_queue_item)
 
@@ -306,10 +302,6 @@ class MainFrame(wx.Frame):
 
         # Tell the world we started anew
         self.reset_metadata(self.project)
-
-        # Register events
-        # TODO what to do with these?
-        ee.on("status", self.ee_on_status)
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -337,19 +329,22 @@ class MainFrame(wx.Frame):
 
         tool_bar.Realize()
 
-    def on_verify_project(self, event):
-        """Handler for the 'verify_project_timer' event
-        It feels a bit like a hack but the cleanest I could think of for now.
-        """
+    def on_update_ui(self, event):
+        """Handles the wx.UpdateUIEvent."""
         enable_disable = self.project.verify()
         self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_QUEUE, enable_disable)
         self.GetMenuBar().Enable(FILE_MENU_QUEUE, enable_disable)
+        self.queue_window.Refresh()
+        # self.queue_window.Layout()
+        self.main_panel.Refresh()
+        self.main_panel.Layout()
+        self.Refresh()
+        self.Layout()
         event.Skip()
 
     def on_exit(self, event):
         """Close the frame, terminating the application."""
         self.save_settings()
-        self.verify_project_timer.Stop()
         self.Close(True)
         event.Skip()
 
@@ -368,7 +363,7 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def on_queue(self, event):
-        status("Processing...")
+        self.status("Processing...")
 
         base_dir = None
         if self.project.name:
@@ -406,17 +401,14 @@ class MainFrame(wx.Frame):
         self.Refresh()
         book.start()
 
-    def on_clean_queue_item(self, event: ProcessCleanEvent):
+    @staticmethod
+    def on_clean_queue_item(event: ProcessCleanEvent):
         """Handles the cleaning of a queued item after it has been stopped and the button is pressed again."""
         event.obj.Destroy()
-        self.queue_window.Refresh()
-
-    @staticmethod
-    def remove_from_queue(entry: AudiobookEntry):
-        entry.Destroy()
+        event.Skip()
 
     def on_select_dir(self, event):
-        status("Select directory")
+        self.status("Select directory")
         with wx.DirDialog(self, "Choose a directory:",
                           style=wx.DD_DEFAULT_STYLE
                                 | wx.DD_DIR_MUST_EXIST
@@ -427,7 +419,7 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def on_open_project(self, event):
-        status("Open Project")
+        self.status("Open Project")
         with wx.FileDialog(self,
                            message="Choose a file...",
                            defaultDir=os.getcwd(),
@@ -474,16 +466,16 @@ class MainFrame(wx.Frame):
 
     # noinspection PyUnusedLocal
     def on_save_project(self, event):
-        status("Save Project")
+        self.status("Save Project")
         save_project(self, self.project)
 
     # noinspection PyUnusedLocal
     def on_clear(self, event):
-        status("Starting new project")
+        self.status("Starting new project")
         self.project = Project()
         self.reset_metadata(self.project)
 
-    def ee_on_status(self, msg):  # TODO eliminate ee event
+    def status(self, msg):
         self.SetStatusText(msg)
         if not self.status_timer.IsRunning():
             self.status_timer.Start(2000)
@@ -493,15 +485,6 @@ class MainFrame(wx.Frame):
         self.SetStatusText(ivonet.TXT_COPYRIGHT)
         if self.status_timer.IsRunning():
             self.status_timer.Stop()
-
-    # noinspection PyUnusedLocal
-    def on_reset_cover_art(self, event):
-        """Resets the cover art on double clicking the image"""
-        self.project.cover_art = None
-        self.cover_art.SetBitmap(yoda.GetBitmap())
-        self.cover_art.Center()
-        self.Refresh()
-        # TODO eliminate me -> ee.emit("reset.cover_art")
 
     def save_settings(self):
         """save_settings() -> Saves default settings to the application settings location"""
@@ -515,6 +498,11 @@ class MainFrame(wx.Frame):
 
     def on_tracks_changed(self, event):
         self.project.tracks = self.lc_mp3.GetStrings()
+        event.Skip()
+
+    def on_tracks_empty(self, event):
+        dbg("on_tracks_empty")
+        self.lc_mp3.SetStrings([])
         event.Skip()
 
     def on_selected_right_click(self, event):
@@ -536,7 +524,6 @@ class MainFrame(wx.Frame):
         gets an image file object or file location as input.
         """
         self.project.cover_art = image
-        log("Setting Cover Art")
         try:
             img = wx.Image(BytesIO(image), wx.BITMAP_TYPE_ANY)
             width = img.GetWidth()
@@ -545,17 +532,48 @@ class MainFrame(wx.Frame):
             dbg(e)
             log("CoverArt found but unknown format")
             return
+        pnl_width, pnl_height = self.cover_art_panel.GetSize()
         if width > height:
-            new_width = self.photo_max_size
-            new_height = self.photo_max_size * height / width
+            new_width = pnl_width
+            new_height = pnl_width * height / width
         else:
-            new_height = self.photo_max_size
-            new_width = self.photo_max_size * width / height
-        img = img.Scale(new_width, new_height)
-
-        self.cover_art.SetBitmap(wx.Bitmap(img))
+            new_height = pnl_height
+            new_width = pnl_height * width / height
+        self.cover_art.SetBitmap(wx.Bitmap(img.Scale(new_width, new_height)))
         self.cover_art.Center()
         self.cover_art.Refresh()
+
+    def on_reset_cover_art(self, event):
+        """Resets the cover art on double clicking the image"""
+        self.project.cover_art = None
+        self.cover_art.SetBitmap(yoda.GetBitmap())
+        self.cover_art.Center()
+        self.Refresh()
+
+    def on_resizing(self, event):
+        """Catch resizing events to enable proportional presentations of the cover.
+        On resizing the cover art image will be replaced with a "pixel image"
+        a very small image with no background so the panel will resize to smaller sizes
+        without trouble.
+        Resizing to a larger size was no trouble but going back to a smaller size was.
+        The image claimed the larger panel and therefore did not resize back to a smaller size.
+        This hack is the solution I came up with :-)
+        """
+        if self.project.has_cover_art() and not self.is_resizing:
+            self.cover_art.SetBitmap(pixel.GetBitmap())
+            self.cover_art.Center()
+        self.is_resizing = True
+        event.Skip()
+
+    def on_idle(self, event):
+        """The first idle event after a resizing event must be caught to resize the cover art
+        to its best fit.
+        It is a bit of a hack to enable the containing panel to resize back to a smaller size.
+        """
+        if self.is_resizing and self.project.has_cover_art():
+            self.set_cover_art(self.project.cover_art)
+        self.is_resizing = False
+        event.Skip()
 
     def load_settings(self):
         """Load_ settings() -> Loads and activates the settings saved by save_settings()"""
@@ -623,7 +641,8 @@ class MainFrame(wx.Frame):
 
     def on_disc(self, event):
         """Handler for the disc and disc_total field events as they are linked"""
-        self.check_disc()
+        if not self.check_disc():
+            log("Corrected disk total as it can not be smaller than the disk.")
         self.project.disc = self.sc_disc.GetValue()
         self.project.disc_total = self.sc_disk_total.GetValue()
         event.Skip()
@@ -638,14 +657,16 @@ class MainFrame(wx.Frame):
         self.project.comment = event.GetString()
         event.Skip()
 
-    def on_log_max_len(self, event):
+    def on_log_empty(self, event):
+        """Happends on double click and max_len"""
         self.tc_log.SetValue("")
         event.Skip()
 
-    def check_disc(self):
+    def check_disc(self) -> bool:
         if self.sc_disk_total.GetValue() < self.sc_disc.GetValue():
-            log("Correcting disk total as it can not be smaller than the disk.")
             self.sc_disk_total.SetValue(self.sc_disc.GetValue())
+            return False
+        return True
 
     def on_project_history(self, event: ProjectHistoryEvent):
         """handler for the 'EVT_PROJECT_HISTORY' event.
@@ -654,4 +675,3 @@ class MainFrame(wx.Frame):
         """
         self.GetMenuBar().file_history.AddFileToHistory(event.path)
         self.save_history()
-

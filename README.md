@@ -20,8 +20,8 @@ The design is with ease of use in mind.
 * Successfully completed projects will show up green.
 * A stopped process can be removed from the queue by using the (x) in the entry.
 
-Projects can be saved to files called *.ivo (for now) and reopened through the app or recent history. I want to
-associate the files to the app but don't know how yet.
+Projects can be saved to files called *.m4baker and reopened through the app or recent history. I want to associate the
+files to the app but don't know how yet.
 
 ## Download release
 

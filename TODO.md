@@ -29,18 +29,20 @@
 
 ## Business logic
 
-* BUG: Scrollable queue does not scroll
+* √ BUG: Scrollable queue does not scroll
 * PRIO! Confirm Quit when processing or save state!!!
 * Save queue on exit for continuation on restart
-* PRIO! Open a *.ivo file with M4Baker by double clicking in
+* PRIO! Open a *.m4baker file with M4Baker by double clicking in
   Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
 * Remember the last used folder location, cuts down on navigation (probably)
-* disc / total disc check should also be done on drop mp3's
-* Eliminate EventEmitter and use wxPython wx.PostEvents. Bad idea to use different event systems mixed.
+* √ disc / total disc check should also be done on drop mp3's
+* √ Eliminate EventEmitter and use wxPython wx.PostEvents. Bad idea to use different event systems mixed.
 * Improve the queue tooltip... "remove the tracks? just metadata?" sometimes too big if many tracks
 * Replace current chapter duration with ffprod because it is more accurate now sometimes a few seconds off.
-* Rename *.ivo to *.m4baker as that is a much better but less ego boosting file extension :-)
+* √ Rename *.ivo to *.m4baker as that is a much better but less ego boosting file extension :-)
 * Update / Version check service
+* √ Double Click on log should empty it
+* √ Resize cover art on resize of window
 * √ Default save audiobook location to same location as mp3files? (not sure or an option?)
 * √ Set target dir (default = dir where mp3 came from unless there are more locations otherwise Music folder)
 * X Extract number of processors

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 07/03/2021 09:33$"
+__revised__ = "$revised: 2021-03-10 13:09:17$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -77,8 +77,7 @@ class AudiobookEntry(wx.Panel):
     def on_stopped(self, event: CommandEvent):
         if self.running:
             self.stop()
-            self.filename.SetBackgroundColour(wx.RED)
-            self.filename.SetForegroundColour(wx.BLACK)
+            self.filename.SetForegroundColour(wx.RED)
             self.Refresh()
         else:
             wx.PostEvent(self.parent, ProcessCleanEvent(obj=self))
@@ -92,8 +91,7 @@ class AudiobookEntry(wx.Panel):
     def on_error(self, event: ProcessExceptionEvent):
         log("Processing stopped because an error occurred:", event.project.title)
         dbg("Processing error", str(event.cmd))
-        self.filename.SetBackgroundColour(wx.RED)
-        self.filename.SetForegroundColour(wx.BLACK)
+        self.filename.SetForegroundColour(wx.RED)
         self.Refresh()
         self.stop()
 

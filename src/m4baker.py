@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-02-28 13:21:13$"
+__revised__ = "$revised: 2021-03-10 13:44:39$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -23,7 +23,6 @@ class M4Baker(wx.App):
 
     def __init__(self, redirect=False, filename=None, use_best_visual=False, clear_sig_int=True):
         super(M4Baker, self).__init__(redirect, filename, use_best_visual, clear_sig_int)
-        dbg("Initializing app")
         self.Bind(wx.EVT_ACTIVATE_APP, self.on_activate)
 
     def on_activate(self, event):
@@ -37,9 +36,11 @@ class M4Baker(wx.App):
 
 def main():
     wx.SystemOptions.SetOption("mac.window-plain-transition", 1)
+    wx.SystemOptions.SetOption("mac.textcontrol-use-spell-checker", 1)
     app = M4Baker()
     frame = MainFrame(None, title="M4Baker", size=(1024, 768))
     frame.Show(True)
+    dbg("M4Baker initialized.")
     app.MainLoop()
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-03-02 21:17:52$"
+__revised__ = "$revised: 2021-03-10 14:03:34$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -84,7 +84,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-FILE_WILDCARD_PROJECT = "M4Baker (*.ivo)|*.ivo"
+FILE_EXTENSION = ".m4baker"
+FILE_WILDCARD_PROJECT = "M4Baker (*.m4baker)|*.m4baker"
 FILE_WILDCARD_M4B = "Audiobook (*.m4b)|*.m4b"
 
 # Toolbar IDs

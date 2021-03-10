@@ -20,7 +20,7 @@ from ivonet.events.custom import ProjectHistoryEvent
 
 def save_project(window, project):
     filename = project.title or "Untitled"
-    filename += ".ivo"
+    filename += ivonet.FILE_EXTENSION
 
     base_dir = None
     if project.name:
@@ -44,8 +44,8 @@ def save_project(window, project):
 
         if save_dlg.ShowModal() == wx.ID_OK:
             path = save_dlg.GetPath()
-            if not path.endswith(".ivo"):
-                path += ".ivo"
+            if not path.endswith(ivonet.FILE_EXTENSION):
+                path += ivonet.FILE_EXTENSION
             with open(path, 'wb') as fo:
                 project.name = path
                 pickle.dump(project, fo)

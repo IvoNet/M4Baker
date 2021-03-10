@@ -15,12 +15,6 @@ import time
 import wx
 
 import ivonet
-from ivonet.events.EventEmitter import EventEmitter
-
-ee = EventEmitter(wildcard=True)
-
-# Set to False if you do not want the emitted messages shown in stdout
-# Should be set to False for prod!
 
 try:
     DEBUG = os.environ["DEBUG"]
@@ -31,18 +25,12 @@ except KeyError:
 def dbg(*args):
     """Emit a 'debug' event convenience method"""
     if DEBUG:
-        ee.emit("debug", *args)
-
-@ee.on_any
-def print_any_event_to_stdout(*args):
-    """Prints all message events if DEBUG = True"""
-    if DEBUG:
         msg = " ".join([str(x) for x in args])
         with open(ivonet.LOG_FILE, "a") as fo:
             fo.write(msg + "\n")
         if len(msg) > 750:
             msg = msg[:750] + "..."
-        print(time.strftime('%X'), "[DEBUG]", msg)
+        wx.LogMessage("{timestamp} [DEBUG] {message}".format(timestamp=time.strftime('%X'), message=msg))
 
 
 def log(*args):
@@ -52,7 +40,6 @@ def log(*args):
 
 
 __all__ = [
-    "ee",
     "dbg",
     "log",
 ]

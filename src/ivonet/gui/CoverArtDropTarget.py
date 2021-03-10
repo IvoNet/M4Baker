@@ -13,6 +13,7 @@ import os
 import wx
 from tinytag import TinyTag
 
+import ivonet
 from ivonet.events import log
 from ivonet.image import IMAGE_TYPES
 
@@ -45,8 +46,11 @@ class CoverArtDropTarget(wx.FileDropTarget):
 
         split_filename = os.path.splitext(filenames[0])
         if len(split_filename) != 2:
-            log("The file dropped is probably not an image.")
+            log("The file dropped is probably not valid.")
             return False
+        if split_filename[1] == ivonet.FILE_EXTENSION:
+            self.parent.project_open(filenames[0])
+            return
         if split_filename[1] in IMAGE_TYPES:
             with open(filenames[0], 'rb') as img:
                 self.parent.set_cover_art(img.read())

@@ -97,6 +97,10 @@ poetry install
 cd PROJECT
 source venv/bin/activate
 python src/m4baker.py
+
+# or
+
+DEBUG=True python src/m4baker.py # Will show extra debug logging in the log window
 ```
 
 ## Build Mac App

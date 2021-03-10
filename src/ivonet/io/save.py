@@ -20,6 +20,8 @@ from ivonet.events.custom import ProjectHistoryEvent
 
 def save_project(window, project):
     filename = project.title or "Untitled"
+    if project.disc_total > 1:
+        filename += f".Part {project.disc}"
     filename += ivonet.FILE_EXTENSION
 
     base_dir = None

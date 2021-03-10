@@ -40,7 +40,6 @@ class CoverArtDropTarget(wx.FileDropTarget):
         - if a list of images just take the first
         - Sets the cover art
         """
-        log("Cover art dropped")
         if len(filenames) > 1:
             log("More than one cover art image was dropped. Taking only the first")
 
@@ -49,8 +48,9 @@ class CoverArtDropTarget(wx.FileDropTarget):
             log("The file dropped is probably not valid.")
             return False
         if split_filename[1] == ivonet.FILE_EXTENSION:
+            log("Recognized project file. Opening...")
             self.parent.project_open(filenames[0])
-            return
+            return False
         if split_filename[1] in IMAGE_TYPES:
             with open(filenames[0], 'rb') as img:
                 self.parent.set_cover_art(img.read())
@@ -63,4 +63,5 @@ class CoverArtDropTarget(wx.FileDropTarget):
         else:
             log(f"File {filenames[0]} is not an image.")
             return False
+        log("Cover art dropped")
         return True

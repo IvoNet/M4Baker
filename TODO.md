@@ -29,12 +29,12 @@
 
 ## Business logic
 
+* √ Reset the name in the project to where it was opened from and renamed to.
 * √ BUG: Scrollable queue does not scroll
 * PRIO! Confirm Quit when processing or save state!!!
 * Save queue on exit for continuation on restart
 * √ Drop a m4baker file onto the cover art and it will open the project
-* PRIO! Open a *.m4baker file with M4Baker by double clicking in
-  Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
+* PRIO! Open a *.m4baker file with M4Baker by double clicking in Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
 * Remember the last used folder location, cuts down on navigation (probably)
 * √ disc / total disc check should also be done on drop mp3's
 * √ Eliminate EventEmitter and use wxPython wx.PostEvents. Bad idea to use different event systems mixed.

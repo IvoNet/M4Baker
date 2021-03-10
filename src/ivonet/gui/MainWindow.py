@@ -439,6 +439,7 @@ class MainFrame(wx.Frame):
         try:
             with open(path, 'rb') as fi:
                 self.project = pickle.load(fi)
+                self.project.name = path
                 self.reset_metadata(self.project)
         except FileNotFoundError:
             log(f"File: {path} could not be opened.")

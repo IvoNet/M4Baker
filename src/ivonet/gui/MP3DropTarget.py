@@ -11,6 +11,7 @@ __doc__ = """
 import wx
 from tinytag import TinyTag
 
+import ivonet
 from ivonet.book.meta import GENRES
 from ivonet.events import log, dbg
 
@@ -42,6 +43,10 @@ class MP3DropTarget(wx.FileDropTarget):
         dbg("MP3 Files dropped", filenames)
 
         for name in filenames:
+            if name.lower().endswith(ivonet.FILE_EXTENSION):
+                log("Recognized project file. Opening...")
+                self.target.project_open(name)
+                return True
             if name.lower().endswith(".mp3") and name not in self.target.lc_mp3.GetStrings():
                 self.target.append_track(name)
                 tag = TinyTag.get(name, image=True, ignore_errors=True)
@@ -55,6 +60,7 @@ class MP3DropTarget(wx.FileDropTarget):
                         getattr(self, f"set_{mapping}")(value.strip())
             else:
                 log(f"Dropped file '{name}' is not an mp3 file or not unique in the list.")
+                return False
         self.genre_logged = False
         self.disc_correction_logged = False
         return True

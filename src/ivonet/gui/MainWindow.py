@@ -275,6 +275,10 @@ class MainFrame(wx.Frame):
         self.load_settings()
         self.Layout()
 
+        self.update_timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.on_update_ui)
+        self.update_timer.Start(500)
+
         self.Bind(wx.EVT_TEXT, self.on_title, self.tc_title)
         self.Bind(wx.EVT_TEXT, self.on_artist, self.tc_artist)
         self.Bind(wx.EVT_TEXT, self.on_grouping, self.tc_grouping)
@@ -287,7 +291,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_TEXT, self.on_comment, self.tc_comment)
         self.Bind(wx.EVT_TEXT_MAXLEN, self.on_log_empty, self.tc_log)
         self.tc_log.Bind(wx.EVT_LEFT_DCLICK, self.on_log_empty)
-        self.Bind(wx.EVT_UPDATE_UI, self.on_update_ui)
+
         self.Bind(wx.EVT_SIZING, self.on_resizing)
         self.Bind(wx.EVT_IDLE, self.on_idle)
         self.Bind(EVT_PROJECT_HISTORY, self.on_project_history)

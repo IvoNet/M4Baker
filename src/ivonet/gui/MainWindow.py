@@ -277,7 +277,7 @@ class MainFrame(wx.Frame):
 
         self.update_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_update_ui)
-        self.update_timer.Start(500)
+        self.update_timer.Start(750)
 
         self.Bind(wx.EVT_TEXT, self.on_title, self.tc_title)
         self.Bind(wx.EVT_TEXT, self.on_artist, self.tc_artist)

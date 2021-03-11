@@ -126,7 +126,7 @@ class MainFrame(wx.Frame):
 
         self.cb_genre = wx.ComboBox(self.metadata_panel, wx.ID_ANY,
                                     choices=GENRES,
-                                    style=wx.CB_DROPDOWN | wx.TE_PROCESS_ENTER)
+                                    style=wx.CB_DROPDOWN | wx.TE_PROCESS_ENTER | wx.CB_READONLY)
         self.cb_genre.SetToolTip("Select your genre")
         self.cb_genre.SetSelection(0)
         fgs_mp3_metadata.Add(self.cb_genre, 0, wx.ALL | wx.EXPAND | wx.FIXED_MINSIZE, 0)

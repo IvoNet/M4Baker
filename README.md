@@ -1,4 +1,4 @@
-# M4B Baker
+# M4Baker
 
 M4Baker bakes mp3 files to Audiobook format (m4b).
 

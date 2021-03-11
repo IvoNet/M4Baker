@@ -347,6 +347,7 @@ class MainFrame(wx.Frame):
 
     def on_exit(self, event):
         """Close the frame, terminating the application."""
+        # TODO Ask for confirmation or save the queue for restart...or both
         self.save_settings()
         self.Close(True)
         event.Skip()
@@ -366,7 +367,11 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def on_queue(self, event):
-        self.status("Processing...")
+        """Handles the queue event from either the toolbar or the File menu (shortcut)."""
+        if not self.project.verify():
+            dbg("You slipped between verifies :-) no no no processing allowed.")
+            return
+        self.status("Queueing audiobook...")
 
         base_dir = None
         if self.project.name:
@@ -393,10 +398,14 @@ class MainFrame(wx.Frame):
             self.project.m4b_name = pathname
 
         self.queue_project(self.project)
-        self.on_clear(None)
+        self.on_clear(event)
         event.Skip()
 
     def queue_project(self, project: Project):
+        """Queue a project.
+        Wraps a project into an AudiobookEntry and puts it on the queue and start it.
+        AudiobookEntry will take care of the rest.
+        """
         book = AudiobookEntry(self, project)
         self.queue_sizer_v.Prepend(book, 0, wx.ALL | wx.EXPAND, 0)
         self.queue_window.Layout()
@@ -410,6 +419,9 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def on_select_dir(self, event):
+        """Handles the default dir event
+        Deprecated because I don't think I will really use it.
+        """
         self.status("Select directory")
         with wx.DirDialog(self, "Choose a directory:",
                           style=wx.DD_DEFAULT_STYLE
@@ -421,6 +433,7 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def on_open_project(self, event):
+        """Handles the open project event."""
         self.status("Open Project")
         with wx.FileDialog(self,
                            message="Choose a file...",
@@ -437,7 +450,7 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def project_open(self, path):
-        """Open a Saved project"""
+        """Open a saved project"""
         try:
             with open(path, 'rb') as fi:
                 self.project = pickle.load(fi)
@@ -447,13 +460,13 @@ class MainFrame(wx.Frame):
             log(f"File: {path} could not be opened.")
 
     def reset_metadata(self, project):
-        """Handles the 'audiobook.new' event to reset the whole space"""
+        """Resets all the metadata fields to te provided project."""
         self.project = project
         self.genre_pristine = True
         if project.has_cover_art():
             self.set_cover_art(self.project.cover_art)
         else:
-            self.on_reset_cover_art(None)
+            self.reset_cover_art()
         self.tc_title.SetValue(project.title)
         self.tc_title.Refresh()
         self.tc_artist.SetValue(project.artist)
@@ -467,43 +480,39 @@ class MainFrame(wx.Frame):
         self.tc_comment.SetValue(project.comment)
         self.lc_mp3.SetStrings(project.tracks)
 
-    # noinspection PyUnusedLocal
     def on_save_project(self, event):
+        """Handles the save project event."""
         self.status("Save Project")
         save_project(self, self.project)
+        event.Skip()
 
-    # noinspection PyUnusedLocal
     def on_clear(self, event):
+        """Handles the new project event."""
         self.status("Starting new project")
         self.project = Project()
         self.reset_metadata(self.project)
+        event.Skip()
 
     def status(self, msg):
+        """Sets the statusbar text and triggers the reset timer"""
         self.SetStatusText(msg)
         if not self.status_timer.IsRunning():
             self.status_timer.Start(2000)
 
-    # noinspection PyUnusedLocal
     def on_clear_status(self, event):
+        """Handles the status bar timer event when triggered and resets it to the default message."""
         self.SetStatusText(ivonet.TXT_COPYRIGHT)
         if self.status_timer.IsRunning():
             self.status_timer.Stop()
-
-    def save_settings(self):
-        """save_settings() -> Saves default settings to the application settings location"""
-        ini = ConfigParser()
-        ini.add_section("Settings")
-        ini.set('Settings', 'screen_size', str(self.GetSize()))
-        ini.set('Settings', 'screen_pos', str(self.GetPosition()))
-        ini.set('Settings', 'default_save_path', self.default_save_path)
-        with open(ivonet.SETTINGS_FILE, "w") as fp:
-            ini.write(fp)
+        event.Skip()
 
     def on_tracks_changed(self, event):
+        """Handles the tracks changed events provided by all the track list buttons"""
         self.project.tracks = self.lc_mp3.GetStrings()
         event.Skip()
 
     def on_tracks_empty(self, event):
+        """Handles the double click event on the tracks panel and will empty the list"""
         dbg("on_tracks_empty")
         self.lc_mp3.SetStrings([])
         event.Skip()
@@ -546,14 +555,19 @@ class MainFrame(wx.Frame):
         self.cover_art.Center()
         self.cover_art.Refresh()
 
-    # noinspection PyUnusedLocal
     def on_reset_cover_art(self, event):
+        """Reset cover art event handler"""
+        self.reset_cover_art()
+        event.Skip()
+
+    def reset_cover_art(self):
         """Resets the cover art on double clicking the image"""
         self.project.cover_art = None
         self.cover_art.SetBitmap(yoda.GetBitmap())
         self.cover_art.Center()
         self.Refresh()
 
+    # noinspection PyUnusedLocal
     def on_resizing(self, event):
         """Catch resizing events to enable proportional presentations of the cover.
         On resizing the cover art image will be replaced with a "pixel image"
@@ -578,6 +592,16 @@ class MainFrame(wx.Frame):
             self.set_cover_art(self.project.cover_art)
         self.is_resizing = False
         event.Skip()
+
+    def save_settings(self):
+        """save_settings() -> Saves default settings to the application settings location"""
+        ini = ConfigParser()
+        ini.add_section("Settings")
+        ini.set('Settings', 'screen_size', str(self.GetSize()))
+        ini.set('Settings', 'screen_pos', str(self.GetPosition()))
+        ini.set('Settings', 'default_save_path', self.default_save_path)
+        with open(ivonet.SETTINGS_FILE, "w") as fp:
+            ini.write(fp)
 
     def load_settings(self):
         """Load_ settings() -> Loads and activates the settings saved by save_settings()"""
@@ -612,6 +636,14 @@ class MainFrame(wx.Frame):
         self.GetMenuBar().file_history.Save(history_config)
         with open(ivonet.HISTORY_FILE, "wb") as fo:
             history_config.Save(fo)
+
+    def on_project_history(self, event: ProjectHistoryEvent):
+        """handler for the 'EVT_PROJECT_HISTORY' event.
+        it will add it to the history (again) for the ranking and then save
+        to settings so it can be reloaded on restart.
+        """
+        self.GetMenuBar().file_history.AddFileToHistory(event.path)
+        self.save_history()
 
     def on_title(self, event):
         """Handler for the title field event"""
@@ -671,11 +703,3 @@ class MainFrame(wx.Frame):
             self.sc_disk_total.SetValue(self.sc_disc.GetValue())
             return False
         return True
-
-    def on_project_history(self, event: ProjectHistoryEvent):
-        """handler for the 'EVT_PROJECT_HISTORY' event.
-        it will add it to the history (again) for the ranking and then save
-        to settings so it can be reloaded on restart.
-        """
-        self.GetMenuBar().file_history.AddFileToHistory(event.path)
-        self.save_history()

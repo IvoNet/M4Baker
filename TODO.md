@@ -29,6 +29,8 @@
 
 ## Business logic
 
+* √ BUG: 100% CPU Usage even on idle (1 core) -> the update ui event was the culprit, now using a timer. Muck improved
+  it is yes yes.
 * √ Reset the name in the project to where it was opened from and renamed to.
 * √ BUG: Scrollable queue does not scroll
 * PRIO! Confirm Quit when processing or save state!!!

@@ -608,8 +608,19 @@ class MainFrame(wx.Frame):
         if os.path.isfile(ivonet.SETTINGS_FILE):
             ini = ConfigParser()
             ini.read(ivonet.SETTINGS_FILE)
-            self.SetSize(ast.literal_eval(ini.get('Settings', 'screen_size')))
-            self.SetPosition(ast.literal_eval(ini.get('Settings', 'screen_pos')))
+            display_width, display_height = wx.DisplaySize()
+            view_size = ast.literal_eval(ini.get('Settings', 'screen_size'))
+            view_x, view_h = view_size
+            if view_x > display_width or view_h > display_height:
+                self.SetSize(self.GetBestSize())
+            else:
+                self.SetSize(view_size)
+            position = ast.literal_eval(ini.get('Settings', 'screen_pos'))
+            pos_w, pos_h = position
+            if pos_w > display_width or pos_h > display_height:
+                self.Center()
+            else:
+                self.SetPosition(position)
             self.default_save_path = ini.get('Settings', 'default_save_path', fallback=ivonet.DEFAULT_SAVE_PATH)
         else:
             self.Center()

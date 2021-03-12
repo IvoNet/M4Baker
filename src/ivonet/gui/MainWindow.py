@@ -222,10 +222,6 @@ class MainFrame(wx.Frame):
         self.lc_mp3.SetToolTip("Drag and Drop MP3 files here")
         self.lc_mp3.del_button = self.lc_mp3.GetDelButton()
         self.lc_mp3.GetListCtrl().Bind(wx.EVT_LEFT_DCLICK, self.on_tracks_empty)
-        self.lc_mp3.GetDownButton().Bind(wx.EVT_LEFT_DOWN, self.on_tracks_changed)
-        self.lc_mp3.GetUpButton().Bind(wx.EVT_LEFT_DOWN, self.on_tracks_changed)
-        self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_INSERT_ITEM, self.on_tracks_changed)
-        self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_DELETE_ITEM, self.on_tracks_changed)
         self.lc_mp3.GetListCtrl().Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.on_selected_right_click)
 
         hs_m4b_panel.Add(self.lc_mp3, 5, wx.ALL | wx.EXPAND, 0)
@@ -335,14 +331,15 @@ class MainFrame(wx.Frame):
 
     def on_update_ui(self, event):
         """Handles the wx.UpdateUIEvent."""
+        self.project.tracks = self.lc_mp3.GetStrings()
         enable_disable = self.project.verify()
         self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_QUEUE, enable_disable)
         self.GetMenuBar().Enable(FILE_MENU_QUEUE, enable_disable)
         self.queue_window.Refresh()
-        self.main_panel.Refresh()
+        # self.main_panel.Refresh()
         self.main_panel.Layout()
         self.Refresh()
-        self.Layout()
+        # self.Layout()
         event.Skip()
 
     def on_exit(self, event):
@@ -504,11 +501,6 @@ class MainFrame(wx.Frame):
         self.SetStatusText(ivonet.TXT_COPYRIGHT)
         if self.status_timer.IsRunning():
             self.status_timer.Stop()
-        event.Skip()
-
-    def on_tracks_changed(self, event):
-        """Handles the tracks changed events provided by all the track list buttons"""
-        self.project.tracks = self.lc_mp3.GetStrings()
         event.Skip()
 
     def on_tracks_empty(self, event):

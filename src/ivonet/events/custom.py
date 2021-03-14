@@ -26,5 +26,6 @@ from wx.lib.newevent import NewEvent
 
 (ProcessDoneEvent, EVT_PROCESS_DONE) = NewEvent()
 (ProcessCleanEvent, EVT_PROCESS_CLEAN) = NewEvent()
+(ProcessCancelledEvent, EVT_PROCESS_CANCELLED) = NewEvent()
 (ProcessExceptionEvent, EVT_PROCESS_ERROR) = NewEvent()
 (ProjectHistoryEvent, EVT_PROJECT_HISTORY) = NewEvent()

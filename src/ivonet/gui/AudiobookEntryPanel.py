@@ -15,7 +15,8 @@ import wx.lib.newevent
 from wx._core import CommandEvent
 
 from ivonet.events import log, dbg
-from ivonet.events.custom import EVT_PROCESS_DONE, EVT_PROCESS_ERROR, ProcessExceptionEvent, ProcessCleanEvent
+from ivonet.events.custom import EVT_PROCESS_DONE, EVT_PROCESS_ERROR, ProcessExceptionEvent, ProcessCleanEvent, \
+    ProcessCancelledEvent
 from ivonet.io.save import save_project
 from ivonet.model.Project import Project
 from ivonet.threading.ProjectConverterWorker import ProjectConverterWorker
@@ -79,6 +80,7 @@ class AudiobookEntry(wx.Panel):
             self.stop()
             self.filename.SetForegroundColour(wx.RED)
             self.Refresh()
+            wx.PostEvent(self.parent, ProcessCancelledEvent(obj=self))
         else:
             wx.PostEvent(self.parent, ProcessCleanEvent(obj=self))
         event.StopPropagation()

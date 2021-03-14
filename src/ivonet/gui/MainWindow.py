@@ -22,7 +22,8 @@ from wx.lib.wordwrap import wordwrap
 import ivonet
 from ivonet.book.meta import GENRES, CHAPTER_LIST
 from ivonet.events import dbg, log
-from ivonet.events.custom import EVT_PROJECT_HISTORY, ProjectHistoryEvent, EVT_PROCESS_CLEAN, ProcessCleanEvent
+from ivonet.events.custom import EVT_PROJECT_HISTORY, ProjectHistoryEvent, EVT_PROCESS_CLEAN, ProcessCleanEvent, \
+    EVT_PROCESS_CANCELLED, ProcessCancelledEvent
 from ivonet.gui.AudiobookEntryPanel import AudiobookEntry
 from ivonet.gui.CoverArtDropTarget import CoverArtDropTarget
 from ivonet.gui.MP3DropTarget import MP3DropTarget
@@ -51,6 +52,7 @@ class MainFrame(wx.Frame):
         super().__init__(*args, **kw)
 
         #  Startup Settings
+        self.active_queue = []
         self.genre_pristine = True
         self.project = Project()
         self.default_save_path = ivonet.DEFAULT_SAVE_PATH
@@ -292,6 +294,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_IDLE, self.on_idle)
         self.Bind(EVT_PROJECT_HISTORY, self.on_project_history)
         self.Bind(EVT_PROCESS_CLEAN, self.on_clean_queue_item)
+        self.Bind(EVT_PROCESS_CANCELLED, self.on_process_cancelled)
 
         self.init()
 
@@ -336,15 +339,19 @@ class MainFrame(wx.Frame):
         self.GetToolBar().EnableTool(ivonet.TOOLBAR_ID_QUEUE, enable_disable)
         self.GetMenuBar().Enable(FILE_MENU_QUEUE, enable_disable)
         self.queue_window.Refresh()
-        # self.main_panel.Refresh()
         self.main_panel.Layout()
         self.Refresh()
-        # self.Layout()
         event.Skip()
 
     def on_exit(self, event):
         """Close the frame, terminating the application."""
-        # TODO Ask for confirmation or save the queue for restart...or both
+        if self.active_queue:
+            with wx.MessageDialog(self, 'Conversions happening...',
+                                  'Are you sure you want to exit?',
+                                  wx.ICON_EXCLAMATION | wx.YES_NO) as dlg:
+                if dlg.ShowModal() == wx.ID_NO:
+                    return
+
         self.save_settings()
         self.Close(True)
         event.Skip()
@@ -405,15 +412,26 @@ class MainFrame(wx.Frame):
         """
         book = AudiobookEntry(self, project)
         self.queue_sizer_v.Prepend(book, 0, wx.ALL | wx.EXPAND, 0)
+        self.active_queue.append(book)
         self.queue_window.Layout()
         self.Refresh()
         book.start()
 
-    @staticmethod
-    def on_clean_queue_item(event: ProcessCleanEvent):
+    def on_clean_queue_item(self, event: ProcessCleanEvent):
         """Handles the cleaning of a queued item after it has been stopped and the button is pressed again."""
         event.obj.Destroy()
+        self.remove_from_active_queue(event.obj)
         event.Skip()
+
+    def on_process_cancelled(self, event: ProcessCancelledEvent):
+        """Remove the process from the active queue when it is cancelled"""
+        self.remove_from_active_queue(event.obj)
+
+    def remove_from_active_queue(self, book):
+        try:
+            self.active_queue.remove(book)
+        except ValueError as e:
+            dbg(e)
 
     def on_select_dir(self, event):
         """Handles the default dir event

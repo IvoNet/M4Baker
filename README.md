@@ -50,8 +50,8 @@ files to the app but don't know how yet.
 
 # Donations / Appreciation
 
-* If you like this software and think I deserve a nice cold beer, or a good cup of coffee you can consider giving me
-  a [donation](http://ivo2u.nl/Zc).
+* If you like this software and think I deserve a nice cold beer, or a good cup of coffee you can consider buying me a
+  coffee [donation](http://ivo2u.nl/ZC).
 * Just showing your appreciation on Twitter is almost just as nice!
 
 # If you are a Developers

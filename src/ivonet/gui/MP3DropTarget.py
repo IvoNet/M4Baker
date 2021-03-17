@@ -60,7 +60,6 @@ class MP3DropTarget(wx.FileDropTarget):
                         getattr(self, f"set_{mapping}")(value.strip())
             else:
                 log(f"Dropped file '{name}' is not an mp3 file or not unique in the list.")
-                return False
         self.genre_logged = False
         self.disc_correction_logged = False
         return True

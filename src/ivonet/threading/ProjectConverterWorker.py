@@ -203,11 +203,6 @@ class ProjectConverterWorker(object):
         self.__check_process(cmd)
 
     def add_metadata(self, m4a):
-        """AtomicParsley "${AUDIOBOOK}.m4a" --title "${TITLE}"
-        --grouping "${GROUPING}" --sortOrder album "${GROUPING}"
-        --album "${ALBUM}" --artist "${AUTHOR}" --genre "${GENRE}"
-        --tracknum "${TRACK}" --disk "${TRACK}" --comment "${COMMENT}"
-        --year "${YEAR}" --stik Audiobook --overWrite"""
         cmd = [
             ivonet.APP_ATOMIC_PARSLEY,
             m4a,

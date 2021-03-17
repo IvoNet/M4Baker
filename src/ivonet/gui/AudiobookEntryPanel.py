@@ -88,6 +88,7 @@ class AudiobookEntry(wx.Panel):
     def on_done(self, event):
         self.stop()
         self.filename.SetForegroundColour(wx.GREEN)
+        self.parent.remove_from_active_queue(self)
         event.Skip()
 
     def on_error(self, event: ProcessExceptionEvent):

@@ -10,8 +10,6 @@ The Menubar
 
 import wx
 
-# File Menu
-
 FILE_MENU_QUEUE = wx.NewIdRef()
 FILE_MENU_STOP_PROCESS = wx.NewIdRef()
 FILE_MENU_TO_DIR = wx.NewIdRef()

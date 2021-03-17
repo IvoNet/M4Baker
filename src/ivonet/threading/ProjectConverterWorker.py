@@ -102,7 +102,8 @@ class ProjectConverterWorker(object):
             # Add chapters
             self.parent.stage = 3
             m4b = os.path.join(project_tmpdir, "converted.m4b")
-            self.create_chapters(project_tmpdir, m4b)
+            chapter_file = os.path.join(project_tmpdir, "converted.chapters.txt")
+            self.create_chapters(chapter_file, m4b)
 
             self.process = None
             if not self.keep_going:
@@ -122,8 +123,12 @@ class ProjectConverterWorker(object):
             self.parent.stage = 5
             self.parent.update(25)
             log(f"Moving completed audiobook [{self.project.title}] to final destination.")
+            basename, ext = os.path.splitext(unique_name(self.project.m4b_name))
             shutil.move(m4b, unique_name(self.project.m4b_name))
-            self.parent.update(100)
+            self.parent.update(50)
+            shutil.move(cover, unique_name(basename + ".png"))
+            self.parent.update(75)
+            shutil.move(chapter_file, unique_name(basename + ".chapters.txt"))
 
             if self.keep_going:
                 self.parent.update(100)
@@ -246,10 +251,9 @@ class ProjectConverterWorker(object):
         self.parent.update(100)
         self.__check_process(cmd)
 
-    def create_chapters(self, project_tmpdir, m4b):
+    def create_chapters(self, chapter_file, m4b):
         cmd = [ivonet.APP_MP4_CHAPS, ]
         if self.project.chapter_method == CHAPTER_LIST[0]:
-            chapter_file = os.path.join(project_tmpdir, "converted.chapters.txt")
             with open(chapter_file, "w") as fo:
                 chapters = self.project.chapter_file()
                 dbg(chapters)

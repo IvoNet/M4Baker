@@ -42,7 +42,7 @@ class Project(object):
         return f"{self.artist} - {self.title}{part}"
 
     def chapter_file(self, chapter_start=1):
-        ret = [f"00:00:00.000 {self.chapter_text} {chapter_start}"]
+        ret = [f"00:00:00.000 {self.chapter_text} {chapter_start:03d}"]
         total_time = 0.0
         for idx, track in enumerate(self.tracks, start=chapter_start + 1):
             total_time += duration(track)

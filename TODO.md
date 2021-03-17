@@ -29,6 +29,13 @@
 
 ## Business logic
 
+* PRIO! Open a *.m4baker file with M4Baker by double clicking in
+  Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
+* Update / Version check service
+* Improve the queue tooltip... "remove the tracks? just metadata?" sometimes too big if many tracks
+* When loading a saved project check if all is still in order
+  * Do the mp3 file references still exist?
+* √ BUGGY: chapter length based on mp3 length is not accurate... use ffprobe?
 * √ BUG: if last window position outside of the current then the screen will not be shown... should take screen size
   into account
 * √ BUG: 100% CPU Usage even on idle (1 core) -> the update ui event was the culprit, now using a timer. Muck improved
@@ -36,16 +43,13 @@
 * √ Reset the name in the project to where it was opened from and renamed to.
 * √ BUG: Scrollable queue does not scroll
 * √ Confirm Quit when processing or save state! -> Done
-* Save queue on exit for continuation on restart
+* X Save queue on exit for continuation on restart
 * √ Drop a m4baker file onto the cover art and it will open the project
-* PRIO! Open a *.m4baker file with M4Baker by double clicking in Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
-* Remember the last used folder location, cuts down on navigation (probably)
+* √ Remember the last used folder location, cuts down on navigation (probably)
 * √ disc / total disc check should also be done on drop mp3's
 * √ Eliminate EventEmitter and use wxPython wx.PostEvents. Bad idea to use different event systems mixed.
-* Improve the queue tooltip... "remove the tracks? just metadata?" sometimes too big if many tracks
-* Replace current chapter duration with ffprod because it is more accurate now sometimes a few seconds off.
+* √ Replace current chapter duration with ffprod because it is more accurate now sometimes a few seconds off.
 * √ Rename *.ivo to *.m4baker as that is a much better but less ego boosting file extension :-)
-* Update / Version check service
 * √ Double Click on log should empty it
 * √ Resize cover art on resize of window
 * √ Default save audiobook location to same location as mp3files? (not sure or an option?)
@@ -59,8 +63,6 @@
   * √ Read history on startup
   * Delete history item if not exists anymore (on selecting it)
   * Remove history item if wanted
-* When loading a saved project check if all is still in order
-  * Do the mp3 file references still exist?
 * √ Remove from Queue when done -> When pressing the (X) button again
 * √ Choose output folder
   * √ per project?

@@ -47,8 +47,36 @@ def checksum(filename) -> str:
 
 
 def metadata(filename) -> dict:
-    output = subprocess.getoutput(f'{ivonet.APP_FFPROBE} -print_format json -show_format -v quiet "{filename}"')
+    output = subprocess.getoutput(
+        f'{ivonet.APP_FFPROBE} -print_format json -show_format -loglevel error -v quiet "{filename}"')
     return json.load(StringIO(output))
+
+
+def chapters(filename) -> dict:
+    output = subprocess.getoutput(
+        f'{ivonet.APP_FFPROBE} -print_format json -show_format -show_chapters -loglevel error -v quiet -i "{filename}"')
+    return json.load(StringIO(output))
+
+
+def sexagesimal(dur):
+    mills = str(dur).split(".")
+    if len(mills) == 2:
+        mills = mills[1]
+    else:
+        mills = "000"
+    hours = int(dur / 3600)
+    minutes = int((dur - (hours * 3600)) / 60)
+    seconds = int(dur - (hours * 3600) - (minutes * 60))
+    print(dur, hours, minutes, seconds, mills)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}.{mills[:3]}"
+
+
+def duration(filename: str, formatted=False) -> float:
+    options = ""
+    if formatted:
+        options += "-sexagesimal"
+    return float(subprocess.getoutput(
+        f'{ivonet.APP_FFPROBE} -show_entries format=duration -loglevel error -v quiet -of default=noprint_wrappers=1:nokey=1 {options} -i "{filename}"'))
 
 
 def shell_command(cmd):
@@ -62,3 +90,8 @@ def shell_command(cmd):
     )
     process.stdin.close()
     return process
+
+
+if __name__ == '__main__':
+    print(sexagesimal(duration(
+        "/Users/iwo16283/Downloads/m4b/000-Rachel Aaron - The Legend of Eli Monpress Omnibus 05 - Spirit's End.mp3")))

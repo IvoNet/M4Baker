@@ -10,7 +10,7 @@ The idea is that this project can be Pickled to a file and restored again to get
 Audiobook configuration.
 """
 
-from tinytag import TinyTag
+from ivonet.io.ffprobe import duration, sexagesimal
 
 
 class Project(object):
@@ -42,16 +42,11 @@ class Project(object):
         return f"{self.artist} - {self.title}{part}"
 
     def chapter_file(self, chapter_start=1):
-        total_seconds = 0.0
         ret = [f"00:00:00.000 {self.chapter_text} {chapter_start}"]
+        total_time = 0.0
         for idx, track in enumerate(self.tracks, start=chapter_start + 1):
-            trk = TinyTag.get(track, image=False, ignore_errors=True)
-            total_seconds += float(trk.duration)
-            hours = int(total_seconds / 3600)
-            minutes = int((total_seconds - (hours * 3600)) / 60)
-            seconds = int(total_seconds - (hours * 3600) - (minutes * 60))
-            mills = str(total_seconds).split(".")[1]
-            ret.append(f"{hours:02d}:{minutes:02d}:{seconds:02d}.{mills[:3]} {self.chapter_text} {idx}")
+            total_time += duration(track)
+            ret.append(f"{sexagesimal(total_time)} {self.chapter_text} {idx:03d}")
         return "\n".join(ret)
 
     def verify(self) -> bool:

@@ -256,7 +256,9 @@ class ProjectConverterWorker(object):
         if self.project.chapter_method == CHAPTER_LIST[0]:
             chapter_file = os.path.join(project_tmpdir, "converted.chapters.txt")
             with open(chapter_file, "w") as fo:
-                fo.write(self.project.chapter_file())
+                chapters = self.project.chapter_file()
+                dbg(chapters)
+                fo.write(chapters)
                 self.parent.update(10)
             cmd.append("-i")
         else:

@@ -20,6 +20,7 @@ ICON_APP = f"{RESOURCE}/yoda.png"
 
 APP_MP3_BINDER = f'{RESOURCE}/mp3binder'
 APP_FFMPEG = f'{RESOURCE}/ffmpeg'
+APP_FFPROBE = f'{RESOURCE}/ffprobe'
 APP_ATOMIC_PARSLEY = f"{RESOURCE}/AtomicParsley"
 APP_MP4_CHAPS = f'{RESOURCE}/mp4chaps'
 APP_MP4_ART = f"{RESOURCE}/mp4art"
@@ -27,6 +28,8 @@ if not os.path.isfile(APP_MP3_BINDER):
     raise IOError("mp3binder not found. Are you sure you copied it to the resource folder? See the README.md")
 if not os.path.isfile(APP_FFMPEG):
     raise IOError("ffmpeg not found. Are you sure you copied it to the resource folder? See the README.md")
+if not os.path.isfile(APP_FFPROBE):
+    raise IOError("ffprobe not found. Are you sure you copied it to the resource folder? See the README.md")
 if not os.path.isfile(APP_ATOMIC_PARSLEY):
     raise IOError("AtomicParsley not found. Are you sure you copied it to the resource folder? See the README.md")
 if not os.path.isfile(APP_MP4_CHAPS):

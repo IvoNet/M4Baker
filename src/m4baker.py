@@ -5,7 +5,7 @@ __revised__ = "$revised: 2021-03-10 13:44:39$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
-The main application file. 
+The main application file.
 The file to rule them all.
 Here it all starts and .... ends.
 There can be only one.
@@ -34,15 +34,18 @@ class M4Baker(wx.App):
         self.GetTopWindow().Raise()
 
 
-def main():
+def main(args):
     wx.SystemOptions.SetOption("mac.window-plain-transition", 1)
     wx.SystemOptions.SetOption("mac.textcontrol-use-spell-checker", 1)
     app = M4Baker()
     frame = MainFrame(None, title="M4Baker", size=(1024, 768))
     frame.Show(True)
     dbg("M4Baker initialized.")
+    if len(args) > 1:
+        dbg("Args provided: ", args)
     app.MainLoop()
 
 
 if __name__ == '__main__':
-    main()
+    import sys
+    main(sys.argv)

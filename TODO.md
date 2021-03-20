@@ -29,6 +29,7 @@
 
 ## Business logic
 
+* DMG package and download
 * PRIO! Open a *.m4baker file with M4Baker by double clicking in
   Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
 * Update / Version check service
@@ -117,3 +118,41 @@
   * √ Process
   * √ already clean
   * √ Can't stop what not has been started
+
+# Trials
+
+* m4baker.spec
+
+```json
+             info_plist={
+                'NSRequiresAquaSystemAppearance': 'Yes',
+                'CFBundleURLTypes': [
+                        {
+                          'CFBundleURLName': 'nl.ivonet.m4baker',
+                          'CFBundleURLSchemes': [
+                                'main-screen',
+                            ],
+                        },
+                    ],
+                'UTExportedTypeDeclarations': [
+                       {
+                        'UTTypeIdentifier': 'public.m4baker',
+                        'UTTypeTagSpecification': {
+                                'com.apple.ostype': 'm4baker',
+                                'public.filename-extension': [
+                                        'm4baker',
+                                    ],
+                                'public.mime-type': 'application/m4baker',
+                            },
+                        'UTTypeDescription': 'M4Baker Project file',
+                        'UTTypeIconFile': 'Yoda.icns',
+                        'UTTypeReferenceURL': 'https://www.ivonet.nl',
+                        'UTTypeConformsTo': [
+                                'public.data',
+                            ],
+                        },
+                    ],
+                },
+             )
+
+```

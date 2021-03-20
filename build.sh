@@ -30,8 +30,7 @@ else
   cd dist
   create-dmg --overwrite --dmg-title M4Baker M4Baker.app
   if [ -f "M4Baker 0.0.0.dmg" ]; then
-    version= <../VERSION
+    version=$(<../VERSION)
     mv "M4Baker 0.0.0.dmg" "M4Baker_${version}".dmg
-
   fi
 fi

@@ -131,4 +131,19 @@ If you want to collaborate on this project to improve it or give in more functio
 # See also
 
 * Command line tool doing the [here](https://github.com/IvoNet/docker-mediatools/)
-* [My Blog](https://www.ivonet.nl) 
+* [My Blog](https://www.ivonet.nl)
+
+## DMG package
+
+### install build-dmg
+
+* Install node 8+
+* `npm install -g build-dmg`
+
+### Usage
+
+```shell
+./build.sh clean
+cd dist
+build-dmg
+```

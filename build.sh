@@ -22,3 +22,16 @@ echo "Building the m4baker.app"
 python -OO -m PyInstaller --osx-bundle-identifier nl.ivonet.m4baker --noconsole -y m4baker.spec
 
 ./tag.sh
+
+check="$(which create-dmg)"
+if [ -z "$check" ]; then
+  echo "Not createing DMG as create-dmg is not installed."
+else
+  cd dist
+  create-dmg --overwrite --dmg-title M4Baker M4Baker.app
+  if [ -f "M4Baker 0.0.0.dmg" ]; then
+    version= <../VERSION
+    mv "M4Baker 0.0.0.dmg" "M4Baker_${version}".dmg
+
+  fi
+fi

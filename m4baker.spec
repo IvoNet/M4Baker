@@ -18,8 +18,7 @@ a = Analysis(['src/m4baker.py'],
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=False)
-pyz = PYZ(a.pure, a.zipped_data,
-             cipher=block_cipher)
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
           [],
@@ -29,7 +28,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False )
+          console=False)
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
@@ -37,12 +36,11 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='m4baker')
+               name='M4Baker')
 app = BUNDLE(coll,
              name='M4Baker.app',
              icon="./Yoda.icns",
              bundle_identifier=None,
              info_plist={
-                'NSRequiresAquaSystemAppearance': 'No'
-                },
+                'NSRequiresAquaSystemAppearance': 'No',
              )

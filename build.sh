@@ -12,10 +12,13 @@ if [ "$1" == "release" ] && [ ! -z "$(git diff --stat)" ]; then
   exit 1
 fi
 
-has_create_dmg="$(which create-has_create_dmg)"
+has_create_dmg="$(which create-dmg)"
 if [ -z "$has_create_dmg" ]; then
   echo "create-dmg is not installed."
   echo "if you want to make a release please make sure to install it first!"
+  if [ "$1" == "release" ]; then
+    exit 1
+  fi
 fi
 
 if [ "$1" == "clean" ] || [ "$1" == "release" ]; then

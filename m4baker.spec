@@ -42,6 +42,6 @@ app = BUNDLE(coll,
              icon="./Yoda.icns",
              bundle_identifier=None,
              info_plist={
-                'NSRequiresAquaSystemAppearance': 'No',
+                    'NSRequiresAquaSystemAppearance': 'No',
                 },
              )

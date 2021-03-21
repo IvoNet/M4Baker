@@ -43,7 +43,7 @@ files to the app but don't know how yet.
   coffee [donation](http://ivo2u.nl/ZC).
 * Just showing your appreciation on Twitter is almost just as nice!
 
-# If you are a Developers
+# Building from source
 
 ## Requirements
 
@@ -52,6 +52,7 @@ files to the app but don't know how yet.
 To be placed in src/resources:
 
 - ffmpeg (brew install ffmpeg)
+- ffprobe (brew install ffmpeg)
 - mp4chaps (brew install mp4v2)
 - mp4art (brew install mp4v2)
 - AtomicParsley (brew install AtomicParsley)

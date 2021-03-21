@@ -25,28 +25,17 @@ files to the app but don't know how yet.
 
 ## Download release
 
-* TODO no release has been made yet als I am very much in testing and tuning phase now, but you can build or run from
-  source. for instructions see the Developers section. Richt now I am building this with a MacBook in mind but as it is
-  written in Python with wxPython it should be portable to Windows / Linux? I will probably not invest any time it
-  porting, but if you want to collaborate or improve the code in any other way please drop me a PM on Twitter (@ivonet).
+* Please read this blog about [Open "Unidentified Developer" Apps On Your Mac](http://ivo2u.nl/ZO)
+    * These are the consequences of writing free software:
+        * I am not in the position to [sign](https://developer.apple.com/developer-id/) my code
+          "The Apple Way" as I am not prepared to pay $99 a year to give away (less than) free software 😄. This means
+          that you might have to perform some extra steps to be able to run a (possible future) distribution on your
+          machine.
+        * You can not expect support from me in any way. As long as I am happy with how it works I hope you like it to.
+          Feature requests will only be honoured if I see a benefit in it. You are of course always free to create a
+          Pull Request with your proposed feature.
 
-* As of version 0.1.2 it should build into a kinda "fully" working version with lots of rough edges
-  (very alpha!)
-
-* Version 0.4.4 has a newer look and feel (single page) and should be a bit more stable :-) working on it!
-  Still very alpha phase.
-
-## Extra note
-
-* I write this software as OpenSource and don't expect to be paid for it. I write this stuff for myself and that makes
-  me happy.
-* These are the consequences of writing free software:
-    * I am not in the position to [sign](https://developer.apple.com/developer-id/) my code
-      "The Apple Way" as I am not prepared to pay $99 a year to give away (less than) free software 😄. This means that
-      you might have to perform some extra steps to be able to run a (possible future) distribution on your machine.
-    * You can not expect support from me in any way. As long as I am happy with how it works I hope you like it to.
-      Feature requests will only be honoured if I see a benefit in it. You are of course always free to create a Pull
-      Request with your proposed feature.
+* Working on releasing my software now.... (look for updates here or on my [website](https://www.ivonet.nl)
 
 # Donations / Appreciation
 

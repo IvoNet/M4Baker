@@ -32,6 +32,7 @@
 * PRIO! Open a *.m4baker file with M4Baker by double clicking in
   Finder ([StackOverflow](https://stackoverflow.com/questions/66554480/is-there-a-way-to-associate-a-filetype-to-my-pyinstaller-build-wxpython-app) )
 * Update / Version check service
+* √ Binary download site
 * Improve the queue tooltip... "remove the tracks? just metadata?" sometimes too big if many tracks
 * When loading a saved project check if all is still in order
   * Do the mp3 file references still exist?
@@ -63,6 +64,7 @@
   * √ Read history on startup
   * Delete history item if not exists anymore (on selecting it)
   * Remove history item if wanted
+  * Clear complete recent history option
 * √ Remove from Queue when done -> When pressing the (X) button again
 * √ Choose output folder
   * √ per project?

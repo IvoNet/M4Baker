@@ -25,17 +25,11 @@ files to the app but don't know how yet.
 
 ## Download release
 
+* Binary downloads for macOS are available
+  here: [https://m4baker.ivonet.nl/index.html](https://m4baker.ivonet.nl/index.html)
 * Please read this blog about [Open "Unidentified Developer" Apps On Your Mac](http://ivo2u.nl/ZO)
-    * These are the consequences of writing free software:
-        * I am not in the position to [sign](https://developer.apple.com/developer-id/) my code
-          "The Apple Way" as I am not prepared to pay $99 a year to give away (less than) free software 😄. This means
-          that you might have to perform some extra steps to be able to run a (possible future) distribution on your
-          machine.
-        * You can not expect support from me in any way. As long as I am happy with how it works I hope you like it to.
-          Feature requests will only be honoured if I see a benefit in it. You are of course always free to create a
-          Pull Request with your proposed feature.
-
-* Working on releasing my software now.... (look for updates here or on my [website](https://www.ivonet.nl)
+* The application is very much in development mode and has only been tested on my machine. Feedback is appreciated
+  twitter @ivonet.
 
 # Donations / Appreciation
 

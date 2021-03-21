@@ -24,3 +24,4 @@ __pycache__
 *.ivo
 *.m4baker
 mp3_tests/
+*.dmg

@@ -14,6 +14,7 @@ from ivonet.sys.application import data_directory
 
 TXT_APP_NAME = "M4Baker"
 TXT_APP_TINY_URL = "http://ivo2u.nl/ZR"
+UPDATE_URL = "https://m4baker.ivonet.nl/update/check"
 HERE = os.path.abspath(os.path.dirname(__file__))
 RESOURCE = os.path.abspath(HERE + '/../resources/')
 ICON_APP = f"{RESOURCE}/yoda.png"
@@ -86,7 +87,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
 FILE_EXTENSION = ".m4baker"
 FILE_WILDCARD_PROJECT = "M4Baker (*.m4baker)|*.m4baker"
 FILE_WILDCARD_M4B = "Audiobook (*.m4b)|*.m4b"

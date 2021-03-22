@@ -14,6 +14,7 @@ import pickle
 from configparser import ConfigParser
 from io import BytesIO
 
+import requests
 import wx
 import wx.adv
 from tinytag import TinyTag
@@ -305,6 +306,7 @@ class MainFrame(wx.Frame):
 
         # Tell the world we started anew
         self.reset_metadata(self.project)
+        self.update_check()
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -724,3 +726,10 @@ class MainFrame(wx.Frame):
             self.sc_disk_total.SetValue(self.sc_disc.GetValue())
             return False
         return True
+
+    @staticmethod
+    def update_check():
+        response = requests.get(ivonet.UPDATE_URL)
+        if response.ok and ivonet.VERSION != response.text:
+            log(f"Update {response.text} is available for download.")
+            log("For update goto: https://m4baker.ivonet.nl ")

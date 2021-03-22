@@ -24,6 +24,7 @@ method exampleL
 
 from wx.lib.newevent import NewEvent
 
+(UpdateCheckEvent, EVT_UPDATE_CHECK) = NewEvent()
 (ProcessDoneEvent, EVT_PROCESS_DONE) = NewEvent()
 (ProcessCleanEvent, EVT_PROCESS_CLEAN) = NewEvent()
 (ProcessCancelledEvent, EVT_PROCESS_CANCELLED) = NewEvent()

@@ -24,7 +24,7 @@ import ivonet
 from ivonet.book.meta import GENRES, CHAPTER_LIST
 from ivonet.events import dbg, log
 from ivonet.events.custom import EVT_PROJECT_HISTORY, ProjectHistoryEvent, EVT_PROCESS_CLEAN, ProcessCleanEvent, \
-    EVT_PROCESS_CANCELLED, ProcessCancelledEvent
+    EVT_PROCESS_CANCELLED, ProcessCancelledEvent, EVT_UPDATE_CHECK, UpdateCheckEvent
 from ivonet.gui.AudiobookEntryPanel import AudiobookEntry
 from ivonet.gui.CoverArtDropTarget import CoverArtDropTarget
 from ivonet.gui.MP3DropTarget import MP3DropTarget
@@ -296,6 +296,7 @@ class MainFrame(wx.Frame):
         self.Bind(EVT_PROJECT_HISTORY, self.on_project_history)
         self.Bind(EVT_PROCESS_CLEAN, self.on_clean_queue_item)
         self.Bind(EVT_PROCESS_CANCELLED, self.on_process_cancelled)
+        self.Bind(EVT_UPDATE_CHECK, self.update_check)
 
         self.init()
 
@@ -306,7 +307,7 @@ class MainFrame(wx.Frame):
 
         # Tell the world we started anew
         self.reset_metadata(self.project)
-        self.update_check()
+        wx.PostEvent(self, UpdateCheckEvent())
 
     def __make_toolbar(self):
         """Toolbar"""
@@ -727,8 +728,7 @@ class MainFrame(wx.Frame):
             return False
         return True
 
-    @staticmethod
-    def update_check():
+    def update_check(self, event):
         response = requests.get(ivonet.UPDATE_URL)
         if response.ok and ivonet.VERSION != response.text:
             log(f"Update {response.text} is available for download.")

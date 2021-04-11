@@ -55,7 +55,7 @@ To be placed in src/resources:
 - mp4chaps (brew install mp4v2)
 - mp4art (brew install mp4v2)
 - AtomicParsley (brew install AtomicParsley
-  or https://github.com/wez/atomicparsley/releases/)
+  or [binary](https://github.com/wez/atomicparsley/releases/))
 - mp3binder (build from source: https://github.com/crra/mp3binder)
 
 how...

@@ -5,16 +5,18 @@
 - AtomicParsley
 - mp3binder (https://github.com/crra/mp3binder)
 
-The license files explain the constraints. In this application only binary versions are distributed build from an
-unchanged codebase.
+The license files explain the constraints. In this application only binary
+versions are distributed build from an unchanged codebase.
 
 # ffmpeg
 
-* Version: 4.3.1
+* Version: 4.4
+* get it from [here](https://evermeet.cx/ffmpeg/) (you need a static binary)
 
 # AtomicParsley
 
 * Version: 20210124.204813.840499f
+* download from [here](https://github.com/wez/atomicparsley/releases/)
 
 # mp4v2
 
@@ -23,10 +25,15 @@ unchanged codebase.
 # mp3binder
 
 * Version used: 3.0.0-1-g7e2e54c
+* Build from source
 
 # Installation
 
-I installed all these components by installing them on my mac with [brew](https://brew.sh)
+NOTE: Sometimes if done this way you will lose the dynamic links... it is better
+to get static binaries
+
+I installed all these components by installing them on my mac
+with [brew](https://brew.sh)
 
 and then copying the specific binaries I needed to the src/resources folder
 

@@ -9,7 +9,6 @@ __doc__ = """
 """
 
 import time
-
 import wx
 import wx.lib.newevent
 from wx._core import CommandEvent
@@ -20,6 +19,8 @@ from ivonet.events.custom import EVT_PROCESS_DONE, EVT_PROCESS_ERROR, ProcessExc
 from ivonet.io.save import save_project
 from ivonet.model.Project import Project
 from ivonet.threading.ProjectConverterWorker import ProjectConverterWorker
+
+DONE_VALUE = 600
 
 
 class AudiobookEntry(wx.Panel):
@@ -45,7 +46,8 @@ class AudiobookEntry(wx.Panel):
         self.refresh_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_time_indicator, self.refresh_timer)
 
-        self.progress = wx.Gauge(self, wx.ID_ANY, range=600, size=(300, 21), style=wx.GA_HORIZONTAL | wx.GA_SMOOTH)
+        self.progress = wx.Gauge(self, wx.ID_ANY, range=DONE_VALUE, size=(300, 21),
+                                 style=wx.GA_HORIZONTAL | wx.GA_SMOOTH)
         sizer.Add(self.progress, 3, wx.ALIGN_CENTER_VERTICAL, 0)
 
         self.stop_button = wx.Button(self, wx.ID_ANY, "x")
@@ -87,6 +89,7 @@ class AudiobookEntry(wx.Panel):
 
     def on_done(self, event):
         self.stop()
+        self.progress.SetValue(DONE_VALUE)
         self.filename.SetForegroundColour(wx.GREEN)
         self.parent.remove_from_active_queue(self)
         event.Skip()

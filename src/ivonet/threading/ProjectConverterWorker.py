@@ -8,7 +8,6 @@ __doc__ = """
 
 """
 
-import _thread
 import os
 import re
 import shutil
@@ -16,6 +15,7 @@ import subprocess
 import tempfile
 from io import BytesIO
 
+import _thread
 import wx
 import wx.lib.newevent
 
@@ -24,6 +24,7 @@ from ivonet.book.meta import CHAPTER_LIST
 from ivonet.events import dbg, log
 from ivonet.events.custom import ProcessDoneEvent, ProcessExceptionEvent
 from ivonet.io import unique_name
+from ivonet.io.UniqueName import InputError
 from ivonet.model.Project import Project
 
 
@@ -123,19 +124,28 @@ class ProjectConverterWorker(object):
             self.parent.stage = 5
             self.parent.update(25)
             log(f"Moving completed audiobook [{self.project.title}] to final destination.")
-            basename, ext = os.path.splitext(unique_name(self.project.m4b_name))
-            shutil.move(m4b, unique_name(self.project.m4b_name))
-            self.parent.update(50)
-            shutil.move(cover, unique_name(basename + ".png"))
-            self.parent.update(75)
-            shutil.move(chapter_file, unique_name(basename + ".chapters.txt"))
+            try:
+                basename, ext = os.path.splitext(unique_name(self.project.m4b_name))
+                shutil.move(m4b, unique_name(self.project.m4b_name))
+                self.parent.update(50)
+                shutil.move(cover, unique_name(basename + ".png"))
+                if os.path.isfile(chapter_file):
+                    shutil.move(chapter_file, unique_name(basename + ".chapters.txt"))
+            except InputError as e:
+                log(e.message)
+                self.keep_going = False
 
             if self.keep_going:
                 self.parent.update(100)
                 wx.PostEvent(self.parent, ProcessDoneEvent())
+                log(f"Created: {self.project.m4b_name}")
+            else:
+                log("Something went wrong and the conversion could not complete successfully.")
+                log("Please try again and if the problem persists you can PM me on twitter")
+                log("@ivonet with a description of when and where it goes wrong.")
+                log("Thanks for the help.")
             self.running = False
             self.keep_going = False
-            log(f"Created: {self.project.m4b_name}")
 
     def merge_mp3_files(self, merged):
 

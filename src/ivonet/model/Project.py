@@ -13,22 +13,71 @@ Audiobook configuration.
 from ivonet.io.ffprobe import duration, sexagesimal
 
 
-class Project(object):
+class Singleton:
+    def __init__(self, cls):
+        self._cls = cls
+
+    def instance(self):
+        try:
+            return self._instance
+        except AttributeError:
+            self._instance = self._cls()
+            return self._instance
+
+    def __call__(self):
+        raise TypeError('Singletons must be accessed through `instance()`.')
+
+    def __instancecheck__(self, inst):
+        return isinstance(inst, self._cls)
+
+
+@Singleton
+class StateMachine(object):
+
     def __init__(self) -> None:
-        self.name = None
-        self.tracks = []
-        self.title = ""
+        self.reset()
+
+    def reset(self):
         self.artist = ""
         self.grouping = ""
         self.genre = "Urban Fantasy"
-        self.chapter_text = "Chapter"
         self.chapter_method = "Based on mp3 length"
+
+
+class Project(object):
+
+    def __init__(self) -> None:
+        self.state_machine = StateMachine.instance()
+        self.name = None
+        self.tracks = []
+        self.title = ""
+        self.artist = self.state_machine.artist
+        self.grouping = self.state_machine.grouping
+        self.genre = self.state_machine.genre
+        self.chapter_text = "Chapter"
+        self.chapter_method = self.state_machine.chapter_method
         self.comment = ""
         self.disc = 1
         self.disc_total = 1
         self.year = ""
         self.cover_art = None
         self.m4b_name = None
+
+    def set_artist(self, value):
+        self.artist = value
+        self.state_machine.artist = value
+
+    def set_grouping(self, value):
+        self.grouping = value
+        self.state_machine.grouping = value
+
+    def set_chapter_method(self, value):
+        self.chapter_method = value
+        self.state_machine.chapter_method = value
+
+    def set_genre(self, value):
+        self.genre = value
+        self.state_machine.genre = value
 
     def has_cover_art(self):
         return self.cover_art is not None
@@ -57,10 +106,27 @@ class Project(object):
     def get_comment(self):
         return self.comment.replace('"', "").replace("'", "").replace("  ", " ").replace("\t", " ")
 
-    def __repr__(self) -> str:
-        # TODO remove Attribute Error code as it is plumbing code to allow unpickle of objects not having m4b_name
+    def refresh_after_pickle(self):
+        """Should be called after a pickle load operation.
+        This method is to guarantee backwards compatibility for m4baker files after a model change
+        """
         try:
-            return f"""Project [
+            self.m4b_name
+        except AttributeError:
+            self.m4b_name = None
+
+        try:
+            self.state_machine
+        except AttributeError:
+            self.state_machine = StateMachine.instance()
+
+        self.state_machine.artist = self.artist
+        self.state_machine.genre = self.genre
+        self.state_machine.grouping = self.grouping
+        self.state_machine.chapter_method = self.chapter_method
+
+    def __repr__(self) -> str:
+        return f"""Project [
     project_name={self.name},
     m4b_name={self.m4b_name},
     title={self.title}, 
@@ -75,20 +141,3 @@ class Project(object):
     cover_art={self.has_cover_art()},
     tracks={self.tracks},
     ]"""
-        except AttributeError:
-            self.m4b_name = None
-            return f"""Project [
-                project_name={self.name},
-                m4b_name={self.m4b_name},
-                title={self.title}, 
-                artist={self.artist}, 
-                grouping={self.grouping},
-                genre={self.genre},
-                disk={self.disc}/{self.disc_total},
-                year={self.year},
-                chapter_text={self.chapter_text},
-                chapter_method={self.chapter_method},
-                comment={self.comment},
-                cover_art={self.has_cover_art()},
-                tracks={self.tracks},
-                ]"""

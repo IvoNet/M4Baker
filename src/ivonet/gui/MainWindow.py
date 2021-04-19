@@ -31,7 +31,7 @@ from ivonet.gui.MP3DropTarget import MP3DropTarget
 from ivonet.gui.MenuBar import MenuBar, FILE_MENU_QUEUE
 from ivonet.image.IvoNetArtProvider import IvoNetArtProvider
 from ivonet.io.save import save_project
-from ivonet.model.Project import Project
+from ivonet.model.Project import Project, StateMachine
 
 try:
     from ivonet.image.images import yoda, pixel
@@ -472,6 +472,7 @@ class MainFrame(wx.Frame):
         try:
             with open(path, 'rb') as fi:
                 self.project = pickle.load(fi)
+                self.project.refresh_after_pickle()
                 self.project.name = path
                 self.reset_metadata(self.project)
         except FileNotFoundError:
@@ -505,10 +506,16 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def on_clear(self, event):
-        """Handles the new project event."""
+        """Handles the clear project event."""
         self.status("Starting new project")
         self.project = Project()
         self.reset_metadata(self.project)
+        event.Skip()
+
+    def on_new(self, event):
+        """Handles the new⁄⁄ project event."""
+        StateMachine.instance().reset()
+        self.on_clear(event)
         event.Skip()
 
     def status(self, msg):
@@ -676,17 +683,17 @@ class MainFrame(wx.Frame):
 
     def on_artist(self, event):
         """Handler for the artist field event"""
-        self.project.artist = event.GetString()
+        self.project.set_artist(event.GetString())
         event.Skip()
 
     def on_grouping(self, event):
         """Handler for the grouping field event"""
-        self.project.grouping = event.GetString()
+        self.project.set_grouping(event.GetString())
         event.Skip()
 
     def on_genre(self, event):
         """Handler for the genre field event"""
-        self.project.genre = event.GetString()
+        self.project.set_genre(event.GetString())
         event.Skip()
 
     def on_chapter_text(self, event):
@@ -696,7 +703,7 @@ class MainFrame(wx.Frame):
 
     def on_chapter_method(self, event):
         """Handler for the chapter convert method field event"""
-        self.project.chapter_method = event.GetString()
+        self.project.set_chapter_method(event.GetString())
         event.Skip()
 
     def on_disc(self, event):

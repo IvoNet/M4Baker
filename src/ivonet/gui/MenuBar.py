@@ -46,7 +46,7 @@ class MenuBar(wx.MenuBar):
 
         menu_handlers = [
             (FILE_MENU_QUEUE, self.parent.on_queue),
-            (wx.ID_NEW, self.parent.on_clear),
+            (wx.ID_NEW, self.parent.on_new),
             (FILE_MENU_TO_DIR, self.parent.on_select_dir),
             (wx.ID_OPEN, self.parent.on_open_project),
             (wx.ID_SAVE, self.parent.on_save_project),

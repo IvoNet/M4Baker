@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 2021-03-02 21:18:42$"
+__revised__ = "$revised: 2021-06-16 22:33:08$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -47,15 +47,14 @@ class StateMachine(object):
 class Project(object):
 
     def __init__(self) -> None:
-        self.state_machine = StateMachine.instance()
         self.name = None
         self.tracks = []
         self.title = ""
-        self.artist = self.state_machine.artist
-        self.grouping = self.state_machine.grouping
-        self.genre = self.state_machine.genre
+        self.artist = StateMachine.instance().artist
+        self.grouping = StateMachine.instance().grouping
+        self.genre = StateMachine.instance().genre
         self.chapter_text = "Chapter"
-        self.chapter_method = self.state_machine.chapter_method
+        self.chapter_method = StateMachine.instance().chapter_method
         self.comment = ""
         self.disc = 1
         self.disc_total = 1
@@ -65,19 +64,19 @@ class Project(object):
 
     def set_artist(self, value):
         self.artist = value
-        self.state_machine.artist = value
+        StateMachine.instance().artist = value
 
     def set_grouping(self, value):
         self.grouping = value
-        self.state_machine.grouping = value
+        StateMachine.instance().grouping = value
 
     def set_chapter_method(self, value):
         self.chapter_method = value
-        self.state_machine.chapter_method = value
+        StateMachine.instance().chapter_method = value
 
     def set_genre(self, value):
         self.genre = value
-        self.state_machine.genre = value
+        StateMachine.instance().genre = value
 
     def has_cover_art(self):
         return self.cover_art is not None
@@ -115,15 +114,10 @@ class Project(object):
         except AttributeError:
             self.m4b_name = None
 
-        try:
-            self.state_machine
-        except AttributeError:
-            self.state_machine = StateMachine.instance()
-
-        self.state_machine.artist = self.artist
-        self.state_machine.genre = self.genre
-        self.state_machine.grouping = self.grouping
-        self.state_machine.chapter_method = self.chapter_method
+        StateMachine.instance().artist = self.artist
+        StateMachine.instance().genre = self.genre
+        StateMachine.instance().grouping = self.grouping
+        StateMachine.instance().chapter_method = self.chapter_method
 
     def __repr__(self) -> str:
         return f"""Project [

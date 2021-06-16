@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 __author__ = "Ivo Woltring"
-__revised__ = "$revised: 07/03/2021 19:02$"
+__revised__ = "$revised: 2021-06-16 22:33:33$"
 __copyright__ = "Copyright (c) 2021 Ivo Woltring"
 __license__ = "Apache 2.0"
 __doc__ = """
@@ -14,7 +14,7 @@ import pickle
 import wx
 
 import ivonet
-from ivonet.events import log
+from ivonet.events import log, dbg
 from ivonet.events.custom import ProjectHistoryEvent
 
 
@@ -49,6 +49,7 @@ def save_project(window, project):
             if not path.endswith(ivonet.FILE_EXTENSION):
                 path += ivonet.FILE_EXTENSION
             with open(path, 'wb') as fo:
+                dbg("Saving project file.." + str(project))
                 project.name = path
                 pickle.dump(project, fo)
             wx.PostEvent(window, ProjectHistoryEvent(path=path))

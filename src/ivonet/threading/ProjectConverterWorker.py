@@ -155,7 +155,7 @@ class ProjectConverterWorker(object):
             self.parent.update(100)
             return
 
-        cmd = [ivonet.APP_MP3_BINDER, '-out', merged]
+        cmd = [ivonet.APP_MP3_BINDER, '--output', merged]
         [cmd.append(mp3) for mp3 in self.project.tracks]
 
         self.subprocess(cmd)

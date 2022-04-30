@@ -50,19 +50,21 @@ recent history. I want to associate the files to the app but don't know how yet.
 
 To be placed in src/resources:
 
-- ffmpeg (https://evermeet.cx/ffmpeg/)
-- ffprobe (https://evermeet.cx/ffmpeg/)
+- ffmpeg & ffprobe
+  - https://github.com/descriptinc/ffmpeg-ffprobe-static/releases
+  - https://evermeet.cx/ffmpeg/ 
+  - https://osxexperts.net/
 - mp4chaps (brew install mp4v2)
 - mp4art (brew install mp4v2)
-- AtomicParsley (brew install AtomicParsley
+- AtomicParsley (brew install AtomicParsley)
   or [binary](https://github.com/wez/atomicparsley/releases/))
 - mp3binder (build from source: https://github.com/crra/mp3binder)
 
 how...
 
 ```shell
-cp -vf "$(which ffmpeg)" "./src/resources"
-cp -vf "$(which ffprobe)" "./src/resources"
+#cp -vf "$(which ffmpeg)" "./src/resources"
+#cp -vf "$(which ffprobe)" "./src/resources"
 cp -vf "$(which mp4chaps)" "./src/resources"
 cp -vf "$(which mp4art)" "./src/resources"
 cp -vf "$(which AtomicParsley)" "./src/resources"
@@ -78,8 +80,13 @@ To create and activate the environment
 python3.9 -m venv venv
 source venv/bin/activate
 pip install poetry 
+# Because wxPython did not install I needed to add these two exports
+export CFLAGS=-I/$(brew --prefix)/include
+export CXXFLAGS=-I/$(brew --prefix)/include
 poetry install
 ```
+
+I had some trouble getting it to work on the Apple M1 chipset and for that added the two export lines.
 
 ## Usage
 
@@ -117,8 +124,7 @@ understood by wxPython.
 ## Collaboration
 
 If you want to collaborate on this project to improve it or give in more
-functionality please drop me a PM on twitter (
-@ivonet)
+functionality please drop me a PM on twitter @ivonet
 
 # See also
 
@@ -131,7 +137,7 @@ functionality please drop me a PM on twitter (
 ### install build-dmg
 
 * Install node 8+
-* `npm install -g build-dmg`
+* `npm install -g create-dmg`
 
 ### Usage
 

@@ -736,7 +736,19 @@ class MainFrame(wx.Frame):
         return True
 
     def update_check(self, event):
-        response = requests.get(ivonet.UPDATE_URL)
-        if response.ok and ivonet.VERSION != response.text:
+        def thelog():
             log(f"Update {response.text} is available for download.")
             log("For update goto: https://m4baker.ivonet.nl ")
+
+        response = requests.get(ivonet.UPDATE_URL)
+        if response.ok and ivonet.VERSION != response.text:
+            major1, minor1, build1 = ivonet.VERSION.split(".")
+            major2, minor2, build2 = response.text.split(".")
+            if major1 < major2:
+                thelog()
+            elif major1 == major2:
+                if minor1 < minor2:
+                    thelog()
+                elif minor1 == minor2:
+                    if build1 < build2:
+                        thelog()

@@ -8,6 +8,8 @@ __doc__ = """
 Versioning file
 """
 
+import re
+
 
 def read_version():
     try:
@@ -27,12 +29,21 @@ def inc_version(version):
     return f"{major}.{minor}.{build}"
 
 
+def update_poetry(version):
+    with open("pyproject.toml", "r") as fi:
+        content = fi.read()
+        content = re.sub('^version = ".*"$', fr'version = "{version}"', content, flags=re.MULTILINE)
+    with open("pyproject.toml", "w") as fo:
+        fo.write(content)
+
+
 def versioning():
     new_version = inc_version(read_version())
     version = input(f"Version (enter = {new_version}): ")
     if not version:
         version = new_version
     write_version(version)
+    update_poetry(version)
 
 
 if __name__ == '__main__':

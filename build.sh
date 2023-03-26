@@ -44,11 +44,8 @@ if [ "$1" == "release" ]; then
     echo "Not creating DMG release as create-dmg is not installed."
   else
     cd ./dist
-    create-dmg --overwrite --dmg-title M4Baker M4Baker.app
-    if [ -f "M4Baker 0.0.0.dmg" ]; then
-      version=$(<../VERSION)
-      mv "M4Baker 0.0.0.dmg" "M4Baker_${version}.dmg"
-      sha512sum "M4Baker_${version}.dmg" >"M4Baker_${version}.dmg.sha512"
-    fi
+    version=$(<../VERSION)
+    create-dmg --app-drop-link 10 20  M4Baker_${version}.dmg M4Baker.app
+    sha512sum "M4Baker_${version}.dmg" >"M4Baker_${version}.dmg.sha512"
   fi
 fi

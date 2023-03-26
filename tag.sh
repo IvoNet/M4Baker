@@ -2,7 +2,7 @@
 
 VERSION=$(<./VERSION)
 
-git add VERSION
+git add .
 git commit -m "v${VERSION}"
 
 if [ -z "$(git diff --stat)" ]; then

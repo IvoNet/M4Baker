@@ -20,7 +20,19 @@ versions are distributed build from an unchanged codebase.
 
 # mp4v2
 
-* Version: 2.0.0
+* Version: 2.1.2
+
+now build from source:
+
+- you need the xcode command line tools installed
+
+```shell
+git clone git@github.com:enzo1982/mp4v2.git
+cd mp4v2
+autoreconf -i
+./configure --enable-shared=no --enable-static=yes
+make
+```
 
 # mp3binder
 

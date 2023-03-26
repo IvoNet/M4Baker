@@ -9,10 +9,10 @@ The design is with ease of use in mind.
 ![](doc/Screen-main.png)
 
 * Mandatory fields
-  * Title
-  * Artist
-  * Cover Art
-  * MP3 files
+    * Title
+    * Artist
+    * Cover Art
+    * MP3 files
 * When at least the mandatory fields are filled the "Queue" button will become
   available
 * When Queued processing of the project will begin, and the current project
@@ -51,9 +51,9 @@ recent history. I want to associate the files to the app but don't know how yet.
 To be placed in src/resources:
 
 - ffmpeg & ffprobe
-  - https://github.com/descriptinc/ffmpeg-ffprobe-static/releases
-  - https://evermeet.cx/ffmpeg/ 
-  - https://osxexperts.net/
+    - https://github.com/descriptinc/ffmpeg-ffprobe-static/releases
+    - https://evermeet.cx/ffmpeg/
+    - https://osxexperts.net/
 - mp4chaps (brew install mp4v2)
 - mp4art (brew install mp4v2)
 - AtomicParsley (brew install AtomicParsley)
@@ -98,6 +98,14 @@ python src/m4baker.py
 # or
 
 DEBUG=True python src/m4baker.py # Will show extra debug logging in the log window
+```
+
+## Debug logging on Production Build
+
+This can help identify problems when normal logging is not enough.
+
+```shell
+DEBUG=True open /Applications/M4Baker.app
 ```
 
 ## Build Mac App

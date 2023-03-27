@@ -33,7 +33,7 @@ autoreconf -i
 ./configure --enable-shared=no --enable-static=yes
 make
 ```
-
+-
 # mp3binder
 
 * Version used: 3.0.0-1-g7e2e54c

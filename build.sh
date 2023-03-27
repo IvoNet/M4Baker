@@ -45,7 +45,7 @@ if [ "$1" == "release" ]; then
   else
     cd ./dist
     version=$(<../VERSION)
-    create-dmg --app-drop-link 10 20  M4Baker_${version}.dmg M4Baker.app
+    create-dmg --app-drop-link 10 30  M4Baker_${version}.dmg M4Baker.app
     sha512sum "M4Baker_${version}.dmg" >"M4Baker_${version}.dmg.sha512"
   fi
 fi
